@@ -9,6 +9,10 @@
 #
 # Revision History:
 #
+#  Version 2.11
+#   Support unicode domains -- Sadeq N. Yazdi sadeqn@gmail.com
+#   Bug fix for .ir, ایران  -- Sadeq N. Yazdi sadeqn@gmail.com
+#
 #  Version 2.10
 #   Bug fix for .com, net, org, jp, and edu  -- Vivek Gite <vivek@nixcraft.com>
 #
