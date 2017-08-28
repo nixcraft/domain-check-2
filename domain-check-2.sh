@@ -5,10 +5,12 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 # 
-# Current Version: 2.10 
+# Current Version: 2.11
 #
 # Revision History:
 #
+#  Version 2.11
+#    Added support for .cafe/.blog/.link domain -- <github.com/kode29>
 #  Version 2.10
 #   Bug fix for .com, net, org, jp, and edu  -- Vivek Gite <vivek@nixcraft.com>
 #
