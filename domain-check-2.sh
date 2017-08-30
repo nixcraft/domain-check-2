@@ -171,7 +171,7 @@ DATE=`which date`
 CUT=`which cut`
 TR=`which tr`
 MAIL=`which mail`
-IDN=`which idn`
+IDN=`which idnxxx`; [ -z "$IDN" ] && IDN="cat"
 GREP=`which egrep`
 
 # Place to stash temporary files
