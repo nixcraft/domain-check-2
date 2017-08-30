@@ -4,13 +4,18 @@
 # Program: Domain Expiration Check <domain-check>
 #
 # Author: Matty < matty91 at gmail dot com >
-# 
-# Current Version: 2.11
+#
+# Current Version: 2.12
+#
 #
 # Revision History:
 #
+#  Version 2.12
+#   Added suport for Czechia (.cz) domains -- Minitram <github.com/Minitram>
+#
 #  Version 2.11
 #    Added support for .cafe/.blog/.link domain -- <github.com/kode29>
+#
 #  Version 2.10
 #   Bug fix for .com, net, org, jp, and edu  -- Vivek Gite <vivek@nixcraft.com>
 #
@@ -44,7 +49,7 @@
 #   instead of the command without path
 #
 #  Version 2.0
-#   Bug fix for .org, .biz, info, and .ca -- Cameron and Jim 
+#   Bug fix for .org, .biz, info, and .ca -- Cameron and Jim
 #
 #  Version 1.9
 #    Bug fix and enhancement for .uk and .co.uk -- Vivek Gite <vivek@nixcraft.com>
@@ -60,7 +65,7 @@
 #
 #  Version 1.5
 #    Added support for .org, .in, .biz and .info domain names -- Vivek Gite <vivek@nixcraft.com>
-# 
+#
 #  Version 1.4
 #    Updated the documentation.
 #
@@ -80,7 +85,7 @@
 #
 # Purpose:
 #  domain-check checks to see if a domain has expired. domain-check
-#  can be run in interactive and batch mode, and provides faciltities 
+#  can be run in interactive and batch mode, and provides faciltities
 #  to alarm if a domain is about to expire.
 #
 # License:
@@ -120,25 +125,25 @@
 #
 #  Domain                              Registrar         Status   Expires     Days Left
 #  ----------------------------------- ----------------- -------- ----------- ---------
-#  prefetch.net                        INTERCOSMOS MEDIA Valid    13-feb-2006   64   
+#  prefetch.net                        INTERCOSMOS MEDIA Valid    13-feb-2006   64
 #
-#  The second example prints the expiration date and registrar for the domains 
+#  The second example prints the expiration date and registrar for the domains
 #  listed in the file "domains":
 #
-#  $ domain-check.sh -f domains    
+#  $ domain-check.sh -f domains
 #
 #  Domain                              Registrar         Status   Expires     Days Left
 #  ----------------------------------- ----------------- -------- ----------- ---------
-#  sun.com                             NETWORK SOLUTIONS Valid    20-mar-2010   1560 
-#  google.com                          EMARKMONITOR INC. Valid    14-sep-2011   2103 
-#  ack.com                             NETWORK SOLUTIONS Valid    09-may-2008   880  
-#  prefetch.net                        INTERCOSMOS MEDIA Valid    13-feb-2006   64   
-#  spotch.com                          GANDI             Valid    03-dec-2006   357  
+#  sun.com                             NETWORK SOLUTIONS Valid    20-mar-2010   1560
+#  google.com                          EMARKMONITOR INC. Valid    14-sep-2011   2103
+#  ack.com                             NETWORK SOLUTIONS Valid    09-may-2008   880
+#  prefetch.net                        INTERCOSMOS MEDIA Valid    13-feb-2006   64
+#  spotch.com                          GANDI             Valid    03-dec-2006   357
 #
 #  The third example will e-mail the address admin@prefetch.net with the domains that
 #  will expire in 60-days or less:
 #
-#  $ domain-check -a -f domains -q -x 60 -e admin@prefetch.net  
+#  $ domain-check -a -f domains -q -x 60 -e admin@prefetch.net
 #
 
 PATH=/bin:/usr/bin:/usr/local/bin:/usr/local/ssl/bin:/usr/sfw/bin
@@ -180,19 +185,19 @@ WHOIS_TMP="/var/tmp/whois.$$"
 #   $2 -> Day   (e.g., 08)
 #   $3 -> Year  (e.g., 2006)
 #############################################################################
-date2julian() 
+date2julian()
 {
     if [ "${1} != "" ] && [ "${2} != ""  ] && [ "${3}" != "" ]
     then
-         ## Since leap years add aday at the end of February, 
+         ## Since leap years add aday at the end of February,
          ## calculations are done from 1 March 0000 (a fictional year)
          d2j_tmpmonth=$((12 * ${3} + ${1} - 3))
-        
+
          ## If it is not yet March, the year is changed to the previous year
          d2j_tmpyear=$(( ${d2j_tmpmonth} / 12))
-        
+
          ## The number of days from 1 March 0000 is calculated
-         ## and the number of days from 1 Jan. 4713BC is added 
+         ## and the number of days from 1 Jan. 4713BC is added
          echo $(( (734 * ${d2j_tmpmonth} + 15) / 24 -  2 * ${d2j_tmpyear} + ${d2j_tmpyear}/4
                        - ${d2j_tmpyear}/100 + ${d2j_tmpyear}/400 + $2 + 1721119 ))
     else
@@ -205,10 +210,10 @@ date2julian()
 # Arguments:
 #   $1 -> Month name (e.g., Sep)
 #############################################################################
-getmonth() 
+getmonth()
 {
        LOWER=`tolower $1`
-              
+
        case ${LOWER} in
              jan) echo 1 ;;
              feb) echo 2 ;;
@@ -232,7 +237,7 @@ getmonth()
 #   $1 -> Date #1
 #   $2 -> Date #2
 #############################################################################
-date_diff() 
+date_diff()
 {
         if [ "${1}" != "" ] &&  [ "${2}" != "" ]
         then
@@ -247,7 +252,7 @@ date_diff()
 # Arguments:
 #   $1 -> String to convert to lower case
 ##################################################################
-tolower() 
+tolower()
 {
      LOWER=`echo ${1} | ${TR} [A-Z] [a-z]`
      echo $LOWER
@@ -258,22 +263,22 @@ tolower()
 # Arguments:
 #   $1 -> Domain to check
 ##################################################################
-check_domain_status() 
+check_domain_status()
 {
     local REGISTRAR=""
-    # Avoid WHOIS LIMIT EXCEEDED - slowdown our whois client by adding 3 sec 
+    # Avoid WHOIS LIMIT EXCEEDED - slowdown our whois client by adding 3 sec
     sleep 3
     # Save the domain since set will trip up the ordering
     DOMAIN=${1}
-    TLDTYPE="`echo ${DOMAIN} | ${CUT} -d '.' -f3 | tr '[A-Z]' '[a-z]'`" 
+    TLDTYPE="`echo ${DOMAIN} | ${CUT} -d '.' -f3 | tr '[A-Z]' '[a-z]'`"
     if [ "${TLDTYPE}"  == "" ];
     then
-	    TLDTYPE="`echo ${DOMAIN} | ${CUT} -d '.' -f2 | tr '[A-Z]' '[a-z]'`" 
+	    TLDTYPE="`echo ${DOMAIN} | ${CUT} -d '.' -f2 | tr '[A-Z]' '[a-z]'`"
     fi
 
     # Invoke whois to find the domain registrar and expiration date
     #${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
-    # Let whois select server 
+    # Let whois select server
     if [ "${TLDTYPE}"  == "org" ];
     then
         ${WHOIS} -h "whois.pir.org" "${1}" > ${WHOIS_TMP}
@@ -286,7 +291,7 @@ check_domain_status()
     elif [ "${TLDTYPE}"  == "md" ];
     then
         ${WHOIS} -h "whois.nic.md" "${1}" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}"  == "uk" ]; # United Kingdom  
+    elif [ "${TLDTYPE}"  == "uk" ]; # United Kingdom
     then
         ${WHOIS} -h "whois.nic.uk" "${1}" > ${WHOIS_TMP}
 
@@ -315,7 +320,7 @@ check_domain_status()
     elif [ "${TLDTYPE}"  == "link" ]; # edu added by @kode29 on 26-aug-2017
     then
         ${WHOIS} -h "whois.uniregistry.net" "${1}" > ${WHOIS_TMP}
-    
+
     elif [ "${TLDTYPE}"  == "blog" ]; # edu added by @kode29 on 26-aug-2017
     then
         ${WHOIS} -h "whois.nic.blog" "${1}" > ${WHOIS_TMP}
@@ -329,6 +334,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "ru" -o "${TLDTYPE}" == "su" ]; # Russia and Soviet Union added 20141113
     then
         ${WHOIS} -h "whois.ripn.net" "${1}" > ${WHOIS_TMP}
+    elif [ "${TLDTYPE}" == "cz" ]; # Czechia (.cz) domains added by Minitram 20170830
+    then
+        ${WHOIS} -h "whois.nic.cz" "${1}" > ${WHOIS_TMP}
     else
 	${WHOIS} "${1}" > ${WHOIS_TMP}
     fi
@@ -391,6 +399,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "ru" -o "${TLDTYPE}" == "su" ]; # added 20141113
     then
 	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,6,17) } END { print REGISTRAR }'`
+    elif [ "${TLDTYPE}" == "cz" ]; # added by Minitram 20170830
+    then
+    REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,5,17) } END { print REGISTRAR }'`
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -627,11 +638,36 @@ check_domain_status()
 	       esac
 	   tday=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
            DOMAINDATE=`echo "${tday}-${tmon}-${tyear}"`
-    else # may work with others	 ??? ;)  
- 	   DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Expiration/ { print $NF }'`	
+
+       elif [ "${TLDTYPE}" == "cz" ] # added on 20170830 by Minitram
+       then
+              tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/expire:/ { print $NF }'`
+       echo $tomdate
+              tyear=`echo ${tdomdate} | ${CUT} -d'.' -f3`
+              tmon=`echo ${tdomdate} |${CUT} -d'.' -f2`
+           case ${tmon} in
+                 1|01) tmonth=jan ;;
+                 2|02) tmonth=feb ;;
+                 3|03) tmonth=mar ;;
+                 4|04) tmonth=apr ;;
+                 5|05) tmonth=may ;;
+                 6|06) tmonth=jun ;;
+                 7|07) tmonth=jul ;;
+                 8|08) tmonth=aug ;;
+                 9|09) tmonth=sep ;;
+                 10) tmonth=oct ;;
+                 11) tmonth=nov ;;
+                 12) tmonth=dec ;;
+                 *) tmonth=0 ;;
+           esac
+       tday=`echo ${tdomdate} | ${CUT} -d "." -f 1`
+              DOMAINDATE=`echo "${tday}-${tmon}-${tyear}"`
+
+    else # may work with others	 ??? ;)
+ 	   DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Expiration/ { print $NF }'`
     fi
 
-    #echo $DOMAINDATE # debug 
+    #echo $DOMAINDATE # debug
     # Whois data should be in the following format: "13-feb-2006"
     IFS="-"
     set -- ${DOMAINDATE}
@@ -790,4 +826,3 @@ rm -f ${WHOIS_TMP}
 
 ### Exit with a success indicator
 exit 0
-
