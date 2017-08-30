@@ -5,13 +5,16 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 # 
-# Current Version: 2.10 
+# Current Version: 2.11
 #
 # Revision History:
 #
-#  Version 2.11
+#  Version 2.12
 #   Support unicode domains -- Sadeq N. Yazdi sadeqn@gmail.com
 #   Bug fix for .ir, ایران  -- Sadeq N. Yazdi sadeqn@gmail.com
+#
+#  Version 2.11
+#    Added support for .cafe/.blog/.link domain -- <github.com/kode29>
 #
 #  Version 2.10
 #   Bug fix for .com, net, org, jp, and edu  -- Vivek Gite <vivek@nixcraft.com>
@@ -332,10 +335,23 @@ check_domain_status()
     elif [ "${TLDTYPE}"  == "ca" ]; # Canada
     then
         ${WHOIS} -h "whois.cira.ca" "${1}" > ${WHOIS_TMP}
+
     elif [ "${TLDTYPE}"  == "edu" ]; # edu added by nixCraft on 26-aug-2017
     then
         ${WHOIS} -h "whois.educause.edu" "${1}" > ${WHOIS_TMP}
 
+
+    elif [ "${TLDTYPE}"  == "link" ]; # edu added by @kode29 on 26-aug-2017
+    then
+        ${WHOIS} -h "whois.uniregistry.net" "${1}" > ${WHOIS_TMP}
+    
+    elif [ "${TLDTYPE}"  == "blog" ]; # edu added by @kode29 on 26-aug-2017
+    then
+        ${WHOIS} -h "whois.nic.blog" "${1}" > ${WHOIS_TMP}
+
+    elif [ "${TLDTYPE}"  == "cafe" ]; # edu added by @kode29 on 26-aug-2017
+    then
+        ${WHOIS} -h "whois.donuts.co" "${1}" > ${WHOIS_TMP}
     elif [ "${TLDTYPE}"  == "com" -o "${TLDTYPE}"  == "net" ];
     then
 	${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
@@ -391,9 +407,20 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "us" ];
     then
 	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Sponsoring Registrar:/ && $2 != ""  { REGISTRAR=substr($2,25,17) } END { print REGISTRAR }'`
+
     elif [ "${TLDTYPE}" == "edu" ]; # added by nixCraft 26-aug-2017
     then
 	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrant:/ && $0 != ""  { getline;REGISTRAR=substr($0,1,17) } END { print REGISTRAR }'`
+    elif [ "${TLDTYPE}" == "cafe" ]; # added by @kode29 26-aug-2017
+    then
+	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $0 != "" { REGISTRAR=substr($0,12,17) } END { print REGISTRAR }'`
+
+    elif [ "${TLDTYPE}" == "link" ]; # added by @kode29 26-aug-2017
+    then
+	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $0 != "" {  REGISTRAR=substr($0,12,17) } END { print REGISTRAR }'`
+    elif [ "${TLDTYPE}" == "blog" ]; # added by @kode29 26-aug-2017
+    then
+	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $0 != "" {  REGISTRAR=substr($0,12,17) } END { print REGISTRAR }'`
     elif [ "${TLDTYPE}" == "ru" -o "${TLDTYPE}" == "su" ]; # added 20141113
     then
 	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,6,17) } END { print REGISTRAR }'`
@@ -594,7 +621,7 @@ check_domain_status()
 	       esac
 	   tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
            DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org" ]; # added on 26-aug-2017 by nixCraft {https://www.cyberciti.biz/}
+    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" ]; # added on 26-aug-2017 by nixCraft {https://www.cyberciti.biz/}
     then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Registry Expiry Date:/ { print $NF }'`
            tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
@@ -656,7 +683,7 @@ check_domain_status()
 
     if [ ${DOMAINDIFF} -lt 0 ]
     then
-          if [ "${ALARM}" = "TRUE" ]
+          if [ "${ALARM}" == "TRUE" ]
           then
                 echo "The domain ${DOMAIN} has expired!" \
                 | ${MAIL} -s "Domain ${DOMAIN} has expired!" ${ADMIN}
@@ -666,7 +693,7 @@ check_domain_status()
 
     elif [ ${DOMAINDIFF} -lt ${WARNDAYS} ]
     then
-           if [ "${ALARM}" = "TRUE" ]
+           if [ "${ALARM}" == "TRUE" ]
            then
                     echo "The domain ${DOMAIN} will expire on ${DOMAINDATE}" \
                     | ${MAIL} -s "Domain ${DOMAIN} will expire in ${WARNDAYS}-days or less" ${ADMIN}
