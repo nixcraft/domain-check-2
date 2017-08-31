@@ -9,8 +9,13 @@
 #
 # Revision History:
 #
+#  Version 2.12
+#   Support unicode domains -- Sadeq N. Yazdi sadeqn@gmail.com
+#   Bug fix for .ir, ایران  -- Sadeq N. Yazdi sadeqn@gmail.com
+#
 #  Version 2.11
 #    Added support for .cafe/.blog/.link domain -- <github.com/kode29>
+#
 #  Version 2.10
 #   Bug fix for .com, net, org, jp, and edu  -- Vivek Gite <vivek@nixcraft.com>
 #
@@ -166,6 +171,8 @@ DATE=`which date`
 CUT=`which cut`
 TR=`which tr`
 MAIL=`which mail`
+IDN=`which idn`; [ -z "$IDN" ] && IDN="cat"
+GREP=`which egrep`
 
 # Place to stash temporary files
 WHOIS_TMP="/var/tmp/whois.$$"
@@ -265,10 +272,19 @@ check_domain_status()
     sleep 3
     # Save the domain since set will trip up the ordering
     DOMAIN=${1}
+    # convert unicode to idn domain name
+    DOMAIN=$(echo -n $DOMAIN|$IDN)
     TLDTYPE="`echo ${DOMAIN} | ${CUT} -d '.' -f3 | tr '[A-Z]' '[a-z]'`" 
     if [ "${TLDTYPE}"  == "" ];
     then
 	    TLDTYPE="`echo ${DOMAIN} | ${CUT} -d '.' -f2 | tr '[A-Z]' '[a-z]'`" 
+    fi
+
+    # check if this is unicode domain name
+    if [ ! -z "$(echo $DOMAIN|$GREP 'xn--')" ] ;
+    then
+        XT="$(echo $DOMAIN|$GREP -o  'xn--[a-zA-Z0-9\-]*$')"
+        [ ! -z "$XT" ] && TLDTYPE=$XT
     fi
 
     # Invoke whois to find the domain registrar and expiration date
@@ -277,6 +293,19 @@ check_domain_status()
     if [ "${TLDTYPE}"  == "org" ];
     then
         ${WHOIS} -h "whois.pir.org" "${1}" > ${WHOIS_TMP}
+
+    elif [ "${TLDTYPE}"  == "xn--mgba3a4f16a" ]; # Iran .ایران
+    then
+        TLDTYPE='ir'
+        ${WHOIS} -h "whois.nic.ir" "${1}" > ${WHOIS_TMP}
+    elif [ "${TLDTYPE}"  == "xn--mgbu7do" ]; # Iran .ايران
+    then
+        TLDTYPE='ir'
+        ${WHOIS} -h "whois.nic.ir" "${1}" > ${WHOIS_TMP}
+    elif [ "${TLDTYPE}"  == "ir" ]; # Iran
+    then
+        ${WHOIS} -h "whois.nic.ir" "${1}" > ${WHOIS_TMP}
+
     elif [ "${TLDTYPE}"  == "in" ]; # India
     then
         ${WHOIS} -h "whois.registry.in" "${1}" > ${WHOIS_TMP}
@@ -345,6 +374,10 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "jp" ];
     then
         REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} '/Registrant/ && $2 != ""  { REGISTRAR=substr($2,1,17) } END { print REGISTRAR }'`
+    elif [ "${TLDTYPE}" == "ir" ];
+    then
+        # IRNIC do not mention registerars but set them as billing contact
+        REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/bill-c:/ && $2 != ""  { REGISTRAR=substr($2,1,27) } END { print REGISTRAR }'|$GREP -o 'to[a-z0-9\-]+'`
     elif [ "${TLDTYPE}" == "in" ];
     then
         REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Sponsoring Registrar:/ && $2 != ""  { REGISTRAR=substr($2,1,47) } END { print REGISTRAR }'`
@@ -400,6 +433,8 @@ check_domain_status()
         return
     fi
 
+    # We need reverse back domain name conversion
+    DOMAIN=$(echo $DOMAIN|$IDN -u)
     # The whois Expiration data should resemble the following: "Expiration Date: 09-may-2008"
 
     if [ "${TLDTYPE}" == "in" ];
@@ -452,6 +487,10 @@ check_domain_status()
 		esac
             tday=`echo ${tdomdate} | ${CUT} -d'-' -f3`
 	    DOMAINDATE=`echo $tday-$tmonth-$tyear`
+    elif [ "${TLDTYPE}" == "ir" ]; # for .ir domain
+    then
+            # make yyyy-mm-dd to dd-mm-yyyy as the script expect
+            DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/expire-date:/ { print $2 }'|$GREP -o "[0-9]+"|tac|while read n ; do echo -n "$n-" ; done |$GREP  -o "[0-9\-]+[0-9]"`
     elif [ "${TLDTYPE}" == "uk" ]; # for .uk domain
     then
             DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Renewal date:/ || /Expiry date:/ { print $3 }'`
