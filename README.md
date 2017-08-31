@@ -7,20 +7,20 @@ Installation:
 Use the curl or wget command to grab script as follows:
 
 ```
-wget https://raw.githubusercontent.com/nixcraft/domain-check-2/master/domain-check-2.sh
-## sample domain list for testing purpose ##
-wget https://raw.githubusercontent.com/nixcraft/domain-check-2/master/domain-list.txt 
-sudo cp domain-check-2.sh /usr/local/bin/
-sudo chmod +x domain-check-2.sh
+$ wget https://raw.githubusercontent.com/nixcraft/domain-check-2/master/domain-check-2.sh
+## [ sample domain list for testing purpose ] ##
+$ wget https://raw.githubusercontent.com/nixcraft/domain-check-2/master/domain-list.txt 
+$ sudo cp domain-check-2.sh /usr/local/bin/
+$ sudo chmod +x domain-check-2.sh
 ```
 
 Usage:
 ------
 Run it as follows:
 ```
-domain-check-2 -d google.com
-domain-check-2 -d cyberciti.biz
-domain-check-2 -f domain-list.txt 
+$ domain-check-2 -d google.com
+$ domain-check-2 -d cyberciti.biz
+$ domain-check-2 -f domain-list.txt 
 ```
 Sample outputs:
 ```
@@ -47,7 +47,7 @@ google.cz                           REG-MARKMONITOR                             
 Getting help
 ------------
 ```
-domain-check-2.sh -h
+$ domain-check-2.sh -h
 Usage: domain-check-2.sh [ -e email ] [ -x expir_days ] [ -q ] [ -a ] [ -h ]
           {[ -d domain_namee ]} || { -f domainfile}
 
@@ -63,9 +63,6 @@ Usage: domain-check-2.sh [ -e email ] [ -x expir_days ] [ -q ] [ -a ] [ -h ]
 
 Authors:
 --------
-
-Origianl Author: Matty < matty91 at gmail dot com > https://github.com/Matty9191
-
-Forked and maitained by nixCraft https://www.cyberciti.biz/tips/domain-check-script.html 
-
-I added support and fixed for various C/TLDS.
+* Origianl Author: Matty < matty91 at gmail dot com > https://github.com/Matty9191
+* Forked and maitained by nixCraft https://www.cyberciti.biz/tips/domain-check-script.html 
+* I added support and fixed for various C/TLDS.
