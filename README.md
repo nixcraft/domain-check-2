@@ -10,8 +10,9 @@ Use the curl or wget command to grab script as follows:
 $ wget https://raw.githubusercontent.com/nixcraft/domain-check-2/master/domain-check-2.sh
 ## [ sample domain list for testing purpose ] ##
 $ wget https://raw.githubusercontent.com/nixcraft/domain-check-2/master/domain-list.txt 
-$ sudo cp domain-check-2.sh /usr/local/bin/
-$ sudo chmod +x domain-check-2.sh
+## [ install it in /usr/local/bin dir ] ##
+$ sudo cp -vf domain-check-2.sh /usr/local/bin/
+$ sudo chmod +x /usr/local/bin/domain-check-2.sh
 ```
 
 Usage:
