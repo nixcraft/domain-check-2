@@ -6,24 +6,24 @@ Installation:
 -------------
 Use the curl or wget command to grab script as follows:
 
-`
+```
 wget https://raw.githubusercontent.com/nixcraft/domain-check-2/master/domain-check-2.sh
 
 sudo cp domain-check-2.sh /usr/local/bin/
 
 sudo chmod +x domain-check-2.sh
-`
+```
 
 Usage:
 ------
 Run it as follows:
-`
+```
 domain-check-2 -d google.com
 domain-check-2 -d cyberciti.biz
 /domain-check-2 -f domain-list.txt 
-`
+```
 Sample outputs:
-`
+```
 Domain                              Registrar                                      Status   Expires     Days Left
 ----------------------------------- ---------------------------------------------- -------- ----------- ---------
 google.com                          MarkMonitor Inc.                               Valid    14-sep-2020   1110 
@@ -38,7 +38,10 @@ google.uk                                  Markmonito                           
 google.co.uk                               Markmonito                              Valid    14-Feb-2018   167  
 google.jp                           Google                                         Valid    31-may-2018   273  
 google.cz                           REG-MARKMONITOR                                Valid    22-07-2018   113  
-`
+```
+
+Author:
+------
 
 Origianl Author: Matty < matty91 at gmail dot com > https://github.com/Matty9191
 
