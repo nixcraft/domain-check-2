@@ -1,11 +1,16 @@
 Domain Expiration Check Shell Script
 ====================================
+A simple shell script to display or notify user via an email about domain status and expiery date.
+
 Installation:
 -------------
-Use the curl or wget command to grab script:
+Use the curl or wget command to grab script as follows:
+
 `
 wget https://raw.githubusercontent.com/nixcraft/domain-check-2/master/domain-check-2.sh
+
 sudo cp domain-check-2.sh /usr/local/bin/
+
 sudo chmod +x domain-check-2.sh
 `
 
