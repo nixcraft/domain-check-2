@@ -10,3 +10,4 @@ google.uk
 google.co.uk
 google.jp
 google.cz
+google.pl
