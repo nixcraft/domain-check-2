@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.12
+# Current Version: 2.13
 #
 #
 # Revision History:
+#
+#  Version 2.13
+#   Added suport for .tech/.cloud domains -- Francesco <github.com/fra967>
 #
 #  Version 2.12
 #   Added suport for Czechia (.cz) domains -- Minitram <github.com/Minitram>
@@ -337,6 +340,12 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "cz" ]; # Czechia (.cz) domains added by Minitram 20170830
     then
         ${WHOIS} -h "whois.nic.cz" "${1}" > ${WHOIS_TMP}
+     elif [ "${TLDTYPE}"  == "tech" ];
+     then
+         ${WHOIS} -h "whois.nic.tech" "${1}" > ${WHOIS_TMP}
+     elif [ "${TLDTYPE}"  == "cloud" ];
+     then
+         ${WHOIS} -h "whois.nic.cloud" "${1}" > ${WHOIS_TMP}
     else
 	${WHOIS} "${1}" > ${WHOIS_TMP}
     fi
@@ -593,7 +602,7 @@ check_domain_status()
 	       esac
 	   tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
            DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" ]; # added on 26-aug-2017 by nixCraft {https://www.cyberciti.biz/}
+    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe"  -o "${TLDTYPE}" == "tech" -o "${TLDTYPE}" == "cloud" ]; # added on 26-aug-2017 by nixCraft {https://www.cyberciti.biz/}
     then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Registry Expiry Date:/ { print $NF }'`
            tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
