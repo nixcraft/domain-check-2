@@ -1,4 +1,4 @@
-google.com
+nixcraft.com
 google.org
 google.net
 google.info
@@ -11,3 +11,14 @@ google.co.uk
 google.jp
 google.cz
 google.pl
+google.co
+google.ru
+google.blog
+linux.cafe
+google.md
+google.co
+dotmobi.mobi
+google.me
+google.us
+google.su
+youtube.tv
