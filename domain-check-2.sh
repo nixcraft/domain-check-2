@@ -277,16 +277,21 @@ check_domain_status()
     if [ "${TLDTYPE}"  == "" ];
     then
 	    TLDTYPE="`echo ${DOMAIN} | ${CUT} -d '.' -f2 | tr '[A-Z]' '[a-z]'`"
-    fi
+	    fi
 
     # Invoke whois to find the domain registrar and expiration date
     #${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
     # Let whois select server
     
     WHS="$(${WHOIS} -h "whois.iana.org" "${TLDTYPE}" | ${GREP} 'whois:' | ${AWK} '{print $2}')"
-
-    ${WHOIS} -h ${WHS} "${1}" > ${WHOIS_TMP}
     
+    if [ "${TLDTYPE}" == "jp" ];
+    then
+	${WHOIS} -h ${WHS} "${1}/e" > ${WHOIS_TMP}
+    else   
+	${WHOIS} -h ${WHS} "${1}" > ${WHOIS_TMP}
+    fi
+
     # Parse out the expiration date and registrar -- uses the last registrar it finds
     REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }'`
 
