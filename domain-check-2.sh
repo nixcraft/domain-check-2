@@ -171,6 +171,7 @@ AWK=`which awk`
 WHOIS=`which whois`
 DATE=`which date`
 CUT=`which cut`
+GREP=`which grep`
 TR=`which tr`
 MAIL=`which mail`
 
@@ -281,71 +282,11 @@ check_domain_status()
     # Invoke whois to find the domain registrar and expiration date
     #${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
     # Let whois select server
-    if [ "${TLDTYPE}"  == "org" ];
-    then
-        ${WHOIS} -h "whois.pir.org" "${1}" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}"  == "in" ]; # India
-    then
-        ${WHOIS} -h "whois.registry.in" "${1}" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}"  == "co" ];
-    then
-        ${WHOIS} -h "whois.nic.co" "${1}" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}"  == "md" ];
-    then
-        ${WHOIS} -h "whois.nic.md" "${1}" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}"  == "uk" ]; # United Kingdom
-    then
-        ${WHOIS} -h "whois.nic.uk" "${1}" > ${WHOIS_TMP}
+    
+    WHS="$(${WHOIS} -h "whois.iana.org" "${TLDTYPE}" | ${GREP} 'whois:' | ${AWK} '{print $2}')"
 
-    elif [ "${TLDTYPE}"  == "biz" ];
-    then
-        ${WHOIS} -h "whois.neulevel.biz" "${1}" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}"  == "info" ];
-    then
-        ${WHOIS} -h "whois.afilias.info" "${1}" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}"  == "tv" ];
-    then
-        ${WHOIS} -h "tvwhois.verisign-grs.com" "${1}" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}"  == "jp" ]; # Japan
-    then
-        ${WHOIS} -h "whois.jprs.jp" "${1}/e" > ${WHOIS_TMP}
-
-    elif [ "${TLDTYPE}"  == "ca" ]; # Canada
-    then
-        ${WHOIS} -h "whois.cira.ca" "${1}" > ${WHOIS_TMP}
-
-    elif [ "${TLDTYPE}"  == "edu" ]; # edu added by nixCraft on 26-aug-2017
-    then
-        ${WHOIS} -h "whois.educause.edu" "${1}" > ${WHOIS_TMP}
-
-
-    elif [ "${TLDTYPE}"  == "link" ]; # edu added by @kode29 on 26-aug-2017
-    then
-        ${WHOIS} -h "whois.uniregistry.net" "${1}" > ${WHOIS_TMP}
-
-    elif [ "${TLDTYPE}"  == "blog" ]; # edu added by @kode29 on 26-aug-2017
-    then
-        ${WHOIS} -h "whois.nic.blog" "${1}" > ${WHOIS_TMP}
-
-    elif [ "${TLDTYPE}"  == "cafe" ]; # edu added by @kode29 on 26-aug-2017
-    then
-        ${WHOIS} -h "whois.donuts.co" "${1}" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}"  == "com" -o "${TLDTYPE}"  == "net" ];
-    then
-	${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}" == "ru" -o "${TLDTYPE}" == "su" ]; # Russia and Soviet Union added 20141113
-    then
-        ${WHOIS} -h "whois.ripn.net" "${1}" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}" == "cz" ]; # Czechia (.cz) domains added by Minitram 20170830
-    then
-        ${WHOIS} -h "whois.nic.cz" "${1}" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}" == "pl" ]; # Poland NASK
-    then
-        ${WHOIS} -h "whois.dns.pl" "${1}" > ${WHOIS_TMP}
-    else
-	${WHOIS} "${1}" > ${WHOIS_TMP}
-    fi
-
+    ${WHOIS} -h ${WHS} "${1}" > ${WHOIS_TMP}
+    
     # Parse out the expiration date and registrar -- uses the last registrar it finds
     REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }'`
 
