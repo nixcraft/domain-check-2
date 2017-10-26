@@ -360,7 +360,7 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "xyz" ];
     then
        REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} Registrar: | ${AWK} -F: '/Registrar:/ && $0 != "" { getline; REGISTRAR=substr($0,12,35) } END { print REGISTRAR }'`
-    elif [ "${TLDTYPE}" == "se" ];
+    elif [ "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" ];
     then
        REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { getline; REGISTRAR=substr($2,9,20) } END { print REGISTRAR }'`    
         elif [ "${TLDTYPE}" == "fi" ];
@@ -637,7 +637,7 @@ check_domain_status()
         tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
-    elif [ "${TLDTYPE}" == "se" ];
+    elif [ "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" ];
     then
         tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/expires:/ { print $2 }'`
         tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
