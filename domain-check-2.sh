@@ -363,9 +363,12 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" ];
     then
        REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { getline; REGISTRAR=substr($2,9,20) } END { print REGISTRAR }'`    
-        elif [ "${TLDTYPE}" == "fi" ];
+    elif [ "${TLDTYPE}" == "fi" ];
     then
        REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} 'registrar' | ${AWK} -F: '/registrar/ && $2 != "" { getline; REGISTRAR=substr($2,2,20) } END { print  REGISTRAR }'`
+     elif [ "${TLDTYPE}" == "fr" -o "${TLDTYPE}" == "re" -o "${TLDTYPE}" == "tf" -o "${TLDTYPE}" == "yt" -o "${TLDTYPE}" == "pm" -o "${TLDTYPE}" == "wf" ];
+    then
+       REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} "registrar:" | ${AWK} -F: '/registrar:/ && $2 != "" { getline; REGISTRAR=substr($2,4,20) } END { print REGISTRAR }'`
     elif [ "${TLDTYPE}" == "dk" ];
     then
        REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} Copyright | ${AWK}  '{print $8, $9, $10}'`
@@ -705,7 +708,30 @@ check_domain_status()
                esac
         tday=`echo ${tdomdate} | ${CUT} -d "." -f 1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
- # may work with others	 ??? ;)
+    
+    elif [ "${TLDTYPE}" == "fr" -o "${TLDTYPE}" == "re" -o "${TLDTYPE}" == "tf" -o "${TLDTYPE}" == "yt" -o "${TLDTYPE}" == "pm" -o "${TLDTYPE}" == "wf" ];
+    then
+        tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expiry Date:/ { print $3 }'`
+        tyear=`echo ${tdomdate} | ${CUT} -d "/" -f 3`
+        tmon=`echo ${tdomdate} | ${CUT} -d "/" -f 2`
+               case ${tmon} in
+                     1|01) tmonth=jan ;;
+                     2|02) tmonth=feb ;;
+                     3|03) tmonth=mar ;;
+                     4|04) tmonth=apr ;;
+                     5|05) tmonth=may ;;
+                     6|06) tmonth=jun ;;
+                     7|07) tmonth=jul ;;
+                     8|08) tmonth=aug ;;
+                     9|09) tmonth=sep ;;
+                     10) tmonth=oct ;;
+                     11) tmonth=nov ;;
+                     12) tmonth=dec ;;
+                     *) tmonth=0 ;;
+               esac
+        tday=`echo ${tdomdate} | ${CUT} -d "/" -f 1`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"` 
+# may work with others	 ??? ;)
     else	   
     DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Expiration/ { print $NF }'`
     fi
