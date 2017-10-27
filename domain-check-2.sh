@@ -5,9 +5,15 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.13
+# Current Version: 2.15
 #
 # Revision History:
+#
+#  Version 2.15
+#   Fixed suport for .jp domain -- Vivek Gite <github.com/nixcraft>
+#
+#  Version 2.14
+#   Added support for .se/.nu/.dk/.xyz and bug fix by -- https://github.com/happyoccasion
 #
 #  Version 2.13
 #   Fiexed suport for .biz/.us/.mobi/.tv domains -- Vivek Gite <github.com/nixcraft>
@@ -83,7 +89,7 @@
 #  Version 1.0
 #    Initial Release
 #
-# Last Updated: 13-Apr-2016
+# Last Updated: 27-Oct-2017
 #
 # Purpose:
 #  domain-check checks to see if a domain has expired. domain-check
