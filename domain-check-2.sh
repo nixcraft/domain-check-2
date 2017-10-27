@@ -283,7 +283,7 @@ check_domain_status()
     if [ "${TLDTYPE}"  == "" ];
     then
 	    TLDTYPE="`echo ${DOMAIN} | ${CUT} -d '.' -f2 | tr '[A-Z]' '[a-z]'`"
-	    fi
+    fi
 
     # Invoke whois to find the domain registrar and expiration date
     #${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
@@ -293,7 +293,7 @@ check_domain_status()
     
     if [ "${TLDTYPE}" == "jp" ];
     then
-	${WHOIS} -h ${WHS} "${1}/e" > ${WHOIS_TMP}
+	${WHOIS} -h ${WHS} "${1}" > ${WHOIS_TMP}
     else   
 	${WHOIS} -h ${WHS} "${1}" > ${WHOIS_TMP}
     fi
