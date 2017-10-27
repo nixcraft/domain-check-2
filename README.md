@@ -11,7 +11,7 @@ $ wget https://raw.githubusercontent.com/nixcraft/domain-check-2/master/domain-c
 ## [ sample domain list for testing purpose ] ##
 $ wget https://raw.githubusercontent.com/nixcraft/domain-check-2/master/domain-list.txt 
 ## [ install it in /usr/local/bin dir ] ##
-$ sudo cp -vf domain-check-2.sh /usr/local/bin/
+$ sudo cp -vf domain-check-2.sh /usr/local/bin/domain-check-2
 $ sudo chmod +x /usr/local/bin/domain-check-2.sh
 ```
 
