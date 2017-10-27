@@ -27,18 +27,34 @@ Sample outputs:
 ```
 Domain                              Registrar                                      Status   Expires     Days Left
 ----------------------------------- ---------------------------------------------- -------- ----------- ---------
-google.com                          MarkMonitor Inc.                               Valid    14-sep-2020   1110 
-google.org                          MarkMonitor Inc.                               Valid    20-oct-2017   50   
-google.net                          MarkMonitor Inc.                               Valid    15-mar-2018   196  
-google.info                         MarkMonitor Inc.                               Valid    31-jul-2018   334  
-cyberciti.biz                       GODADDY.COM, INC.                              Valid    30-Jun-2019   668  
-google.in                           MarkMonitor Inc. (R84-AFIN)                    Valid    14-Feb-2018   167  
-google.co.in                        MarkMonitor Inc. (R84-AFIN)                    Valid    23-Jun-2018   296  
-google.us                           MARKMONITOR, INC.                              Valid    18-apr-2018   230  
-google.uk                                  Markmonito                              Valid    11-Jun-2018   284  
-google.co.uk                               Markmonito                              Valid    14-Feb-2018   167  
-google.jp                           Google                                         Valid    31-may-2018   273  
-google.cz                           REG-MARKMONITOR                                Valid    22-07-2018   113  
+nixcraft.com                        GoDaddy.com, LLC                               Valid    10-may-2023   2022 
+google.org                          MarkMonitor Inc.                               Valid    20-oct-2018   359  
+google.net                          MarkMonitor Inc.                               Valid    15-mar-2018   140  
+google.info                         MarkMonitor Inc.                               Valid    31-jul-2018   278  
+cyberciti.biz                       GoDaddy.com, Inc.                              Valid    30-jun-2024   2439 
+google.in                           MarkMonitor Inc. (R84-AFIN)                    Valid    14-Feb-2018   111  
+google.co.in                        MarkMonitor Inc. (R84-AFIN)                    Valid    23-Jun-2018   240  
+google.us                           MarkMonitor, Inc.                              Valid    18-apr-2018   174  
+google.uk                           Markmonitor Inc.                               Valid    11-Jun-2018   228  
+google.co.uk                        Markmonitor Inc.                               Valid    14-Feb-2018   111  
+google.jp                           Google                                         Valid    31-may-2018   217  
+
+google.cz                           REG-MARKMONITOR                                Valid    22-jul-2018   269  
+google.pl                           Markmonitor, Inc.                              Valid    18-sep-2018   327  
+google.co                           MARKMONITOR, INC.                              Valid    24-Feb-2018   121  
+google.ru                           RU-CENTER-RU                                   Valid    04-mar-2018   129  
+google.blog                         MarkMonitor Inc                                Valid    19-aug-2018   297  
+linux.cafe                          OVH SAS                                        Valid    14-nov-2018   384  
+google.md                           Google Inc.                                    Valid    02-may-2018   188  
+google.co                           MARKMONITOR, INC.                              Valid    24-Feb-2018   121  
+dotmobi.mobi                        CSC Corporate Dom                              Valid    11-may-2018   197  
+google.me                           MarkMonitor Inc.                               Valid    13-jun-2018   230  
+google.us                           MarkMonitor, Inc.                              Valid    18-apr-2018   174  
+google.su                           RUCENTER-SU                                    Valid    15-oct-2018   354  
+youtube.tv                          MARKMONITOR INC.                               Valid    14-aug-2018   292  
+abc.xyz                             MarkMonitor, Inc (TLDs)                        Valid    20-mar-2025   2702 
+google.se                           MarkMonitor Inc                                Valid    20-oct-2018   359  
+google.dk                           DK Hostmaster A/S                              Valid    31-mar-2018   156
 ```
 [Setup Unix/Linux cron job](https://www.cyberciti.biz/faq/how-do-i-add-jobs-to-cron-under-linux-or-unix-oses/)  as follows to get email notification to send expiration notices:
 

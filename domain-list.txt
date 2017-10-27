@@ -22,3 +22,6 @@ google.me
 google.us
 google.su
 youtube.tv
+abc.xyz
+google.se
+google.dk
