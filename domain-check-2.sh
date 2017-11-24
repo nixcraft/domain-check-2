@@ -398,10 +398,10 @@ check_domain_status()
             tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
             tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
 	       case ${tmon} in
-                     1|01) tmonth=jan ;;
-                     2|02) tmonth=feb ;;
-                     3|03) tmonth=mar ;;
-                     4|04) tmonth=apr ;;
+             1|01) tmonth=jan ;;
+             2|02) tmonth=feb ;;
+             3|03) tmonth=mar ;;
+             4|04) tmonth=apr ;;
 		     5|05) tmonth=may ;;
 		     6|06) tmonth=jun ;;
 		     7|07) tmonth=jul ;;
