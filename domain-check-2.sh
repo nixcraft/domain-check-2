@@ -378,6 +378,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "dk" ];
     then
        REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} Copyright | ${AWK}  '{print $8, $9, $10}'`
+    elif [ "${TLDTYPE}" == "tr" ];
+    then
+       REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} "Organization Name" -m 1 | ${AWK} -F: '{print $2}'`
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -736,7 +739,16 @@ check_domain_status()
                      *) tmonth=0 ;;
                esac
         tday=`echo ${tdomdate} | ${CUT} -d "/" -f 1`
-        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"` 
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif [ "${TLDTYPE}" == "tr" ];
+   	then
+   		tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expires/ { print substr($3, 1, length($3)-1) }'`
+   		tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+   		tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
+   		tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
+   		DOMAINDATE=`echo "${tday}-${tmon}-${tyear}"`
+   		
 # may work with others	 ??? ;)
     else	   
     DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Expiration/ { print $NF }'`
