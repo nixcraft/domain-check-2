@@ -5,9 +5,12 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.15
+# Current Version: 2.16
 #
 # Revision History:
+#
+#  Version 2.16
+#   Added suport for .tr domain -- https://github.com/eaydin
 #
 #  Version 2.15
 #   Fixed suport for .jp domain -- Vivek Gite <github.com/nixcraft>
