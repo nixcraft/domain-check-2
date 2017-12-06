@@ -5,9 +5,12 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.16
+# Current Version: 2.17
 #
 # Revision History:
+#
+#  Version 2.17
+#   Fixed suport for .co domain -- Vivek Gite <github.com/nixcraft>
 #
 #  Version 2.16
 #   Added suport for .tr domain -- https://github.com/eaydin
@@ -328,9 +331,9 @@ check_domain_status()
         REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }'`
     # no longer needed 28-sep-2017
     #elif [ "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "co" ]; 
-    elif [ "${TLDTYPE}" == "co" ];
-    then
-        REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,20,17) } END { print REGISTRAR }'`
+    #elif [ "${TLDTYPE}" == "co" ];
+    #then
+    #    REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,20,17) } END { print REGISTRAR }'`
     elif [ "${TLDTYPE}" == "ca" ];
     then
 	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $0 != ""  { getline; REGISTRAR=substr($0,24,17) } END { print REGISTRAR }'`
@@ -420,9 +423,9 @@ check_domain_status()
 	       esac
 	    tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
 	    DOMAINDATE=`echo $tday-$tmonth-$tyear`
-    elif [ "${TLDTYPE}" == "co" ]; # for .biz and .co domain
-    then
-            DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Domain Expiration Date:/ { print $6"-"$5"-"$9 }'`
+    #elif [ "${TLDTYPE}" == "co" ]; # for .biz and .co domain
+    #then
+    #        DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Domain Expiration Date:/ { print $6"-"$5"-"$9 }'`
     elif [ "${TLDTYPE}" == "md" ]; # for .md domain
     then
             tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expiration date:/ { print $3 }'`
@@ -536,7 +539,7 @@ check_domain_status()
 	       esac
 	   tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
            DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" ]; # added on 26-aug-2017 by nixCraft
+    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" ]; # added on 26-aug-2017 by nixCraft
     then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Registry Expiry Date:/ { print $NF }'`
            tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
