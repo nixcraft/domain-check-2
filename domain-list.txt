@@ -25,3 +25,4 @@ youtube.tv
 abc.xyz
 google.se
 google.dk
+google.com.tr
