@@ -6,6 +6,7 @@
 # Author: Matty < matty91 at gmail dot com >
 #
 # Current Version: 2.17
+# Last Updated: 6-Dec-2017
 #
 # Revision History:
 #
@@ -95,7 +96,6 @@
 #  Version 1.0
 #    Initial Release
 #
-# Last Updated: 27-Oct-2017
 #
 # Purpose:
 #  domain-check checks to see if a domain has expired. domain-check
