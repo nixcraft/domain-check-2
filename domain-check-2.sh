@@ -5,28 +5,31 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.17
-# Last Updated: 6-Dec-2017
+# Current Version: 2.18
+# Last Updated: 17-Feb-2018
 #
 # Revision History:
 #
+#  Version 2.18
+#   Added support for .fr domain -- Nuxy59 https://github.com/nuxy59
+#
 #  Version 2.17
-#   Fixed suport for .co domain -- Vivek Gite <github.com/nixcraft>
+#   Fixed support for .co domain -- Vivek Gite <github.com/nixcraft>
 #
 #  Version 2.16
-#   Added suport for .tr domain -- https://github.com/eaydin
+#   Added support for .tr domain -- https://github.com/eaydin
 #
 #  Version 2.15
-#   Fixed suport for .jp domain -- Vivek Gite <github.com/nixcraft>
+#   Fixed support for .jp domain -- Vivek Gite <github.com/nixcraft>
 #
 #  Version 2.14
 #   Added support for .se/.nu/.dk/.xyz and bug fix by -- https://github.com/happyoccasion
 #
 #  Version 2.13
-#   Fiexed suport for .biz/.us/.mobi/.tv domains -- Vivek Gite <github.com/nixcraft>
+#   Fiexed support for .biz/.us/.mobi/.tv domains -- Vivek Gite <github.com/nixcraft>
 #
 #  Version 2.12
-#   Added suport for Czechia (.cz) domains -- Minitram <github.com/Minitram>
+#   Added support for Czechia (.cz) domains -- Minitram <github.com/Minitram>
 #
 #  Version 2.11
 #    Added support for .cafe/.blog/.link domain -- <github.com/kode29>
@@ -360,6 +363,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "blog" ]; # added by @kode29 26-aug-2017
     then
 	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $0 != "" {  REGISTRAR=substr($0,12,17) } END { print REGISTRAR }'`
+    elif [ "${TLDTYPE}" == "fr" ]; # added by Nuxy59 on 17-feb-2018
+    then
+        REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != ""  { REGISTRAR=substr($2,1,17) } END { print REGISTRAR }'`
     elif [ "${TLDTYPE}" == "ru" -o "${TLDTYPE}" == "su" ]; # added 20141113
     then
 	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,6,17) } END { print REGISTRAR }'`
@@ -584,7 +590,28 @@ check_domain_status()
 	       esac
 	   tday=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
            DOMAINDATE=`echo "${tday}-${tmon}-${tyear}"`
-
+    elif [ "${TLDTYPE}" == "fr" ]; # added by Nuxy59 on 17-feb-2018
+    then
+            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expiry Date:/ { print $3 }'`
+            tday=`echo ${tdomdate} | cut -d'/' -f1`
+            tmon=`echo ${tdomdate} | cut -d'/' -f2`
+               case ${tmon} in
+                     1|01) tmonth=jan ;;
+                     2|02) tmonth=feb ;;
+                     3|03) tmonth=mar ;;
+                     4|04) tmonth=apr ;;
+                     5|05) tmonth=may ;;
+                     6|06) tmonth=jun ;;
+                     7|07) tmonth=jul ;;
+                     8|08) tmonth=aug ;;
+                     9|09) tmonth=sep ;;
+                     10)tmonth=oct ;;
+                     11) tmonth=nov ;;
+                     12) tmonth=dec ;;
+                      *) tmonth=0 ;;
+                esac
+            tyear=`echo ${tdomdate} | cut -d'/' -f3`
+            DOMAINDATE=`echo $tday-$tmonth-$tyear`
      elif [ "${TLDTYPE}" == "cz" ] # added on 20170830 by Minitram
      then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/expire:/ { print $NF }'`
