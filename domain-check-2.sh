@@ -401,7 +401,7 @@ check_domain_status()
     if [ "${TLDTYPE}" == "in" ];
     then
 	DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Expiration Date:/ { print $2 }' | ${CUT} -d ':' -f2`
-    elif [ "${TLDTYPE}" == "info" -o "${TLDTYPE}" == "org" ];
+    elif [ "${TLDTYPE}" == "info" -o "${TLDTYPE}" == "org" -o "${TLDTYPE}" == "srl" ];
     then
 	    tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expiry Date:/ { print $4 }'`
             tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
