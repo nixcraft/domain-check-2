@@ -27,3 +27,5 @@ google.se
 google.dk
 google.com.tr
 google.ro
+get.tech
+get.cloud
