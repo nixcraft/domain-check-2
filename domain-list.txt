@@ -26,3 +26,4 @@ abc.xyz
 google.se
 google.dk
 google.com.tr
+google.ro

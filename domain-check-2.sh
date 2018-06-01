@@ -755,6 +755,29 @@ check_domain_status()
    		tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
    		DOMAINDATE=`echo "${tday}-${tmon}-${tyear}"`
    		
+    elif [ "${TLDTYPE}" == "ro" ]; # for .ro 2018/05/31
+    then
+        tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/[Ee]xpires [Oo]n/ { print $3 }'`
+        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
+        tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
+
+        case ${tmon} in
+            1|01) tmonth=jan ;;
+            2|02) tmonth=feb ;;
+            3|03) tmonth=mar ;;
+            4|04) tmonth=apr ;;
+            5|05) tmonth=may ;;
+            6|06) tmonth=jun ;;
+            7|07) tmonth=jul ;;
+            8|08) tmonth=aug ;;
+            9|09) tmonth=sep ;;
+            10) tmonth=oct ;;
+            11) tmonth=nov ;;
+            12) tmonth=dec ;;
+            *) tmonth=0 ;;
+        esac
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f3`
+        DOMAINDATE=`echo $tday-$tmonth-$tyear`
 # may work with others	 ??? ;)
     else	   
     DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Expiration/ { print $NF }'`
