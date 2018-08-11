@@ -778,7 +778,28 @@ check_domain_status()
                esac
         tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-
+     elif [ "${TLDTYPE}" == "pw" ];
+     then
+        tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Registry Expiry Date:/ { print $4 }'`
+        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
+               case ${tmon} in
+                     1|01) tmonth=jan ;;
+                     2|02) tmonth=feb ;;
+                     3|03) tmonth=mar ;;
+                     4|04) tmonth=apr ;;
+                     5|05) tmonth=may ;;
+                     6|06) tmonth=jun ;;
+                     7|07) tmonth=jul ;;
+                     8|08) tmonth=aug ;;
+                     9|09) tmonth=sep ;;
+                     10) tmonth=oct ;;
+                     11) tmonth=nov ;;
+                     12) tmonth=dec ;;
+                     *) tmonth=0 ;;
+               esac
+        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
     elif [ "${TLDTYPE}" == "fi" ];
     then
         tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/expires/ { print $2 }'`
