@@ -294,13 +294,13 @@ check_domain_status()
     # Invoke whois to find the domain registrar and expiration date
     #${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
     # Let whois select server
-    
+
     WHS="$(${WHOIS} -h "whois.iana.org" "${TLDTYPE}" | ${GREP} 'whois:' | ${AWK} '{print $2}')"
-    
+
     if [ "${TLDTYPE}" == "jp" ];
     then
 	${WHOIS} -h ${WHS} "${1}" > ${WHOIS_TMP}
-    else   
+    else
 	${WHOIS} -h ${WHS} "${1}" > ${WHOIS_TMP}
     fi
 
@@ -330,7 +330,7 @@ check_domain_status()
     then
         REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }'`
     # no longer needed 28-sep-2017
-    #elif [ "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "co" ]; 
+    #elif [ "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "co" ];
     #elif [ "${TLDTYPE}" == "co" ];
     #then
     #    REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,20,17) } END { print REGISTRAR }'`
@@ -374,7 +374,7 @@ check_domain_status()
        REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} Registrar: | ${AWK} -F: '/Registrar:/ && $0 != "" { getline; REGISTRAR=substr($0,12,35) } END { print REGISTRAR }'`
     elif [ "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" ];
     then
-       REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { getline; REGISTRAR=substr($2,9,20) } END { print REGISTRAR }'`    
+       REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { getline; REGISTRAR=substr($2,9,20) } END { print REGISTRAR }'`
     elif [ "${TLDTYPE}" == "fi" ];
     then
        REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} 'registrar' | ${AWK} -F: '/registrar/ && $2 != "" { getline; REGISTRAR=substr($2,2,20) } END { print  REGISTRAR }'`
@@ -387,6 +387,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "tr" ];
     then
        REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} "Organization Name" -m 1 | ${AWK} -F: '{print $2}'`
+    elif [ "${TLDTYPE}" == "cat" ];
+    then
+       REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $0 != "" { R=substr($2,2,17) } END {print R}'`
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -723,7 +726,7 @@ check_domain_status()
                esac
         tday=`echo ${tdomdate} | ${CUT} -d "." -f 1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-    
+
     elif [ "${TLDTYPE}" == "fr" -o "${TLDTYPE}" == "re" -o "${TLDTYPE}" == "tf" -o "${TLDTYPE}" == "yt" -o "${TLDTYPE}" == "pm" -o "${TLDTYPE}" == "wf" ];
     then
         tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expiry Date:/ { print $3 }'`
@@ -754,9 +757,32 @@ check_domain_status()
    		tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
    		tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
    		DOMAINDATE=`echo "${tday}-${tmon}-${tyear}"`
-   		
+
+   elif [ "${TLDTYPE}" == "cat" ];
+   then
+     tdomdate=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registry Expiry Date:/ && $0 != "" { R=substr($2,2,10) } END {print R}'`
+     tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+     tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
+     case ${tmon} in
+           1|01) tmonth=jan ;;
+           2|02) tmonth=feb ;;
+           3|03) tmonth=mar ;;
+           4|04) tmonth=apr ;;
+           5|05) tmonth=may ;;
+           6|06) tmonth=jun ;;
+           7|07) tmonth=jul ;;
+           8|08) tmonth=aug ;;
+           9|09) tmonth=sep ;;
+           10) tmonth=oct ;;
+           11) tmonth=nov ;;
+           12) tmonth=dec ;;
+           *) tmonth=0 ;;
+     esac
+     tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
+     DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
 # may work with others	 ??? ;)
-    else	   
+    else
     DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Expiration/ { print $NF }'`
     fi
 
@@ -919,3 +945,4 @@ rm -f ${WHOIS_TMP}
 
 ### Exit with a success indicator
 exit 0
+
