@@ -778,7 +778,6 @@ check_domain_status()
         tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
-
     elif [ "${TLDTYPE}" == "tr" ];
    	then
    		tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expires/ { print substr($3, 1, length($3)-1) }'`
@@ -787,7 +786,7 @@ check_domain_status()
    		tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
    		DOMAINDATE=`echo "${tday}-${tmon}-${tyear}"`
    		
-# may work with others	 ??? ;)
+    # may work with others	 ??? ;)
     else	   
     DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Expiration/ { print $NF }'`
     fi
