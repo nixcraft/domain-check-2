@@ -35,3 +35,4 @@ google.tf
 google.yt
 google.pm
 google.it
+google.ro
