@@ -18,6 +18,7 @@ linux.cafe
 google.md
 google.co
 dotmobi.mobi
+google.wf
 google.me
 google.us
 google.su
@@ -26,3 +27,11 @@ abc.xyz
 google.se
 google.dk
 google.com.tr
+google.mx
+google.pro
+google.fr
+google.re
+google.tf
+google.yt
+google.pm
+google.it
