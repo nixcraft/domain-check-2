@@ -36,3 +36,7 @@ google.yt
 google.pm
 google.it
 google.ro
+information.aero
+google.asia
+google.cc
+google.college
