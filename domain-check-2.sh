@@ -11,7 +11,7 @@
 # Revision History:
 #
 #  Version 2.18
-#   Added support for .pro/.mx domain -- Vivek Gite <github.com/nixcraft>
+#   Added support for .pro/.mx/.ro domain -- Vivek Gite <github.com/nixcraft>
 #   Added suport for .it domain -- https://github.com/pelligrag
 #   Fixed supporf for .in/.md/.cafe/.fr/.re/.tf/.yt/.pm/.wf/.cat domain -- Vivek Gite <github.com/nixcraft>
 #
@@ -758,6 +758,29 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "it" ];	# added by nixCraft 07/jan/2019 based upon https://github.com/pelligrag
     then
         tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expire Date:/ { print $3 }'`
+        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
+               case ${tmon} in
+                     1|01) tmonth=jan ;;
+                     2|02) tmonth=feb ;;
+                     3|03) tmonth=mar ;;
+                     4|04) tmonth=apr ;;
+                     5|05) tmonth=may ;;
+                     6|06) tmonth=jun ;;
+                     7|07) tmonth=jul ;;
+                     8|08) tmonth=aug ;;
+                     9|09) tmonth=sep ;;
+                     10) tmonth=oct ;;
+                     11) tmonth=nov ;;
+                     12) tmonth=dec ;;
+                     *) tmonth=0 ;;
+               esac
+        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif [ "${TLDTYPE}" == "ro" ];	# added by nixCraft 07/jan/2019 
+    then
+        tdomdate=`cat ${WHOIS_TMP} | ${AWK} -F':' '/Expires On:/ { print $2 }'`
         tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
         tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
                case ${tmon} in
