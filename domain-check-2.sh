@@ -12,8 +12,8 @@
 #
 #  Version 2.18
 #   Added support for .pro/.mx/.ro/.aero/.asia/.cc/.college domain -- Vivek Gite <github.com/nixcraft>
-#   Added suport for .it domain -- https://github.com/pelligrag
-#   Fixed supporf for .in/.md/.cafe/.fr/.re/.tf/.yt/.pm/.wf/.cat domain -- Vivek Gite <github.com/nixcraft>
+#   Added support for .it domain -- https://github.com/pelligrag
+#   Fixed support for .in/.md/.cafe/.fr/.re/.tf/.yt/.pm/.wf/.cat domain -- Vivek Gite <github.com/nixcraft>
 #
 #  Version 2.17
 #   Fixed suport for .co domain -- Vivek Gite <github.com/nixcraft>
@@ -218,8 +218,8 @@ date2julian()
 
          ## The number of days from 1 March 0000 is calculated
          ## and the number of days from 1 Jan. 4713BC is added
-         echo $(( (734 * ${d2j_tmpmonth} + 15) / 24 -  2 * ${d2j_tmpyear} + ${d2j_tmpyear}/4
-                       - ${d2j_tmpyear}/100 + ${d2j_tmpyear}/400 + $2 + 1721119 ))
+         echo $(( (734 * ${d2j_tmpmonth} + 15) / 24 -  2 * ${d2j_tmpyear} + ${d2j_tmpyear}/4 \
+            - ${d2j_tmpyear}/100 + ${d2j_tmpyear}/400 + $2 + 1721119 ))
     else
          echo 0
     fi
@@ -553,7 +553,7 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "edu" ] # added on 26-aug-2017 by nixCraft
     then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Domain expires:/ { print $NF }'`
-	   echo $tomdate
+	   	   echo $tdomdate
            tyear=`echo ${tdomdate} | ${CUT} -d'-' -f3`
            tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
 	       case ${tmon} in
@@ -577,7 +577,7 @@ check_domain_status()
      elif [ "${TLDTYPE}" == "cz" ] # added on 20170830 by Minitram
      then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/expire:/ { print $NF }'`
-           echo $tomdate
+           echo $tdomdate
            tyear=`echo ${tdomdate} | ${CUT} -d'.' -f3`
            tmon=`echo ${tdomdate} |${CUT} -d'.' -f2`
            case ${tmon} in
