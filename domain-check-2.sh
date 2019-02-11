@@ -313,6 +313,10 @@ check_domain_status()
     then
 	    ${WHOIS} -h whois.aero "${1}" > ${WHOIS_TMP}
     fi
+    if [ "${TLDTYPE}" == "pl" ];
+    then
+       ${WHOIS} -h whois.dns.pl "${1}" > ${WHOIS_TMP}
+    fi
     # Parse out the expiration date and registrar -- uses the last registrar it finds
     REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }'`
 
@@ -360,7 +364,7 @@ check_domain_status()
         REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,5,17) } END { print REGISTRAR }'`
     elif [ "${TLDTYPE}" == "pl" ];
     then
-	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/REGISTRAR:/ && $0 != "" { getline; REGISTRAR=substr($0,0,35) } END { print REGISTRAR }'`
+	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/REGISTRAR:/ && $0 != "" { getline; REGISTRAR=substr($0,0,35) } END { print REGISTRAR }' | ${TR} -d " \r"`
     elif [ "${TLDTYPE}" == "xyz" ];
     then
        REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} Registrar: | ${AWK} -F: '/Registrar:/ && $0 != "" { getline; REGISTRAR=substr($0,12,35) } END { print REGISTRAR }'`
@@ -600,23 +604,23 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "pl" ] # NASK
     then
-          tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/renewal date:/ { print $3 }'`
+          tdomdate=`cat ${WHOIS_TMP} | ${AWK} -F':' '/expiration date:/ { print $2 }' | ${AWK} '{ print $1 ;}'`
           tyear=`echo ${tdomdate} | ${CUT} -d'.' -f1`
           tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
           case ${tmon} in
-	     1|01) tmonth=jan ;;
-	     2|02) tmonth=feb ;;
-	     3|03) tmonth=mar ;;
-	     4|04) tmonth=apr ;;
-	     5|05) tmonth=may ;;
-	     6|06) tmonth=jun ;;
-	     7|07) tmonth=jul ;;
-	     8|08) tmonth=aug ;;
-	     9|09) tmonth=sep ;;
-	     10) tmonth=oct ;;
-	     11) tmonth=nov ;;
-	     12) tmonth=dec ;;
-	     *) tmonth=0 ;;
+                 1|01) tmonth=jan ;;
+                 2|02) tmonth=feb ;;
+                 3|03) tmonth=mar ;;
+                 4|04) tmonth=apr ;;
+                 5|05) tmonth=may ;;
+                 6|06) tmonth=jun ;;
+                 7|07) tmonth=jul ;;
+                 8|08) tmonth=aug ;;
+                 9|09) tmonth=sep ;;
+                 10) tmonth=oct ;;
+                 11) tmonth=nov ;;
+                 12) tmonth=dec ;;
+                 *) tmonth=0 ;;
           esac
           tday=`echo ${tdomdate} | ${CUT} -d'.' -f3`
           DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
