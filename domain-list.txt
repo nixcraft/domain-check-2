@@ -40,3 +40,6 @@ information.aero
 google.asia
 google.cc
 google.college
+google.cn
+google.io
+google.ua
