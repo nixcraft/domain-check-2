@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.19
+# Current Version: 2.20
 # Last Updated: 12-Feb-2019
 #
 # Revision History:
+#
+#  Version 2.20
+#   Fixed support for .jp/.aero/.cn/.pl/.md/.tr/.it/.mx domains -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.19
 #   Added support for .ua/.cn/.io domains -- Vladislav V. Prodan <github.com/click0>
@@ -312,25 +315,26 @@ check_domain_status()
     
     if [ "${TLDTYPE}" == "jp" ];
     then
-	${WHOIS} -h ${WHS} "${1}" > ${WHOIS_TMP}
+	${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     else   
-	${WHOIS} -h ${WHS} "${1}" > ${WHOIS_TMP}
+	${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
 
     if [ "${TLDTYPE}" == "aero" ];
     then
-	    ${WHOIS} -h whois.aero "${1}" > ${WHOIS_TMP}
+	    ${WHOIS} -h whois.aero "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
     if [ "${TLDTYPE}" == "cn" ];
     then
-       ${WHOIS} -h whois.cnnic.cn "${1}" > ${WHOIS_TMP}
+       ${WHOIS} -h whois.cnnic.cn "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
     if [ "${TLDTYPE}" == "pl" ];
     then
-       ${WHOIS} -h whois.dns.pl "${1}" > ${WHOIS_TMP}
+       ${WHOIS} -h whois.dns.pl "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
     # Parse out the expiration date and registrar -- uses the last registrar it finds
-    REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }'`
+    REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }' \
+        | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r"`
 
     if [ "${TLDTYPE}" == "uk" ]; # for .uk domain
     then
@@ -340,11 +344,11 @@ check_domain_status()
 	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,23) } END { print REGISTRAR }'`
     elif [ "${TLDTYPE}" == "jp" ];
     then
-        REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} '/Registrant/ && $2 != ""  { REGISTRAR=substr($2,1,17) } END { print REGISTRAR }'`
+        REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F\] '/\[Registrant\]/ && $2 != ""  { REGISTRAR=substr($2,21,40) } END { print REGISTRAR }' | ${TR} -d "\r"`
     # no longer shows Registrar name, so will use Status #	
     elif [ "${TLDTYPE}" == "md" ];
     then
-        REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Status:/ && $2 != ""  { REGISTRAR=substr($2,2,27) } END { print REGISTRAR }'`
+        REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Status:/ && $2 != ""  { REGISTRAR=substr($2,2,27) } END { print REGISTRAR }' | ${TR} -d "\r"`
     elif [ "${TLDTYPE}" == "info" ];
     then
         REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }'`
@@ -400,16 +404,19 @@ check_domain_status()
        REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} Copyright | ${AWK}  '{print $8, $9, $10}'`
     elif [ "${TLDTYPE}" == "tr" ];
     then
-       REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} "Organization Name" -m 1 | ${AWK} -F: '{print $2}'`
+       REGISTRAR=`cat ${WHOIS_TMP} | ${GREP} "Organization Name" -m 1 | ${AWK} -F': ' '{print $2}'`
     elif [ "${TLDTYPE}" == "it" ];
     then
-       REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F':' '/Registrar/ && $0 != ""  { getline;REGISTRAR=substr($0,16,32) } END { print REGISTRAR }'`    
+       REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F':' '/Registrar/ && $0 != ""  { getline;REGISTRAR=substr($0,21,40) } END { print REGISTRAR }'`
     elif [ "${TLDTYPE}" == "cn" ];
     then
-       REGISTRAR=$(cat ${WHOIS_TMP} | ${AWK} -F: '/Registrant\ ID/ && $0 != "" {print $2;}' | ${TR} -d ' ')
+       REGISTRAR=$(cat ${WHOIS_TMP} | ${AWK} -F': ' '/Registrant\ ID:/ && $0 != "" {print $2;}')
     elif [ "${TLDTYPE}" == "io" ];
     then
        REGISTRAR=$(cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $0 != "" {print $2;}' | ${TR} -d " \r")
+    elif [ "${TLDTYPE}" == "mx" ];
+    then
+       REGISTRAR=$(cat ${WHOIS_TMP} | ${AWK} '/Registrar:/ && $0 != "" {print $2;}')
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -470,7 +477,7 @@ check_domain_status()
             DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Renewal date:/ || /Expiry date:/ { print $3 }'`
     elif [ "${TLDTYPE}" == "jp" ]; # for .jp 2010/04/30
     then
-	    tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expires on/ { print $3 }'`
+	    tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/\[有効期限\]/ { print $2 }' | ${TR} -d " \r"`
             tyear=`echo ${tdomdate} | ${CUT} -d'/' -f1`
             tmon=`echo ${tdomdate} | ${CUT} -d'/' -f2`
 	       case ${tmon} in
@@ -603,7 +610,6 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "edu" ] # added on 26-aug-2017 by nixCraft
     then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Domain expires:/ { print $NF }'`
-	   	   echo $tdomdate
            tyear=`echo ${tdomdate} | ${CUT} -d'-' -f3`
            tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
 	       case ${tmon} in
@@ -627,7 +633,6 @@ check_domain_status()
      elif [ "${TLDTYPE}" == "cz" ] # added on 20170830 by Minitram
      then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/expire:/ { print $NF }'`
-           echo $tdomdate
            tyear=`echo ${tdomdate} | ${CUT} -d'.' -f3`
            tmon=`echo ${tdomdate} |${CUT} -d'.' -f2`
            case ${tmon} in
