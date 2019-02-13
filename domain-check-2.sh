@@ -281,7 +281,7 @@ date_diff()
 ##################################################################
 tolower()
 {
-     LOWER=`echo ${1} | ${TR} [A-Z] [a-z]`
+     LOWER=`echo ${1} | ${AWK} '{print tolower($0);}'`
      echo $LOWER
 }
 
