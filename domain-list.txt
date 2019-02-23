@@ -43,3 +43,4 @@ google.college
 google.cn
 google.io
 google.ua
+google.kz

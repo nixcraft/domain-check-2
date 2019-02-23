@@ -10,6 +10,10 @@
 #
 # Revision History:
 #
+#  Version 2.22
+#   Added support for .kz domains -- Vladislav V. Prodan <github.com/click0>
+#	Many thanks to the service that provided the API for the .KZ zone - https://www.ps.kz/
+#
 #  Version 2.21
 #   Fixed support for .pl domain -- https://github.com/hawkeye116477
 #
@@ -201,9 +205,11 @@ CUT=`which cut`
 GREP=`which grep`
 TR=`which tr`
 MAIL=`which mail`
+CURL=`which curl`
 
 # Place to stash temporary files
 WHOIS_TMP="/var/tmp/whois.$$"
+WHOIS_2_TMP="/var/tmp/whois_2.$$"
 
 #############################################################################
 # Purpose: Convert a date from MONTH-DAY-YEAR to Julian format
@@ -335,6 +341,11 @@ check_domain_status()
     then
        ${WHOIS} -h whois.dns.pl "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
+    if [ "${TLDTYPE}" == "kz" ];
+    then
+       ${CURL} -s "https://api.ps.kz/kzdomain/domain-whois?username=test&password=test&input_format=http&output_format=get&dname=${1}" \
+        | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_2_TMP}
+    fi
     # Parse out the expiration date and registrar -- uses the last registrar it finds
     REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }' \
         | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r"`
@@ -384,6 +395,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "ua" ]; # added by @click0 20190212
     then
 	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,9,17) } END { print REGISTRAR }'`
+    elif [ "${TLDTYPE}" == "kz" ]; # added by @click0 20190223
+    then
+	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F": " '/Current Registar:/ && $0 != "" {print $2;}' | ${TR} -d " \r"`
     elif [ "${TLDTYPE}" == "cz" ]; # added by Minitram 20170830
     then
         REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,5,17) } END { print REGISTRAR }'`
@@ -569,6 +583,28 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "ua" ]; # for .ua @click0 2019/02/12
     then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/expires:/ { print $2 }'`
+           tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
+           tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
+           case ${tmon} in
+                 1|01) tmonth=jan ;;
+                 2|02) tmonth=feb ;;
+                 3|03) tmonth=mar ;;
+                 4|04) tmonth=apr ;;
+                 5|05) tmonth=may ;;
+                 6|06) tmonth=jun ;;
+                 7|07) tmonth=jul ;;
+                 8|08) tmonth=aug ;;
+                 9|09) tmonth=sep ;;
+                 10) tmonth=oct ;;
+                 11) tmonth=nov ;;
+                 12) tmonth=dec ;;
+                 *) tmonth=0 ;;
+           esac
+       tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
+       DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+    elif [ "${TLDTYPE}" == "kz" ]; # for .kz @click0 2019/02/23
+    then
+           tdomdate=`cat ${WHOIS_2_TMP} | ${GREP} -A 1 "expire" | ${GREP} "utc" | ${AWK} -F\" '{print $4;}'`
            tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
            tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
            case ${tmon} in
@@ -1078,7 +1114,8 @@ fi
 echo
 
 ### Remove the temporary files
-rm -f ${WHOIS_TMP}
+[ -f "${WHOIS_TMP}" ] && rm -f ${WHOIS_TMP};
+[ -f "${WHOIS_2_TMP}" ] && rm -f ${WHOIS_2_TMP};
 
 ### Exit with a success indicator
 exit 0
