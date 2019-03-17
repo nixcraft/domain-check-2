@@ -44,3 +44,6 @@ google.cn
 google.io
 google.ua
 google.kz
+google.xyz
+google.app
+google.top

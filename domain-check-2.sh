@@ -5,10 +5,14 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.23
-# Last Updated: 25-Feb-2019
+# Current Version: 2.24
+# Last Updated: 17-Mar-2019
 #
 # Revision History:
+#
+#  Version 2.24
+#   Added support for .app/.top domains -- Vladislav V. Prodan <github.com/click0>
+#   Fixed support for .io/.xyz/.me/.pl/.ro domains -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.23
 #   Added support for .online domain -- https://github.com/hawkeye116477
@@ -539,28 +543,6 @@ check_domain_status()
 		esac
             tday=`echo ${tdomdate} | ${CUT} -d'/' -f3`
 	    DOMAINDATE=`echo $tday-$tmonth-$tyear`
-    elif [ "${TLDTYPE}" == "me" ]; # for .me domain
-    then
-	tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Registry Expiry Date:/ { print $4 }'`
-	tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
-	tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
-               case ${tmon} in
-                     1|01) tmonth=jan ;;
-                     2|02) tmonth=feb ;;
-                     3|03) tmonth=mar ;;
-                     4|04) tmonth=apr ;;
-                     5|05) tmonth=may ;;
-                     6|06) tmonth=jun ;;
-                     7|07) tmonth=jul ;;
-                     8|08) tmonth=aug ;;
-                     9|09) tmonth=sep ;;
-                     10) tmonth=oct ;;
-                     11) tmonth=nov ;;
-                     12) tmonth=dec ;;
-                     *) tmonth=0 ;;
-               esac
-	tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
-	DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
     elif [ "${TLDTYPE}" == "ru" -o "${TLDTYPE}" == "su" ]; # for .ru and .su 2014/11/13
     then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/paid-till:/ { print $2 }'`
@@ -627,7 +609,7 @@ check_domain_status()
            esac
        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o "${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero" -o "${TLDTYPE}" == "online" ]; # added on 26-aug-2017 by nixCraft
+    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o "${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero" -o "${TLDTYPE}" == "online" -o "${TLDTYPE}" == "app" -o "${TLDTYPE}" == "io" -o "${TLDTYPE}" == "me" -o "${TLDTYPE}" == "xyz" -o "${TLDTYPE}" == "top" ]; # added on 26-aug-2017 by nixCraft
     then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Registry Expiry Date:/ { print $NF }'`
            tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
@@ -697,7 +679,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "pl" ] # NASK
     then
-          tdomdate=`cat ${WHOIS_TMP} | ${AWK} -F':' '/expiration date:/ || /renewal date:/ { print $2 }' | ${AWK} '{ print $1 ;}'`
+          tdomdate=`cat ${WHOIS_TMP} | ${AWK} -F: '/^expiration date:/ || /renewal date:/ { print $2; }' | ${AWK} -F" " '{ print $1; }'`
           tyear=`echo ${tdomdate} | ${CUT} -d'.' -f1`
           tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
           case ${tmon} in
@@ -717,29 +699,6 @@ check_domain_status()
           esac
           tday=`echo ${tdomdate} | ${CUT} -d'.' -f3`
           DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-
-    elif [ "${TLDTYPE}" == "xyz" ];
-    then
-        tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Registry Expiry Date:/ { print $4 }'`
-        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
-        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
-               case ${tmon} in
-                     1|01) tmonth=jan ;;
-                     2|02) tmonth=feb ;;
-                     3|03) tmonth=mar ;;
-                     4|04) tmonth=apr ;;
-                     5|05) tmonth=may ;;
-                     6|06) tmonth=jun ;;
-                     7|07) tmonth=jul ;;
-                     8|08) tmonth=aug ;;
-                     9|09) tmonth=sep ;;
-                     10) tmonth=oct ;;
-                     11) tmonth=nov ;;
-                     12) tmonth=dec ;;
-                     *) tmonth=0 ;;
-               esac
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
-        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" ];
     then
@@ -881,7 +840,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "ro" ];	# added by nixCraft 07/jan/2019
     then
-        tdomdate=`cat ${WHOIS_TMP} | ${AWK} -F':' '/Expires On:/ { print $2 }'`
+        tdomdate=`cat ${WHOIS_TMP} | ${AWK} -F':' '/Expires On:/ { print $2; }' | ${AWK} '{ print $1; }'`
         tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
         tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
                case ${tmon} in
@@ -912,31 +871,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "cn" ];	# for .cn @click0 2019/02/12
     then
-        tdomdate=`cat ${WHOIS_TMP} | ${AWK} -F':' '/Expiration Time:/ { print $2 }' | ${AWK} '{ print $1 ;}'`
-        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
-        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
-               case ${tmon} in
-                     1|01) tmonth=jan ;;
-                     2|02) tmonth=feb ;;
-                     3|03) tmonth=mar ;;
-                     4|04) tmonth=apr ;;
-                     5|05) tmonth=may ;;
-                     6|06) tmonth=jun ;;
-                     7|07) tmonth=jul ;;
-                     8|08) tmonth=aug ;;
-                     9|09) tmonth=sep ;;
-                     10) tmonth=oct ;;
-                     11) tmonth=nov ;;
-                     12) tmonth=dec ;;
-                     *) tmonth=0 ;;
-               esac
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
-        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-
-    elif [ "${TLDTYPE}" == "io" ];	# for .io @click0 2019/02/12
-    then
-        tdomdate=`cat ${WHOIS_TMP} | ${AWK} -F':' '/Registry Expiry Date:/ { print $2 }' \
-            | ${AWK} '{ print $1 ;}' | ${AWK} -FT '{print $1;}'`
+        tdomdate=`cat ${WHOIS_TMP} | ${AWK} -F':' '/Expiration Time:/ { print $2 }' | ${AWK} '{ print $1; }'`
         tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
         tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
                case ${tmon} in
