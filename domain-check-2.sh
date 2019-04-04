@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.25
-# Last Updated: 24-Mar-2019
+# Current Version: 2.26
+# Last Updated: 4-Apr-2019
 #
 # Revision History:
+#
+#  Version 2.26
+#   Added support for .icu domain -- https://github.com/hawkeye116477
 #
 #  Version 2.25
 #   Added support for .bid/.ng/.site domains -- https://github.com/hawkeye116477
@@ -612,7 +615,7 @@ check_domain_status()
            esac
        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o "${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero" -o "${TLDTYPE}" == "online" -o "${TLDTYPE}" == "app" -o "${TLDTYPE}" == "io" -o "${TLDTYPE}" == "me" -o "${TLDTYPE}" == "xyz" -o "${TLDTYPE}" == "top" -o "${TLDTYPE}" == "bid" -o "${TLDTYPE}" == "ng" -o "${TLDTYPE}" == "site" ]; # added on 26-aug-2017 by nixCraft
+    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o "${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero" -o "${TLDTYPE}" == "online" -o "${TLDTYPE}" == "app" -o "${TLDTYPE}" == "io" -o "${TLDTYPE}" == "me" -o "${TLDTYPE}" == "xyz" -o "${TLDTYPE}" == "top" -o "${TLDTYPE}" == "bid" -o "${TLDTYPE}" == "ng" -o "${TLDTYPE}" == "site" -o "${TLDTYPE}" == "icu" ]; # added on 26-aug-2017 by nixCraft
     then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Registry Expiry Date:/ { print $NF }'`
            tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
