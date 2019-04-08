@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.26
-# Last Updated: 4-Apr-2019
+# Current Version: 2.27
+# Last Updated: 8-Apr-2019
 #
 # Revision History:
+#
+#  Version 2.27
+#   Added support for .is/.cloud domains -- https://github.com/hawkeye116477
 #
 #  Version 2.26
 #   Added support for .icu domain -- https://github.com/hawkeye116477
@@ -354,6 +357,10 @@ check_domain_status()
     then
        ${WHOIS} -h whois.dns.pl "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
+    if [ "${TLDTYPE}" == "is" ]; # added by @hawkeye116477 20190408
+    then
+       ${WHOIS} -h whois.isnic.is "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
+    fi
     if [ "${TLDTYPE}" == "kz" ];
     then
        ${CURL} -s "https://api.ps.kz/kzdomain/domain-whois?username=test&password=test&input_format=http&output_format=get&dname=${1}" \
@@ -447,6 +454,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "mx" ];
     then
        REGISTRAR=$(cat ${WHOIS_TMP} | ${AWK} '/Registrar:/ && $0 != "" {print $2;}')
+    elif [ "${TLDTYPE}" == "is" ]; # added by @hawkeye116477 20190408
+    then
+       REGISTRAR=$(cat ${WHOIS_TMP} | ${AWK} '/registrant:/ && $0 != "" {print $2;}')
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -593,6 +603,28 @@ check_domain_status()
            esac
        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+    elif [ "${TLDTYPE}" == "is" ]; # for .is @hawkeye116477 2019/04/08
+    then
+        tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/expires:/ { print $2 " " $3 " " $4}'`
+        tyear=`echo ${tdomdate} | ${CUT} -d " " -f 3`
+        tmon=`echo ${tdomdate} | ${CUT} -d " " -f 1`
+               case ${tmon} in
+                     January) tmonth=jan ;;
+                     February) tmonth=feb ;;
+                     March) tmonth=mar ;;
+                     April) tmonth=apr ;;
+                     May) tmonth=may ;;
+                     June) tmonth=jun ;;
+                     July) tmonth=jul ;;
+                     August) tmonth=aug ;;
+                     September) tmonth=sep ;;
+                     October) tmonth=oct ;;
+                     November) tmonth=nov ;;
+                     December) tmonth=dec ;;
+                     *) tmonth=0 ;;
+               esac
+        tday=`echo ${tdomdate} | ${CUT} -d " " -f 2`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
     elif [ "${TLDTYPE}" == "kz" ]; # for .kz @click0 2019/02/23
     then
            tdomdate=`cat ${WHOIS_2_TMP} | ${GREP} -A 1 "expire" | ${GREP} "utc" | ${AWK} -F\" '{print $4;}'`
@@ -615,7 +647,7 @@ check_domain_status()
            esac
        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o "${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero" -o "${TLDTYPE}" == "online" -o "${TLDTYPE}" == "app" -o "${TLDTYPE}" == "io" -o "${TLDTYPE}" == "me" -o "${TLDTYPE}" == "xyz" -o "${TLDTYPE}" == "top" -o "${TLDTYPE}" == "bid" -o "${TLDTYPE}" == "ng" -o "${TLDTYPE}" == "site" -o "${TLDTYPE}" == "icu" ]; # added on 26-aug-2017 by nixCraft
+    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o "${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero" -o "${TLDTYPE}" == "online" -o "${TLDTYPE}" == "app" -o "${TLDTYPE}" == "io" -o "${TLDTYPE}" == "me" -o "${TLDTYPE}" == "xyz" -o "${TLDTYPE}" == "top" -o "${TLDTYPE}" == "bid" -o "${TLDTYPE}" == "ng" -o "${TLDTYPE}" == "site" -o "${TLDTYPE}" == "icu"  -o "${TLDTYPE}" == "cloud" ]; # added on 26-aug-2017 by nixCraft
     then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Registry Expiry Date:/ { print $NF }'`
            tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
