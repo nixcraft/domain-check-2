@@ -47,3 +47,4 @@ google.kz
 google.xyz
 google.app
 google.top
+google.is
