@@ -315,7 +315,7 @@ check_domain_status()
     fi
     if [ "${TLDTYPE}" == "id" ];
     then
-	    ${WHOIS} "${1}" > ${WHOIS_TMP}
+	    ${WHOIS} -h whois.id "${1}" > ${WHOIS_TMP}
     fi
     # Parse out the expiration date and registrar -- uses the last registrar it finds
     REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }'`
