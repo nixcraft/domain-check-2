@@ -313,6 +313,10 @@ check_domain_status()
     then
 	    ${WHOIS} -h whois.aero "${1}" > ${WHOIS_TMP}
     fi
+    if [ "${TLDTYPE}" == "id" ];
+    then
+	    ${WHOIS} "${1}" > ${WHOIS_TMP}
+    fi
     # Parse out the expiration date and registrar -- uses the last registrar it finds
     REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }'`
 
@@ -326,6 +330,9 @@ check_domain_status()
     then
         REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} '/Registrant/ && $2 != ""  { REGISTRAR=substr($2,1,17) } END { print REGISTRAR }'`
     # no longer shows Registrar name, so will use Status #	
+    elif [ "${TLDTYPE}" == "id" ];
+    then
+    REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar Organization:/ && $2 != ""  { REGISTRAR=substr($2,1,17) } END { print REGISTRAR }'`
     elif [ "${TLDTYPE}" == "md" ];
     then
         REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Status:/ && $2 != ""  { REGISTRAR=substr($2,2,27) } END { print REGISTRAR }'`
@@ -780,6 +787,29 @@ check_domain_status()
                      *) tmonth=0 ;;
                esac
         tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif [ "${TLDTYPE}" == "id" ];      # added by nixCraft 07/jan/2019 based upon https://github.com/pelligrag
+    then
+        tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expiration Date:/ { print $2 }' | sed -e 's/Date\:\(.*\)/\1/'`
+        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
+        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
+               case ${tmon} in
+                     Jan) tmonth=jan ;;
+                     Feb) tmonth=feb ;;
+                     Mar) tmonth=mar ;;
+                     Apr) tmonth=apr ;;
+                     Mei) tmonth=may ;;
+                     Jun) tmonth=jun ;;
+                     Jul) tmonth=jul ;;
+                     Aug) tmonth=aug ;;
+                     Sep) tmonth=sep ;;
+                     Oct) tmonth=oct ;;
+                     Nov) tmonth=nov ;;
+                     Dec) tmonth=dec ;;
+                     *) tmonth=0 ;;
+               esac
+        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "ro" ];	# added by nixCraft 07/jan/2019 
