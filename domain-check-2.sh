@@ -584,7 +584,15 @@ check_domain_status()
        tmonth=$(getmonth_number ${tmon})
        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o "${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero" -o "${TLDTYPE}" == "online" -o "${TLDTYPE}" == "app" -o "${TLDTYPE}" == "io" -o "${TLDTYPE}" == "me" -o "${TLDTYPE}" == "xyz" -o "${TLDTYPE}" == "top" -o "${TLDTYPE}" == "bid" -o "${TLDTYPE}" == "ng" -o "${TLDTYPE}" == "site" -o "${TLDTYPE}" == "icu"  -o "${TLDTYPE}" == "cloud" -o "${TLDTYPE}" == "systems" ]; # added on 26-aug-2017 by nixCraft
+
+    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o \
+    		"${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o \
+    		"${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o \
+    		"${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o \
+    		"${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero" -o "${TLDTYPE}" == "online" -o \
+    		"${TLDTYPE}" == "app" -o "${TLDTYPE}" == "io" -o "${TLDTYPE}" == "me" -o "${TLDTYPE}" == "xyz" -o \
+    		"${TLDTYPE}" == "top" -o "${TLDTYPE}" == "bid" -o "${TLDTYPE}" == "ng" -o "${TLDTYPE}" == "site" -o \
+    		"${TLDTYPE}" == "icu"  -o "${TLDTYPE}" == "cloud" -o "${TLDTYPE}" == "systems" ]; # added on 26-aug-2017 by nixCraft
     then
         tdomdate=`${AWK} '/Registry Expiry Date:/ { print $NF }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
