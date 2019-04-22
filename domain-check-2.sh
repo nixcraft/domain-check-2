@@ -5,10 +5,14 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.28
-# Last Updated: 22-Apr-2019
+# Current Version: 2.29
+# Last Updated: 23-Apr-2019
 #
 # Revision History:
+#
+#  Version 2.29
+#   Partial syntax fixes in the script -- Vladislav V. Prodan <github.com/click0>
+#   Partially removed extra disk read operations --Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.28
 #   Added support for .systems domain and fixed status when expiration date isn't detected -- https://github.com/hawkeye116477
