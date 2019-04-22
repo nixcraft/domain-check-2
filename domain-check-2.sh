@@ -32,7 +32,7 @@
 #
 #  Version 2.22
 #   Added support for .kz domains -- Vladislav V. Prodan <github.com/click0>
-#	Many thanks to the service that provided the API for the .KZ zone - https://www.ps.kz/
+#    any thanks to the service that provided the API for the .KZ zone - https://www.ps.kz/
 #
 #  Version 2.21
 #   Fixed support for .pl domain -- https://github.com/hawkeye116477
@@ -344,9 +344,9 @@ check_domain_status()
 
     if [ "${TLDTYPE}" == "jp" ];
     then
-	${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
+		${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     else
-	${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
+		${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
 
     if [ "${TLDTYPE}" == "aero" ];
@@ -494,6 +494,7 @@ check_domain_status()
 	       esac
 	    tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
 	    DOMAINDATE=`echo $tday-$tmonth-$tyear`
+
     elif [ "${TLDTYPE}" == "md" ]; # for .md domain
     then
             tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expiration date:/ { print $3 }'`
@@ -516,6 +517,7 @@ check_domain_status()
 		esac
             tday=`echo ${tdomdate} | ${CUT} -d'-' -f3`
 	    DOMAINDATE=`echo $tday-$tmonth-$tyear`
+
     elif [ "${TLDTYPE}" == "uk" ]; # for .uk domain
     then
             DOMAINDATE=`cat ${WHOIS_TMP} | ${AWK} '/Renewal date:/ || /Expiry date:/ { print $3 }'`
@@ -541,6 +543,7 @@ check_domain_status()
 		esac
             tday=`echo ${tdomdate} | ${CUT} -d'/' -f3`
 	    DOMAINDATE=`echo $tday-$tmonth-$tyear`
+
     elif [ "${TLDTYPE}" == "ca" ]; # for .ca 2010/04/30
     then
 	    tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expiry date/ { print $3 }'`
@@ -563,6 +566,7 @@ check_domain_status()
 		esac
             tday=`echo ${tdomdate} | ${CUT} -d'/' -f3`
 	    DOMAINDATE=`echo $tday-$tmonth-$tyear`
+
     elif [ "${TLDTYPE}" == "ru" -o "${TLDTYPE}" == "su" ]; # for .ru and .su 2014/11/13
     then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/paid-till:/ { print $2 }'`
@@ -629,6 +633,7 @@ check_domain_status()
                esac
         tday=`echo ${tdomdate} | ${CUT} -d " " -f 2`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
     elif [ "${TLDTYPE}" == "kz" ]; # for .kz @click0 2019/02/23
     then
            tdomdate=`cat ${WHOIS_2_TMP} | ${GREP} -A 1 "expire" | ${GREP} "utc" | ${AWK} -F\" '{print $4;}'`
