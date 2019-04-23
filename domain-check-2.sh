@@ -36,7 +36,7 @@
 #
 #  Version 2.22
 #   Added support for .kz domains -- Vladislav V. Prodan <github.com/click0>
-#    any thanks to the service that provided the API for the .KZ zone - https://www.ps.kz/
+#   Many thanks to the service that provided the API for the .KZ zone - https://www.ps.kz/
 #
 #  Version 2.21
 #   Fixed support for .pl domain -- https://github.com/hawkeye116477
