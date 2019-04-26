@@ -816,8 +816,8 @@ usage()
         echo "  -s whois server  : Whois sever to query for information"
         echo "  -q               : Don't print anything on the console"
         echo "  -x days          : Domain expiration interval (eg. if domain_date < days)"
-        echo "  -V               : Print version of the script"
         echo "  -v               : Show debug information when running script"
+        echo "  -V               : Print version of the script"
         echo ""
 }
 

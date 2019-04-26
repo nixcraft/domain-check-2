@@ -65,10 +65,10 @@ Getting help
 ------------
 ```
 $ domain-check-2.sh -h
-Usage: domain-check-2.sh [ -e email ] [ -x expir_days ] [ -q ] [ -a ] [ -h ]
+Usage: domain-check-2.sh [ -e email ] [ -x expir_days ] [ -q ] [ -a ] [ -h ] [ -v ] [ -V ]
           {[ -d domain_namee ]} || { -f domainfile}
 
-  -a               : Send a warning message through email 
+  -a               : Send a warning message through email
   -d domain        : Domain to analyze (interactive mode)
   -e email address : Email address to send expiration notices
   -f domain file   : File with a list of domains
@@ -76,6 +76,8 @@ Usage: domain-check-2.sh [ -e email ] [ -x expir_days ] [ -q ] [ -a ] [ -h ]
   -s whois server  : Whois sever to query for information
   -q               : Don't print anything on the console
   -x days          : Domain expiration interval (eg. if domain_date < days)
+  -v               : Show debug information when running script
+  -V               : Print version of the script
 ```
 
 Authors:
