@@ -5,10 +5,14 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.29
-# Last Updated: 23-Apr-2019
+# Current Version: 2.30
+# Last Updated: 26-Apr-2019
 #
 # Revision History:
+#
+#  Version 2.30
+#   Added option to display the version of the script -- Vladislav V. Prodan <github.com/click0>
+#   Added option to show debug information when running script -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.29
 #   Partial syntax fixes in the script -- Vladislav V. Prodan <github.com/click0>
@@ -217,6 +221,15 @@ QUIET="FALSE"
 
 # Don't send emails by default (cmdline: -a)
 ALARM="FALSE"
+
+# Don't show the version of the script by default (cmdline: -V)
+VERSIONENABLE="FALSE"
+
+# Version of the script
+VERSION="2.30"
+
+# Don't show debug information by default (cmdline: -vv)
+VERBOSE="FALSE"
 
 # Whois server to use (cmdline: -s)
 WHOIS_SERVER="whois.internic.org"
@@ -792,10 +805,10 @@ prints()
 ##########################################
 usage()
 {
-        echo "Usage: $0 [ -e email ] [ -x expir_days ] [ -q ] [ -a ] [ -h ]"
+        echo "Usage: $0 [ -e email ] [ -x expir_days ] [ -q ] [ -a ] [ -h ] [ -v ] [ -V ]"
         echo "          {[ -d domain_namee ]} || { -f domainfile}"
         echo ""
-        echo "  -a               : Send a warning message through email "
+        echo "  -a               : Send a warning message through email"
         echo "  -d domain        : Domain to analyze (interactive mode)"
         echo "  -e email address : Email address to send expiration notices"
         echo "  -f domain file   : File with a list of domains"
@@ -803,25 +816,35 @@ usage()
         echo "  -s whois server  : Whois sever to query for information"
         echo "  -q               : Don't print anything on the console"
         echo "  -x days          : Domain expiration interval (eg. if domain_date < days)"
+        echo "  -V               : Print version of the script"
+        echo "  -v               : Show debug information when running script"
         echo ""
 }
 
 ### Evaluate the options passed on the command line
-while getopts ae:f:hd:s:qx: option
+while getopts ad:e:f:hs:qx:vV option
 do
         case "${option}"
         in
                 a) ALARM="TRUE";;
-                e) ADMIN=${OPTARG};;
                 d) DOMAIN=${OPTARG};;
+                e) ADMIN=${OPTARG};;
                 f) SERVERFILE=$OPTARG;;
                 s) WHOIS_SERVER=$OPTARG;;
                 q) QUIET="TRUE";;
                 x) WARNDAYS=$OPTARG;;
+                v) VERBOSE="TRUE";;
+                V) VERSIONENABLE="TRUE";;
                 \?) usage
-                    exit 1;;
+                exit 1;;
         esac
 done
+
+### Show debug information when running script
+if [ "${VERBOSE}" == "TRUE" ]
+then
+	set -x
+fi
 
 ### Check to see if the whois binary exists
 if [ ! -f ${WHOIS} ]
@@ -837,6 +860,13 @@ then
         echo "ERROR: The date binary does not exist in ${DATE} ."
         echo "  FIX: Please modify the \$DATE variable in the program header."
         exit 1
+fi
+
+### Print version of the script
+if [ "${VERSIONENABLE}" == "TRUE" ]
+then
+	printf "%-15s %-10s\n" "Script version: " "${VERSION}"
+	exit 1
 fi
 
 ### Baseline the dates so we have something to compare to
