@@ -7,12 +7,12 @@ Installation:
 Use the curl or wget command to grab script as follows:
 
 ```
-$ wget https://raw.githubusercontent.com/nixcraft/domain-check-2/master/domain-check-2.sh
+$ wget https://github.com/click0/domain-check-2/blob/master/domain-check-2.sh
 ## [ sample domain list for testing purpose ] ##
-$ wget https://raw.githubusercontent.com/nixcraft/domain-check-2/master/domain-list.txt 
+$ wget https://github.com/click0/domain-check-2/blob/master/domain-list.txt 
 ## [ install it in /usr/local/bin dir ] ##
 $ sudo cp -vf domain-check-2.sh /usr/local/bin/domain-check-2
-$ sudo chmod +x /usr/local/bin/domain-check-2.sh
+$ sudo chmod +x /usr/local/bin/domain-check-2
 ```
 
 Usage:
