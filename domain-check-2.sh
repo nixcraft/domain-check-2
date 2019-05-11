@@ -11,7 +11,8 @@
 # Revision History:
 #
 #  Version 2.32
-#   Fixed support for .ca/.space domains -- https://github.com/hawkeye116477
+#   Fixed support for .ca domain -- https://github.com/hawkeye116477
+#   Added support for .space domain -- https://github.com/hawkeye116477
 #
 #  Version 2.31
 #   Added support for .expert/.express domains -- https://github.com/hawkeye116477
