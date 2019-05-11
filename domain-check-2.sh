@@ -413,10 +413,6 @@ check_domain_status()
     then
        ${WHOIS} -h whois.isnic.is "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
-    if [ "${TLDTYPE}" == "ca" ]; # added by @hawkeye116477 20190511
-    then
-       ${WHOIS} -h whois.cira.ca "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    fi
     if [ "${TLDTYPE}" == "kz" ];
     then
        ${CURL} -s "https://api.ps.kz/kzdomain/domain-whois?username=test&password=test&input_format=http&output_format=get&dname=${1}" \
