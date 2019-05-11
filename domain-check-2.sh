@@ -414,7 +414,7 @@ check_domain_status()
     fi
     if [ "${TLDTYPE}" == "ca" ]; # added by @hawkeye116477 20190511
     then
-       ${WHOIS} -h whois.ca.fury.ca "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
+       ${WHOIS} -h whois.cira.ca "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
     if [ "${TLDTYPE}" == "kz" ];
     then
