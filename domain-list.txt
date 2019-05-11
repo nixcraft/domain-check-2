@@ -48,3 +48,4 @@ google.xyz
 google.app
 google.top
 google.is
+google.ca

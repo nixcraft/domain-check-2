@@ -5,10 +5,14 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.31
+# Current Version: 2.32
 # Last Updated: 11-May-2019
 #
 # Revision History:
+#
+#  Version 2.32
+#   Fixed support for .ca domain -- https://github.com/hawkeye116477
+#   Added support for .space domain -- https://github.com/hawkeye116477
 #
 #  Version 2.31
 #   Added support for .expert/.express domains -- https://github.com/hawkeye116477
@@ -434,9 +438,6 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "info" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
-    elif [ "${TLDTYPE}" == "ca" ];
-    then
-	REGISTRAR=`${AWK} -F: '/Registrar:/ && $0 != "" { getline; REGISTRAR=substr($0,24,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
 	if [ "${REGISTRAR}" = "" ]
 	then
         REGISTRAR=`${AWK} -F: '/Sponsoring Registrar:/ && $2 != "" { REGISTRAR=substr($2,1,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -546,15 +547,6 @@ check_domain_status()
         tday=`echo ${tdomdate} | ${CUT} -d'/' -f3`
 	    DOMAINDATE=`echo $tday-$tmonth-$tyear`
 
-    elif [ "${TLDTYPE}" == "ca" ]; # for .ca 2010/04/30
-    then
-	    tdomdate=`${AWK} '/Expiry date/ { print $3 }' ${WHOIS_TMP}`
-        tyear=`echo ${tdomdate} | ${CUT} -d'/' -f1`
-        tmon=`echo ${tdomdate} | ${CUT} -d'/' -f2`
-        tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d'/' -f3`
-	    DOMAINDATE=`echo $tday-$tmonth-$tyear`
-
     elif [ "${TLDTYPE}" == "ru" -o "${TLDTYPE}" == "su" ]; # for .ru and .su 2014/11/13
     then
         tdomdate=`${AWK} '/paid-till:/ { print $2 }' ${WHOIS_TMP}`
@@ -613,7 +605,7 @@ check_domain_status()
     		"${TLDTYPE}" == "app" -o "${TLDTYPE}" == "io" -o "${TLDTYPE}" == "me" -o "${TLDTYPE}" == "xyz" -o \
     		"${TLDTYPE}" == "top" -o "${TLDTYPE}" == "bid" -o "${TLDTYPE}" == "ng" -o "${TLDTYPE}" == "site" -o \
     		"${TLDTYPE}" == "icu"  -o "${TLDTYPE}" == "cloud" -o "${TLDTYPE}" == "systems" -o \
-            "${TLDTYPE}" == "expert" -o "${TLDTYPE}" == "express" ]; # added on 26-aug-2017 by nixCraft
+            "${TLDTYPE}" == "expert" -o "${TLDTYPE}" == "express" -o "${TLDTYPE}" == "ca" -o "${TLDTYPE}" == "space" ]; # added on 26-aug-2017 by nixCraft
     then
         tdomdate=`${AWK} '/Registry Expiry Date:/ { print $NF }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
