@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.30
-# Last Updated: 26-Apr-2019
+# Current Version: 2.31
+# Last Updated: 11-May-2019
 #
 # Revision History:
+#
+#  Version 2.31
+#   Added support for .expert/.express domains -- https://github.com/hawkeye116477
 #
 #  Version 2.30
 #   Added option to display the version of the script -- Vladislav V. Prodan <github.com/click0>
@@ -609,7 +612,8 @@ check_domain_status()
     		"${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero" -o "${TLDTYPE}" == "online" -o \
     		"${TLDTYPE}" == "app" -o "${TLDTYPE}" == "io" -o "${TLDTYPE}" == "me" -o "${TLDTYPE}" == "xyz" -o \
     		"${TLDTYPE}" == "top" -o "${TLDTYPE}" == "bid" -o "${TLDTYPE}" == "ng" -o "${TLDTYPE}" == "site" -o \
-    		"${TLDTYPE}" == "icu"  -o "${TLDTYPE}" == "cloud" -o "${TLDTYPE}" == "systems" ]; # added on 26-aug-2017 by nixCraft
+    		"${TLDTYPE}" == "icu"  -o "${TLDTYPE}" == "cloud" -o "${TLDTYPE}" == "systems" -o \
+            "${TLDTYPE}" == "expert" -o "${TLDTYPE}" == "express" ]; # added on 26-aug-2017 by nixCraft
     then
         tdomdate=`${AWK} '/Registry Expiry Date:/ { print $NF }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
