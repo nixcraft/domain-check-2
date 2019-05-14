@@ -12,6 +12,7 @@
 #
 #  Version 2.33
 #   Added support for .co.pl domain -- https://github.com/hawkeye116477
+#   Fixed version variable -- https://github.com/hawkeye116477
 #
 #  Version 2.32
 #   Fixed support for .ca domain -- https://github.com/hawkeye116477
@@ -235,9 +236,6 @@ ALARM="FALSE"
 # Don't show the version of the script by default (cmdline: -V)
 VERSIONENABLE="FALSE"
 
-# Version of the script
-VERSION="2.30"
-
 # Don't show debug information by default (cmdline: -vv)
 VERBOSE="FALSE"
 
@@ -253,6 +251,9 @@ GREP=`which grep`
 TR=`which tr`
 MAIL=`which mail`
 CURL=`which curl`
+
+# Version of the script
+VERSION=$($AWK -F': ' '/Current Version:/ {print $2; exit}' $0)
 
 # Place to stash temporary files
 WHOIS_TMP="/var/tmp/whois.$$"
