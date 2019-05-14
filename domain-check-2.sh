@@ -253,7 +253,7 @@ MAIL=`which mail`
 CURL=`which curl`
 
 # Version of the script
-VERSION=$($AWK -F': ' '/Current Version:/ {print $2; exit}' $0)
+VERSION=$(${AWK} -F': ' '/^# Current Version:/ {print $2; exit}' $0)
 
 # Place to stash temporary files
 WHOIS_TMP="/var/tmp/whois.$$"
