@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.32
-# Last Updated: 11-May-2019
+# Current Version: 2.33
+# Last Updated: 14-May-2019
 #
 # Revision History:
+#
+#  Version 2.33
+#   Added support for .co.pl domain -- https://github.com/hawkeye116477
 #
 #  Version 2.32
 #   Fixed support for .ca domain -- https://github.com/hawkeye116477
@@ -379,7 +382,7 @@ check_domain_status()
     then
         TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1));}')
     fi
-    if [ "${TLDTYPE}"  == "ua" ];
+    if [ "${TLDTYPE}"  == "ua" -o "${TLDTYPE}"  == "pl" ];
     then
         SUBTLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1)"."$(NF));}')
     fi
@@ -405,9 +408,13 @@ check_domain_status()
     then
        ${WHOIS} -h whois.cnnic.cn "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
-    if [ "${TLDTYPE}" == "pl" ];
+    if [ "${TLDTYPE}" == "pl" ] && [ "${SUBTLDTYPE}" != "co.pl" ];
     then
        ${WHOIS} -h whois.dns.pl "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
+    fi
+    if [ "${SUBTLDTYPE}" == "co.pl" ]; # added by @hawkeye116477 20190514
+    then
+       ${WHOIS} -h whois.co.pl "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
     if [ "${TLDTYPE}" == "is" ]; # added by @hawkeye116477 20190408
     then
@@ -469,9 +476,12 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "cz" ]; # added by Minitram 20170830
     then
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,5,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
-    elif [ "${TLDTYPE}" == "pl" ];
+    elif [ "${TLDTYPE}" == "pl" ] && [ "${SUBTLDTYPE}" != "co.pl" ];
     then
 		REGISTRAR=`${AWK} -F: '/REGISTRAR:/ && $0 != "" { getline; REGISTRAR=substr($0,0,35) } END { print REGISTRAR }' ${WHOIS_TMP} | ${TR} -d " \r"`
+    elif [ "${SUBTLDTYPE}" == "co.pl" ] # added by @hawkeye116477 20190514;
+    then
+		REGISTRAR=`${GREP} -A1 'Holder data:' ${WHOIS_TMP} | ${AWK} -F': ' '/Name...:/ {print $2}'`
     elif [ "${TLDTYPE}" == "xyz" ];
     then
        REGISTRAR=`${GREP} Registrar: ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $0 != "" { getline; REGISTRAR=substr($0,12,35) } END { print REGISTRAR }'`
@@ -632,13 +642,22 @@ check_domain_status()
         tday=`echo ${tdomdate} | ${CUT} -d "." -f 1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
-    elif [ "${TLDTYPE}" == "pl" ] # NASK
+    elif [ "${TLDTYPE}" == "pl" ] &&  [ "${SUBTLDTYPE}" != "co.pl" ] # NASK
     then
         tdomdate=`${AWK} -F: '/^expiration date:/ || /renewal date:/ { print $2; }' ${WHOIS_TMP} | ${AWK} -F" " '{ print $1; }'`
         tyear=`echo ${tdomdate} | ${CUT} -d'.' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
         tmonth=$(getmonth_number ${tmon})
         tday=`echo ${tdomdate} | ${CUT} -d'.' -f3`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif  [ "${SUBTLDTYPE}" == "co.pl" ]; # for .co.pl @hawkeye116477 2019/05/14
+    then
+        tdomdate=`${AWK} '/Expires:/ { print $2 }' ${WHOIS_TMP}`
+        tyear=`echo ${tdomdate} | ${CUT} -d "." -f 1`
+        tmon=`echo ${tdomdate} | ${CUT} -d "." -f 2`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d "." -f 3`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" ];
