@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.33
-# Last Updated: 14-May-2019
+# Current Version: 2.34
+# Last Updated: 15-May-2019
 #
 # Revision History:
+#
+#  Version 2.34
+#   Added support for .укр domain -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.33
 #   Added support for .co.pl domain -- https://github.com/hawkeye116477
@@ -471,6 +474,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "ua" ]; # added by @click0 20190212
     then
 		REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,9,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
+    elif [ "${TLDTYPE}" == "укр" ]; # added by @click0 20190515
+    then
+    	REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,65) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "kz" ]; # added by @click0 20190223
     then
 		REGISTRAR=`${AWK} -F": " '/Current Registar:/ && $0 != "" {print $2;}' ${WHOIS_TMP} | ${TR} -d " \r"`
@@ -574,6 +580,16 @@ check_domain_status()
         tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
         tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif [ "${TLDTYPE}" == "укр" ]; # for .укр @click0 2019/05/15
+    then
+        tdomdate=`${AWK} '/Expiration Date:/ { print $3 }' ${WHOIS_TMP}`
+        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f3`
+        tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
+        tmonth=$(getmonth ${tmon})
+        tmonth=$(getmonth_number ${tmonth})
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "is" ]; # for .is @hawkeye116477 2019/04/08
