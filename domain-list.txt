@@ -50,3 +50,4 @@ google.top
 google.is
 google.ca
 гугл.укр
+google.museum

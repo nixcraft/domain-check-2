@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.35
-# Last Updated: 20-May-2019
+# Current Version: 2.36
+# Last Updated: 22-May-2019
 #
 # Revision History:
+#
+#  Version 2.36
+#   Added support for .museum domain -- Bryan Clay <github.com/watermark>
 #
 #  Version 2.35
 #   Added support for .fun domain -- https://github.com/hawkeye116477
