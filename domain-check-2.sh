@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.36
-# Last Updated: 22-May-2019
+# Current Version: 2.37
+# Last Updated: 2-June-2019
 #
 # Revision History:
+#
+#  Version 2.37
+#   Added support for .live domain -- https://github.com/hawkeye116477
 #
 #  Version 2.36
 #   Added support for .museum domain -- Bryan Clay <github.com/watermark>
@@ -639,7 +642,7 @@ check_domain_status()
     		"${TLDTYPE}" == "top" -o "${TLDTYPE}" == "bid" -o "${TLDTYPE}" == "ng" -o "${TLDTYPE}" == "site" -o \
     		"${TLDTYPE}" == "icu"  -o "${TLDTYPE}" == "cloud" -o "${TLDTYPE}" == "systems" -o \
             "${TLDTYPE}" == "expert" -o "${TLDTYPE}" == "express" -o "${TLDTYPE}" == "ca" -o "${TLDTYPE}" == "space" -o \
-            "${TLDTYPE}" == "fun" -o "${TLDTYPE}" == "museum" ]; # added on 26-aug-2017 by nixCraft
+            "${TLDTYPE}" == "fun" -o "${TLDTYPE}" == "museum" -o "${TLDTYPE}" == "live" ]; # added on 26-aug-2017 by nixCraft
     then
         tdomdate=`${AWK} '/Registry Expiry Date:/ { print $NF }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
