@@ -59,3 +59,4 @@ google.co.pl
 google.fun
 google.museum
 nic.live
+google.sk

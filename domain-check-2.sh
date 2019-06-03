@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.37
-# Last Updated: 2-June-2019
+# Current Version: 2.38
+# Last Updated: 03-June-2019
 #
 # Revision History:
+#
+#  Version 2.38
+#   Added support for .sk domain -- https://github.com/hawkeye116477
 #
 #  Version 2.37
 #   Added support for .live domain -- https://github.com/hawkeye116477
@@ -531,6 +534,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "is" ]; # added by @hawkeye116477 20190408
     then
        REGISTRAR=$(${AWK} '/registrant:/ && $0 != "" {print $2;}' ${WHOIS_TMP})
+    elif [ "${TLDTYPE}" == "sk" ]; # added by @hawkeye116477 20190603
+    then
+       REGISTRAR=$(${AWK} '/Registrar:/ && $0 != "" {print $2; exit}' ${WHOIS_TMP})
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -761,6 +767,14 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "cn" ];	# for .cn @click0 2019/02/12
     then
         tdomdate=`${AWK} -F':' '/Expiration Time:/ { print $2 }' ${WHOIS_TMP} | ${AWK} '{ print $1; }'`
+        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+    elif  [ "${TLDTYPE}" == "sk" ]; # for .sk @hawkeye116477 2019/06/03
+    then
+        tdomdate=`${AWK} '/Valid Until:/ {print $3}' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
         tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
         tmonth=$(getmonth_number ${tmon})
