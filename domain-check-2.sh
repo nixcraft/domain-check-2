@@ -12,6 +12,7 @@
 #
 #  Version 2.38
 #   Added support for .sk domain -- https://github.com/hawkeye116477
+#   Fixed displaying of some long registrars -- https://github.com/hawkeye116477
 #
 #  Version 2.37
 #   Added support for .live domain -- https://github.com/hawkeye116477
@@ -442,7 +443,7 @@ check_domain_status()
         | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_2_TMP}
     fi
     # Parse out the expiration date and registrar -- uses the last registrar it finds
-    REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }' ${WHOIS_TMP}\
+    REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,40) } END { print REGISTRAR }' ${WHOIS_TMP}\
         | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r"`
 
     if [ "${TLDTYPE}" == "uk" ]; # for .uk domain
