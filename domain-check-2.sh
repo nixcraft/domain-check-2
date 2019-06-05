@@ -574,7 +574,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "jp" ]; # for .jp fixed @hawkeye116477 2019/06/03
     then
-	    tdomdate=`${AWK} '/Expires on/ {print $3}' ${WHOIS_TMP}`
+	    tdomdate=`${AWK} '/\[有効期限\]|\[Expires on\]/ {print $2}' ${WHOIS_TMP} | ${TR} -d " \r"`
         tyear=`echo ${tdomdate} | ${CUT} -d'/' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'/' -f2`
         tmonth=$(getmonth_number ${tmon})
