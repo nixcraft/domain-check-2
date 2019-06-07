@@ -60,3 +60,4 @@ google.fun
 google.museum
 nic.live
 google.sk
+nic.club
