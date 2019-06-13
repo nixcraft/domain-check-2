@@ -416,9 +416,7 @@ check_domain_status()
 
     if [ "${TLDTYPE}" == "jp" ];
     then
-		${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    else
-		${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
+        ${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
 
     if [ "${TLDTYPE}" == "aero" ];
