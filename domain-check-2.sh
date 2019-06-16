@@ -12,6 +12,7 @@
 #
 #  Version 2.41
 #   Added support for .stream domain -- https://github.com/hawkeye116477
+#   Fixed condition with whois -- https://github.com/hawkeye116477
 #
 #  Version 2.40
 #   Partial syntax fixes in the script -- Vladislav V. Prodan <github.com/click0>
@@ -420,36 +421,31 @@ check_domain_status()
 
     WHS="$(${WHOIS} -h "whois.iana.org" "${TLDTYPE}" | ${GREP} 'whois:' | ${AWK} '{print $2}')"
 
-    if [ "${TLDTYPE}" == "jp" ];
-    then
-        ${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    fi
-
     if [ "${TLDTYPE}" == "aero" ];
     then
         ${WHOIS} -h whois.aero "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    fi
-    if [ "${TLDTYPE}" == "cn" ];
+    elif [ "${TLDTYPE}" == "cn" ];
     then
        ${WHOIS} -h whois.cnnic.cn "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    fi
-    if [ "${TLDTYPE}" == "pl" ] && [ "${SUBTLDTYPE}" != "co.pl" ];
+    elif [ "${TLDTYPE}" == "pl" ] && [ "${SUBTLDTYPE}" != "co.pl" ];
     then
        ${WHOIS} -h whois.dns.pl "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    fi
-    if [ "${SUBTLDTYPE}" == "co.pl" ]; # added by @hawkeye116477 20190514
+    elif [ "${SUBTLDTYPE}" == "co.pl" ]; # added by @hawkeye116477 20190514
     then
        ${WHOIS} -h whois.co.pl "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    fi
-    if [ "${TLDTYPE}" == "is" ]; # added by @hawkeye116477 20190408
+    elif [ "${TLDTYPE}" == "is" ]; # added by @hawkeye116477 20190408
     then
        ${WHOIS} -h whois.isnic.is "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
+    else
+        ${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
+
     if [ "${TLDTYPE}" == "kz" ];
     then
        ${CURL} -s "https://api.ps.kz/kzdomain/domain-whois?username=test&password=test&input_format=http&output_format=get&dname=${1}" \
         | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_2_TMP}
     fi
+
     # Parse out the expiration date and registrar -- uses the last registrar it finds
     REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,40) } END { print REGISTRAR }' ${WHOIS_TMP}\
         | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r"`
