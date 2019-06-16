@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.40
-# Last Updated: 14-June-2019
+# Current Version: 2.41
+# Last Updated: 16-June-2019
 #
 # Revision History:
+#
+#  Version 2.41
+#   Added support for .stream domain -- https://github.com/hawkeye116477
 #
 #  Version 2.40
 #   Partial syntax fixes in the script -- Vladislav V. Prodan <github.com/click0>
@@ -654,7 +657,8 @@ check_domain_status()
         "${TLDTYPE}" == "top" -o "${TLDTYPE}" == "bid" -o "${TLDTYPE}" == "ng" -o "${TLDTYPE}" == "site" -o \
         "${TLDTYPE}" == "icu"  -o "${TLDTYPE}" == "cloud" -o "${TLDTYPE}" == "systems" -o \
         "${TLDTYPE}" == "expert" -o "${TLDTYPE}" == "express" -o "${TLDTYPE}" == "ca" -o "${TLDTYPE}" == "space" -o \
-        "${TLDTYPE}" == "fun" -o "${TLDTYPE}" == "museum" -o "${TLDTYPE}" == "live" -o "${TLDTYPE}" == "club" ]; # added on 26-aug-2017 by nixCraft
+        "${TLDTYPE}" == "fun" -o "${TLDTYPE}" == "museum" -o "${TLDTYPE}" == "live" -o "${TLDTYPE}" == "club" -o \
+        "${TLDTYPE}" == "stream" ]; # added on 26-aug-2017 by nixCraft
     then
         tdomdate=`${AWK} '/Registry Expiry Date:/ { print $NF }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`

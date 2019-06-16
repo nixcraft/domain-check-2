@@ -61,3 +61,4 @@ google.museum
 nic.live
 google.sk
 nic.club
+nic.stream
