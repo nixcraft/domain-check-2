@@ -436,6 +436,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "is" ]; # added by @hawkeye116477 20190408
     then
        ${WHOIS} -h whois.isnic.is "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
+    elif [ "${TLDTYPE}" == "stream" ]; # added by @hawkeye116477 20190616
+    then
+        ${WHOIS} -h whois.nic.stream "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     else
         ${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
     fi
