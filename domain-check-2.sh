@@ -581,9 +581,9 @@ check_domain_status()
     then
         DOMAINDATE=`${AWK} '/Renewal date:/ || /Expiry date:/ { print $3 }' ${WHOIS_TMP}`
 
-    elif [ "${TLDTYPE}" == "jp" ]; # for .jp fixed @hawkeye116477 2019/06/03
+    elif [ "${TLDTYPE}" == "jp" ]; # for .jp fixed @click0 2019/06/26
     then
-        tdomdate=`${AWK} '/\[有効期限\]|\[Expires on\]/ {print $3}' ${WHOIS_TMP} | ${TR} -d " \r"`
+        tdomdate=`${AWK} -F] '/\[有効期限\]|\[Expires on\]/ {print $2}' ${WHOIS_TMP} | ${TR} -d " \r"`
         tyear=`echo ${tdomdate} | ${CUT} -d'/' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'/' -f2`
         tmonth=$(getmonth_number ${tmon})
@@ -784,6 +784,7 @@ check_domain_status()
         tmonth=$(getmonth_number ${tmon})
         tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
     elif  [ "${TLDTYPE}" == "sk" ]; # for .sk @hawkeye116477 2019/06/03
     then
         tdomdate=`${AWK} '/Valid Until:/ {print $3}' ${WHOIS_TMP}`
