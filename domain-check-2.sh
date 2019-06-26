@@ -11,7 +11,8 @@
 # Revision History:
 #
 #  Version 2.42
-#   Fixed support for .jp domain -- Tozapid <github.com/Tozapid/>
+#   Fixed support for .jp domain -- Tozapid <github.com/Tozapid>
+#   Added support for .xxx domain -- Tozapid <github.com/Tozapid>
 #
 #  Version 2.41
 #   Added support for .stream domain -- https://github.com/hawkeye116477
@@ -560,6 +561,15 @@ check_domain_status()
     # The whois Expiration data should resemble the following: "Expiration Date: 09-may-2008"
 
     if [ "${TLDTYPE}" == "info" -o "${TLDTYPE}" == "org" ];
+    then
+        tdomdate=`${AWK} '/Expiry Date:/ { print $4 }' ${WHOIS_TMP}`
+        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
+        tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
+        DOMAINDATE=`echo $tday-$tmonth-$tyear`
+
+    elif [ "${TLDTYPE}" == "xxx" ]; # for .xxx domain @tozapid 2019/06/21
     then
         tdomdate=`${AWK} '/Expiry Date:/ { print $4 }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
