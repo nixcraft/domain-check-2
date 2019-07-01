@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.42
-# Last Updated: 26-June-2019
+# Current Version: 2.43
+# Last Updated: 01-July-2019
 #
 # Revision History:
+#
+#  Version 2.43
+#   Added support for .id domain -- Menthol Date <github.com/menthoolll>
 #
 #  Version 2.42
 #   Fixed support for .jp domain -- Tozapid <github.com/Tozapid>
@@ -549,6 +552,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "sk" ]; # added by @hawkeye116477 20190603
     then
         REGISTRAR=$(${AWK} '/Registrar:/ && $0 != "" {print $2; exit}' ${WHOIS_TMP})
+    elif [ "${TLDTYPE}" == "id" ];
+    then
+    	REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar Organization:/ && $2 != ""  { REGISTRAR=substr($2,1,40) } END { print REGISTRAR }'`
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -802,6 +808,15 @@ check_domain_status()
         tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
         tmonth=$(getmonth_number ${tmon})
         tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif [ "${TLDTYPE}" == "id" ]; # for .id @Minitram 2019/07/01
+    then
+        tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expiration Date:/ { print $2 }' | ${AWK} -F: '{ print $2}'`
+        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
+        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
+        tmonth=$(tolower ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     # may work with others	 ??? ;)
