@@ -839,7 +839,8 @@ check_domain_status()
     DOMAINJULIAN=$(date2julian ${MONTH} ${1#0} ${3})
     DOMAINDIFF=$(date_diff ${NOWJULIAN} ${DOMAINJULIAN})
 
-    if [ ${DOMAINDIFF} -lt 0 ] && [ ${DOMAINJULIAN} -gt 0 ] && [ ${MONTH} -gt 0 ] && [ ${DAY} -gt 0 ] && [ ${YEAR} -gt 0 ]
+    if [ ${DOMAINDIFF} -lt 0 ] && [ ${DOMAINJULIAN} -gt 0 ] && \
+       [ ${MONTH} -gt 0 ] && [ ${DAY} -gt 0 ] && [ ${YEAR} -gt 0 ]
     then
         if [ "${ALARM}" == "TRUE" ]
         then
@@ -848,7 +849,8 @@ check_domain_status()
         fi
         prints "${DOMAIN}" "Expired" "${DOMAINDATE}" "${DOMAINDIFF}" "${REGISTRAR}"
 
-    elif [ ${DOMAINDIFF} -lt ${WARNDAYS} ] && [ ${DOMAINJULIAN} -gt 0 ] && [ ${MONTH} -gt 0 ] && [ ${DAY} -gt 0 ] && [ ${YEAR} -gt 0 ]
+    elif [ ${DOMAINDIFF} -lt ${WARNDAYS} ] && [ ${DOMAINJULIAN} -gt 0 ] && \
+         [ ${MONTH} -gt 0 ] && [ ${DAY} -gt 0 ] && [ ${YEAR} -gt 0 ]
     then
         if [ "${ALARM}" == "TRUE" ]
         then
@@ -856,7 +858,8 @@ check_domain_status()
                 | ${MAIL} -s "Domain ${DOMAIN} will expire in ${WARNDAYS}-days or less" ${ADMIN}
         fi
         prints "${DOMAIN}" "Expiring" "${DOMAINDATE}" "${DOMAINDIFF}" "${REGISTRAR}"
-    elif [ ${DOMAINJULIAN} -eq 0 ] || [ ${MONTH} -le 0 ] || [ ${DAY} -le 0 ] || [ ${YEAR} -le 0 ]
+    elif [ ${DOMAINJULIAN} -eq 0 ] || [ ${MONTH} -le 0 ] || [ ${DAY} -le 0 ] || \
+         [ ${YEAR} -le 0 ]
     then
         prints "${DOMAIN}" "Unknown" "Unknown" "Unknown" "${REGISTRAR}"
     else
