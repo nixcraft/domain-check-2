@@ -12,6 +12,7 @@
 #
 #  Version 2.44
 #   Fixed status when expiration date is wrongly detected (sometimes can be described as not defined) -- https://github.com/hawkeye116477
+#   Added support for .today domain -- https://github.com/hawkeye116477
 #
 #  Version 2.43
 #   Added support for .id domain -- Menthol Date <github.com/menthoolll>
@@ -679,7 +680,7 @@ check_domain_status()
         "${TLDTYPE}" == "icu"  -o "${TLDTYPE}" == "cloud" -o "${TLDTYPE}" == "systems" -o \
         "${TLDTYPE}" == "expert" -o "${TLDTYPE}" == "express" -o "${TLDTYPE}" == "ca" -o "${TLDTYPE}" == "space" -o \
         "${TLDTYPE}" == "fun" -o "${TLDTYPE}" == "museum" -o "${TLDTYPE}" == "live" -o "${TLDTYPE}" == "club" -o \
-        "${TLDTYPE}" == "stream" ]; # added on 26-aug-2017 by nixCraft
+        "${TLDTYPE}" == "stream" -o "${TLDTYPE}" == "today" ]; # added on 26-aug-2017 by nixCraft
     then
         tdomdate=`${AWK} '/Registry Expiry Date:/ { print $NF }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`

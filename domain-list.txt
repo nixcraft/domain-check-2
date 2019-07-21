@@ -64,3 +64,4 @@ nic.club
 nic.stream
 google.xxx
 google.id
+nic.today
