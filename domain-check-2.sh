@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.43
-# Last Updated: 01-July-2019
+# Current Version: 2.44
+# Last Updated: 27-July-2019
 #
 # Revision History:
+#
+#  Version 2.44
+#   Fixed status when expiration date is wrongly detected (sometimes can be described as not defined) -- https://github.com/hawkeye116477
 #
 #  Version 2.43
 #   Added support for .id domain -- Menthol Date <github.com/menthoolll>
@@ -835,7 +838,7 @@ check_domain_status()
     DOMAINJULIAN=$(date2julian ${MONTH} ${1#0} ${3})
     DOMAINDIFF=$(date_diff ${NOWJULIAN} ${DOMAINJULIAN})
 
-    if [ ${DOMAINDIFF} -lt 0 ] && [ ${DOMAINJULIAN} -gt 0 ]
+    if [ ${DOMAINDIFF} -lt 0 ] && [ ${DOMAINJULIAN} -gt 0 ] && [ ${MONTH} -gt 0 ] && [ ${DAY} -gt 0 ] && [ ${YEAR} -gt 0 ]
     then
         if [ "${ALARM}" == "TRUE" ]
         then
@@ -844,7 +847,7 @@ check_domain_status()
         fi
         prints "${DOMAIN}" "Expired" "${DOMAINDATE}" "${DOMAINDIFF}" "${REGISTRAR}"
 
-    elif [ ${DOMAINDIFF} -lt ${WARNDAYS} ] && [ ${DOMAINJULIAN} -gt 0 ]
+    elif [ ${DOMAINDIFF} -lt ${WARNDAYS} ] && [ ${DOMAINJULIAN} -gt 0 ] && [ ${MONTH} -gt 0 ] && [ ${DAY} -gt 0 ] && [ ${YEAR} -gt 0 ]
     then
         if [ "${ALARM}" == "TRUE" ]
         then
@@ -852,7 +855,7 @@ check_domain_status()
                 | ${MAIL} -s "Domain ${DOMAIN} will expire in ${WARNDAYS}-days or less" ${ADMIN}
         fi
         prints "${DOMAIN}" "Expiring" "${DOMAINDATE}" "${DOMAINDIFF}" "${REGISTRAR}"
-    elif [ ${DOMAINJULIAN} -eq 0 ]
+    elif [ ${DOMAINJULIAN} -eq 0 ] || [ ${MONTH} -le 0 ] || [ ${DAY} -le 0 ] || [ ${YEAR} -le 0 ]
     then
         prints "${DOMAIN}" "Unknown" "Unknown" "Unknown" "${REGISTRAR}"
     else
