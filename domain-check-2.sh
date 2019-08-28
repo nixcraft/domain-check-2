@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.44
-# Last Updated: 27-July-2019
+# Current Version: 2.45
+# Last Updated: 28-August-2019
 #
 # Revision History:
+#
+#  Version 2.45
+#   Added support for .game domain -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.44
 #   Fixed status when expiration date is wrongly detected (sometimes can be described as not defined) -- https://github.com/hawkeye116477
@@ -821,6 +824,15 @@ check_domain_status()
         tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
         tmonth=$(tolower ${tmon})
         tday=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif [ "${TLDTYPE}" == "game" ]; # for .game @click0 2019/08/28
+    then
+        tdomdate=`${AWK} '/Registry Expiry Date:/ { print $4 }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1; }'`
+        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     # may work with others	 ??? ;)
