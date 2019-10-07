@@ -5,10 +5,14 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.45
-# Last Updated: 28-August-2019
+# Current Version: 2.46
+# Last Updated: 07-October-2019
 #
 # Revision History:
+#
+#  Version 2.46
+#   Spaces, tabs and blank lines in the domain list file are now ignored -- Vladislav V. Prodan <github.com/click0>
+#   Commenting on domains with the # symbol also began to work -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.45
 #   Added support for .game domain -- Vladislav V. Prodan <github.com/click0>
@@ -1001,11 +1005,11 @@ then
 elif [ -f "${SERVERFILE}" ]
 then
     print_heading
+    sed -e 's/[[:space:]]*#.*// ; /^[[:space:]]*$/d' ${SERVERFILE} | tr -d '[:blank:]' | \
     while read DOMAIN
     do
         check_domain_status "${DOMAIN}"
-
-    done < ${SERVERFILE}
+    done
 
 ### There was an error, so print a detailed usage message and exit
 else
