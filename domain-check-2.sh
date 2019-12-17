@@ -165,6 +165,12 @@
 #  $ domain-check -a -f domains -q -x 60 -e admin@prefetch.net
 #
 
+# TEMP VAR BY ANDREY.TK
+
+DOMAIN_LIST_TO_SEND="/tmp/domain_exp.log" 
+
+
+
 PATH=/bin:/usr/bin:/usr/local/bin:/usr/local/ssl/bin:/usr/sfw/bin
 export PATH
 
@@ -528,7 +534,7 @@ check_domain_status()
 	       esac
 	   tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
            DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o "${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero"  ]; # added on 26-aug-2017 by nixCraft
+    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o "${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero" -o "${TLDTYPE}" == "team" -o "${TLDTYPE}" == "app" -o "${TLDTYPE}" == "host" -o "${TLDTYPE}" == "website" -o "${TLDTYPE}" == "best" ]; # added on 26-aug-2017 by nixCraft
     then
            tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Registry Expiry Date:/ { print $NF }'`
            tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
@@ -833,9 +839,9 @@ check_domain_status()
     then
           if [ "${ALARM}" == "TRUE" ]
           then
-                echo "The domain ${DOMAIN} has expired!" \
-                | ${MAIL} -s "Domain ${DOMAIN} has expired!" ${ADMIN}
-           fi
+                #echo "The domain ${DOMAIN} has expired!" | ${MAIL} -s "Domain ${DOMAIN} has expired!" ${ADMIN}
+		echo "The domain ${DOMAIN} has expired!" >> $DOMAIN_LIST_TO_SEND
+          fi
 
            prints "${DOMAIN}" "Expired" "${DOMAINDATE}" "${DOMAINDIFF}" "${REGISTRAR}"
 
@@ -843,8 +849,8 @@ check_domain_status()
     then
            if [ "${ALARM}" == "TRUE" ]
            then
-                    echo "The domain ${DOMAIN} will expire on ${DOMAINDATE}" \
-                    | ${MAIL} -s "Domain ${DOMAIN} will expire in ${WARNDAYS}-days or less" ${ADMIN}
+                    #echo "The domain ${DOMAIN} will expire on ${DOMAINDATE}" | ${MAIL} -s "Domain ${DOMAIN} will expire in ${WARNDAYS}-days or less" ${ADMIN}
+		    echo "The domain ${DOMAIN} will expire on ${DOMAINDATE}" >> $DOMAIN_LIST_TO_SEND
             fi
             prints "${DOMAIN}" "Expiring" "${DOMAINDATE}" "${DOMAINDIFF}" "${REGISTRAR}"
      else
@@ -974,6 +980,15 @@ echo
 
 ### Remove the temporary files
 rm -f ${WHOIS_TMP}
+
+# TEMPORARY CHANGED BY ANDREY.TK 
+
+
+cat $DOMAIN_LIST_TO_SEND | mail -s "Domain's less then 30 days expiration" ${ADMIN}; 
+
+rm -f $DOMAIN_LIST_TO_SEND ;
+
+
 
 ### Exit with a success indicator
 exit 0
