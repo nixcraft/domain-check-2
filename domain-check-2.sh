@@ -905,75 +905,80 @@ usage()
         echo ""
 }
 
-### Evaluate the options passed on the command line
-while getopts ae:f:hd:s:qx: option
-do
+main()
+{
+    ### Evaluate the options passed on the command line
+    while getopts ae:f:hd:s:qx: option
+    do
         case "${option}"
         in
-                a) ALARM="TRUE";;
-                e) ADMIN=${OPTARG};;
-                d) DOMAIN=${OPTARG};;
-                f) SERVERFILE=$OPTARG;;
-                s) WHOIS_SERVER=$OPTARG;;
-                q) QUIET="TRUE";;
-                x) WARNDAYS=$OPTARG;;
-                \?) usage
-                    exit 1;;
+            a) ALARM="TRUE";;
+            e) ADMIN=${OPTARG};;
+            d) DOMAIN=${OPTARG};;
+            f) SERVERFILE=$OPTARG;;
+            s) WHOIS_SERVER=$OPTARG;;
+            q) QUIET="TRUE";;
+            x) WARNDAYS=$OPTARG;;
+            \?) usage
+                exit 1;;
         esac
-done
+    done
 
-### Check to see if the whois binary exists
-if [ ! -f ${WHOIS} ]
-then
+    ### Check to see if the whois binary exists
+    if [ ! -f ${WHOIS} ]
+    then
         echo "ERROR: The whois binary does not exist in ${WHOIS} ."
         echo "  FIX: Please modify the \$WHOIS variable in the program header."
         exit 1
-fi
+    fi
 
-### Check to make sure a date utility is available
-if [ ! -f ${DATE} ]
-then
+    ### Check to make sure a date utility is available
+    if [ ! -f ${DATE} ]
+    then
         echo "ERROR: The date binary does not exist in ${DATE} ."
         echo "  FIX: Please modify the \$DATE variable in the program header."
         exit 1
-fi
+    fi
 
-### Baseline the dates so we have something to compare to
-MONTH=$(${DATE} "+%m")
-DAY=$(${DATE} "+%d")
-YEAR=$(${DATE} "+%Y")
-NOWJULIAN=$(date2julian ${MONTH#0} ${DAY#0} ${YEAR})
+    ### Baseline the dates so we have something to compare to
+    MONTH=$(${DATE} "+%m")
+    DAY=$(${DATE} "+%d")
+    YEAR=$(${DATE} "+%Y")
+    NOWJULIAN=$(date2julian ${MONTH#0} ${DAY#0} ${YEAR})
 
-### Touch the files prior to using them
-touch ${WHOIS_TMP}
+    ### Touch the files prior to using them
+    touch ${WHOIS_TMP}
 
-### If a HOST and PORT were passed on the cmdline, use those values
-if [ "${DOMAIN}" != "" ]
-then
+    ### If a HOST and PORT were passed on the cmdline, use those values
+    if [ "${DOMAIN}" != "" ]
+    then
         print_heading
         check_domain_status "${DOMAIN}"
-### If a file and a "-a" are passed on the command line, check all
-### of the domains in the file to see if they are about to expire
-elif [ -f "${SERVERFILE}" ]
-then
+        ### If a file and a "-a" are passed on the command line, check all
+        ### of the domains in the file to see if they are about to expire
+    elif [ -f "${SERVERFILE}" ]
+    then
         print_heading
         while read DOMAIN
         do
-                check_domain_status "${DOMAIN}"
+            check_domain_status "${DOMAIN}"
 
         done < ${SERVERFILE}
 
-### There was an error, so print a detailed usage message and exit
-else
+        ### There was an error, so print a detailed usage message and exit
+    else
         usage
         exit 1
+    fi
+
+    # Add an extra newline
+    echo
+
+    ### Remove the temporary files
+    rm -f ${WHOIS_TMP}
+}
+
+if [ "$0" = "$BASH_SOURCE" ]; then
+    main $@
+    exit 0
 fi
-
-# Add an extra newline
-echo
-
-### Remove the temporary files
-rm -f ${WHOIS_TMP}
-
-### Exit with a success indicator
-exit 0
