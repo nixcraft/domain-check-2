@@ -10,6 +10,9 @@
 #
 # Revision History:
 #
+#  Version 2.47
+#  Added support for .do domain -- rk00t <github.com/rk00t>
+#
 #  Version 2.46
 #   Spaces, tabs and blank lines in the domain list file are now ignored -- Vladislav V. Prodan <github.com/click0>
 #   Commenting on domains with the # symbol also began to work -- Vladislav V. Prodan <github.com/click0>
@@ -831,6 +834,15 @@ check_domain_status()
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "game" ]; # for .game @click0 2019/08/28
+    then
+        tdomdate=`${AWK} '/Registry Expiry Date:/ { print $4 }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1; }'`
+        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif [ "${TLDTYPE}" == "do" ]; # for .do @rk00t 2020/07/24
     then
         tdomdate=`${AWK} '/Registry Expiry Date:/ { print $4 }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1; }'`
         tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
