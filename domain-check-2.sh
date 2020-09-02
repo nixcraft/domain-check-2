@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.46
-# Last Updated: 07-October-2019
+# Current Version: 2.48
+# Last Updated: 02-September-2020
 #
 # Revision History:
+#
+#  Version 2.48
+#   Added support for .team/.app/.host/.website domains -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.47
 #  Added support for .do domain -- rk00t <github.com/rk00t>
@@ -690,7 +693,8 @@ check_domain_status()
         "${TLDTYPE}" == "icu"  -o "${TLDTYPE}" == "cloud" -o "${TLDTYPE}" == "systems" -o \
         "${TLDTYPE}" == "expert" -o "${TLDTYPE}" == "express" -o "${TLDTYPE}" == "ca" -o "${TLDTYPE}" == "space" -o \
         "${TLDTYPE}" == "fun" -o "${TLDTYPE}" == "museum" -o "${TLDTYPE}" == "live" -o "${TLDTYPE}" == "club" -o \
-        "${TLDTYPE}" == "stream" -o "${TLDTYPE}" == "today" ]; # added on 26-aug-2017 by nixCraft
+        "${TLDTYPE}" == "stream" -o "${TLDTYPE}" == "today" -o "${TLDTYPE}" == "website" -o "${TLDTYPE}" == "host" -o \
+        "${TLDTYPE}" == "team" ];
     then
         tdomdate=`${AWK} '/Registry Expiry Date:/ { print $NF }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
