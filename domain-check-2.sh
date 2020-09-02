@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.48
+# Current Version: 2.49
 # Last Updated: 02-September-2020
 #
 # Revision History:
+#
+#  Version 2.49
+#  Added support for .com.br domain -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.48
 #   Added support for .team/.app/.host/.website domains -- Vladislav V. Prodan <github.com/click0>
@@ -436,7 +439,7 @@ check_domain_status()
     then
         TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1));}')
     fi
-    if [ "${TLDTYPE}"  == "ua" -o "${TLDTYPE}"  == "pl" ];
+    if [ "${TLDTYPE}"  == "ua" -o "${TLDTYPE}"  == "pl" -o "${TLDTYPE}"  == "br" ];
     then
         SUBTLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1)"."$(NF));}')
     fi
@@ -571,6 +574,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "sk" ]; # added by @hawkeye116477 20190603
     then
         REGISTRAR=$(${AWK} '/Registrar:/ && $0 != "" {print $2; exit}' ${WHOIS_TMP})
+    elif [ "${SUBTLDTYPE}" == "com.br" ];
+    then
+        REGISTRAR=$(${AWK} -F':' '/owner:/ && $0 != "" {print $2;}' ${WHOIS_TMP})
     elif [ "${TLDTYPE}" == "id" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar Organization:/ && $2 != ""  { REGISTRAR=substr($2,1,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -760,6 +766,15 @@ check_domain_status()
         tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
         tmonth=$(tolower ${tmon})
         tday=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif [ "${SUBTLDTYPE}" == "com.br" ];
+    then
+        tdomdate=`${AWK} '/expires:/ { print $2 }' ${WHOIS_TMP}`
+        tyear=`echo ${tdomdate} | ${CUT} -c 1-4`
+        tmon=`echo ${tdomdate} | ${CUT} -c 5-6`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -c 7-8`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     # may work with others	 ??? ;)
