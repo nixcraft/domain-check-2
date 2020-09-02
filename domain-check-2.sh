@@ -12,6 +12,7 @@
 #
 #  Version 2.48
 #   Added support for .team/.app/.host/.website domains -- Vladislav V. Prodan <github.com/click0>
+#	Fixed length of registrar name for .edu domain
 #
 #  Version 2.47
 #  Added support for .do domain -- rk00t <github.com/rk00t>
@@ -499,7 +500,7 @@ check_domain_status()
     fi
     elif [ "${TLDTYPE}" == "edu" ]; # added by nixCraft 26-aug-2017
     then
-        REGISTRAR=`${AWK} -F: '/Registrant:/ && $0 != "" { getline;REGISTRAR=substr($0,1,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
+        REGISTRAR=`${AWK} -F: '/Registrant:/ && $0 != "" { getline;REGISTRAR=substr($0,2,30) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "cafe" ]; # added by @kode29 26-aug-2017
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $0 != "" { REGISTRAR=substr($0,12,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
