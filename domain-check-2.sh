@@ -433,22 +433,22 @@ check_domain_status()
     # Avoid WHOIS LIMIT EXCEEDED - slowdown our whois client by adding 3 sec
     sleep 1
     # Save the domain since set will trip up the ordering
-    DOMAIN=${1}
-    TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($NF);}')
+    local DOMAIN=${1}
+    local TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($NF);}')
     if [ "${TLDTYPE}"  == "" ];
     then
         TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1));}')
     fi
     if [ "${TLDTYPE}"  == "ua" -o "${TLDTYPE}"  == "pl" -o "${TLDTYPE}"  == "br" ];
     then
-        SUBTLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1)"."$(NF));}')
+        local SUBTLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1)"."$(NF));}')
     fi
 
     # Invoke whois to find the domain registrar and expiration date
     #${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
     # Let whois select server
 
-    WHS="$(${WHOIS} -h "whois.iana.org" "${TLDTYPE}" | ${GREP} 'whois:' | ${AWK} '{print $2}')"
+    local WHS="$(${WHOIS} -h "whois.iana.org" "${TLDTYPE}" | ${GREP} 'whois:' | ${AWK} '{print $2}')"
 
     if [ "${TLDTYPE}" == "aero" ];
     then
