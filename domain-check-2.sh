@@ -787,10 +787,17 @@ check_domain_status()
     IFS="-"
     set -- ${DOMAINDATE}
     MONTH=$(getmonth ${2})
+    # We change the date format here as we need ("13-feb-2006")
+    if [ "$MONTH" == "0" ]; then
+        MONTH=${2#0}
+        MONTH_IN_WORDS=$(getmonth_number ${2#0})
+		DOMAINDATE=${3}-${MONTH_IN_WORDS}-${1}
+		set -- ${DOMAINDATE}
+    fi
     IFS=""
 
     # Convert the date to seconds, and get the diff between NOW and the expiration date
-    DOMAINJULIAN=$(date2julian ${MONTH} ${1#0} ${3})
+    DOMAINJULIAN=$(date2julian ${MONTH} ${1#0} ${3#0})
     DOMAINDIFF=$(date_diff ${NOWJULIAN} ${DOMAINJULIAN})
 
     if [ ${DOMAINDIFF} -lt 0 ] && [ ${DOMAINJULIAN} -gt 0 ] && \
