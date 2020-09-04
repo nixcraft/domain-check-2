@@ -307,6 +307,8 @@ GREP=`which grep`
 TR=`which tr`
 MAIL=`which mail`
 CURL=`which curl`
+ECHO=`which echo`
+HEAD=`which head`
 
 # Version of the script
 VERSION=$(${AWK} -F': ' '/^# Current Version:/ {print $2; exit}' $0)
