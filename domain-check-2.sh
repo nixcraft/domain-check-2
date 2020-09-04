@@ -561,7 +561,7 @@ check_domain_status()
         REGISTRAR=`${AWK} -F':' '/Registrar/ && $0 != "" { getline;REGISTRAR=substr($0,21,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "cn" ];
     then
-        REGISTRAR=$(${AWK} -F': ' '/Registrant\ ID:/ && $0 != "" {print $2;}' ${WHOIS_TMP})
+        REGISTRAR=$(${AWK} -F': ' '/Registrant\ ID:|Registrant:/ && $0 != "" {print $2;}' ${WHOIS_TMP})
     elif [ "${TLDTYPE}" == "io" ];
     then
         REGISTRAR=$(${AWK} -F: '/Registrar:/ && $0 != "" {print $2;}' ${WHOIS_TMP} | ${TR} -d " \r")
