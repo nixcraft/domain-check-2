@@ -309,6 +309,7 @@ MAIL=`which mail`
 CURL=`which curl`
 ECHO=`which echo`
 HEAD=`which head`
+SED=`which sed`
 
 # Version of the script
 VERSION=$(${AWK} -F': ' '/^# Current Version:/ {print $2; exit}' $0)
@@ -952,7 +953,7 @@ then
 elif [ -f "${SERVERFILE}" ]
 then
     print_heading
-    sed -e 's/[[:space:]]*#.*// ; /^[[:space:]]*$/d' ${SERVERFILE} | tr -d '[:blank:]' | \
+    ${SED} -e 's/[[:space:]]*#.*// ; /^[[:space:]]*$/d' ${SERVERFILE} | tr -d '[:blank:]' | \
     while read DOMAIN
     do
         check_domain_status "${DOMAIN}"
