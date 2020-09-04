@@ -779,7 +779,7 @@ check_domain_status()
 
     # may work with others	 ??? ;)
     else
-        DOMAINDATE=`${AWK} '/Expiration/ { print $NF }' ${WHOIS_TMP}`
+        DOMAINDATE=`${AWK} '/Expiration/ { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1}'`
     fi
 
     #echo $DOMAINDATE # debug
