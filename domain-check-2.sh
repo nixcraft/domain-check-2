@@ -433,7 +433,7 @@ tolower()
 check_domain_status()
 {
     local REGISTRAR=""
-    # Avoid WHOIS LIMIT EXCEEDED - slowdown our whois client by adding 3 sec
+    # Avoid WHOIS LIMIT EXCEEDED - slowdown our whois client by adding 1 sec
     sleep 1
     # Save the domain since set will trip up the ordering
     local DOMAIN=${1}
@@ -580,9 +580,18 @@ check_domain_status()
     elif [ "${SUBTLDTYPE}" == "com.br" ];
     then
         REGISTRAR=$(${AWK} -F':' '/owner:/ && $0 != "" {print $2;}' ${WHOIS_TMP})
+    elif [ "${TLDTYPE}" == "il" ];
+    then
+        REGISTRAR=$(${AWK} -F':' '/registrar name:/ && $0 != "" {print $2;}' ${WHOIS_TMP})
     elif [ "${TLDTYPE}" == "id" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar Organization:/ && $2 != ""  { REGISTRAR=substr($2,1,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
+    elif [ "${TLDTYPE}" == "tg" ];
+    then
+        REGISTRAR=`${ECHO} ${REGISTRAR} | ${TR} -d "."`
+    elif [ "${TLDTYPE}" == "hr" ];
+    then
+        REGISTRAR=`${AWK} -F: '/Registrant Name:/ && $2 != "" { print $2 }' ${WHOIS_TMP}`
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -778,6 +787,24 @@ check_domain_status()
         tmon=`echo ${tdomdate} | ${CUT} -c 5-6`
         tmonth=$(getmonth_number ${tmon})
         tday=`echo ${tdomdate} | ${CUT} -c 7-8`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+     elif [ "${TLDTYPE}" == "il" ]
+     then
+        tdomdate=`${AWK} '/validity:/ { print $NF }' ${WHOIS_TMP}`
+        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f3`
+        tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+     elif [ "${TLDTYPE}" == "tg" ]
+     then
+        tdomdate=`${AWK} -F: '/Expiration:/ { print $2 }' ${WHOIS_TMP} | ${HEAD} -1 | ${TR} -d "."`
+        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
+        tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     # may work with others	 ??? ;)
