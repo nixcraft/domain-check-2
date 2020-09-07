@@ -5,10 +5,15 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.49
-# Last Updated: 02-September-2020
+# Current Version: 2.50
+# Last Updated: 07-September-2020
 #
 # Revision History:
+#
+#  Version 2.50
+#  Added support for .tg/.co.il/.net.il/.org.il domains -- Vladislav V. Prodan <github.com/click0>
+#  Added an additional function to change to the desired date format.
+#  Fixed display of the registrar in the .cn/.edu domains.
 #
 #  Version 2.49
 #  Added support for .com.br domain -- Vladislav V. Prodan <github.com/click0>

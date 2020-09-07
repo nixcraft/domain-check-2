@@ -66,3 +66,11 @@ google.xxx
 google.id
 nic.today
 google.game
+google.sk
+dream.team
+google.app
+google.host
+google.website
+google.co.il
+isoc.org.il
+netvision.net.il
