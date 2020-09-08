@@ -54,7 +54,7 @@ nic.expert
 google.express
 google.space
 google.ca
-google.co.pl
+news.co.pl
 гугл.укр
 google.fun
 google.museum
