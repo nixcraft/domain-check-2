@@ -488,7 +488,7 @@ check_domain_status()
 
     # Parse out the expiration date and registrar -- uses the last registrar it finds
     REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,40) } END { print REGISTRAR }' ${WHOIS_TMP}\
-        | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r"`
+        | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" | ${SED} -e 's/[[:space:]\t]*// ;'`
 
     if [ "${TLDTYPE}" == "uk" ]; # for .uk domain
     then
@@ -814,7 +814,7 @@ check_domain_status()
 
     # may work with others	 ??? ;)
     else
-        DOMAINDATE=`${AWK} '/Expiration/ { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1}'`
+        DOMAINDATE=`${AWK} '/Expiration|Expires:|expires:/ { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1}'`
     fi
 
     #echo $DOMAINDATE # debug
