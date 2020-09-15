@@ -5,10 +5,14 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.50
-# Last Updated: 07-September-2020
+# Current Version: 2.51
+# Last Updated: 16-September-2020
 #
 # Revision History:
+#
+#  Version 2.51
+#  Added support for .rs/.am/.xin/ domains -- Vladislav V. Prodan <github.com/click0>
+#  Fixed typos.
 #
 #  Version 2.50
 #  Added support for .tg/.co.il/.net.il/.org.il domains -- Vladislav V. Prodan <github.com/click0>
