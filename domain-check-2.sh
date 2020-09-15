@@ -584,10 +584,10 @@ check_domain_status()
         REGISTRAR=$(${AWK} '/Registrar:/ && $0 != "" {print $2; exit}' ${WHOIS_TMP})
     elif [ "${SUBTLDTYPE}" == "com.br" ];
     then
-        REGISTRAR=$(${AWK} -F':' '/owner:/ && $0 != "" {print $2;}' ${WHOIS_TMP})
+        REGISTRAR=$(${AWK} -F':' '/owner:/ && $0 != "" {print $2;}' ${WHOIS_TMP} | ${SED} -e 's/[[:space:]\t]*// ;')
     elif [ "${TLDTYPE}" == "il" ];
     then
-        REGISTRAR=$(${AWK} -F':' '/registrar name:/ && $0 != "" {print $2;}' ${WHOIS_TMP})
+        REGISTRAR=$(${AWK} -F':' '/registrar name:/ && $0 != "" {print $2;}' ${WHOIS_TMP} | ${SED} -e 's/[[:space:]\t]*// ;')
     elif [ "${TLDTYPE}" == "id" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar Organization:/ && $2 != ""  { REGISTRAR=substr($2,1,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -823,7 +823,8 @@ check_domain_status()
 
     # may work with others	 ??? ;)
     else
-        DOMAINDATE=`${AWK} '/Expiration:|Expires:|expires:|Registry Expiry Date:/ { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1}'`
+        DOMAINDATE=`${AWK} '/Expiration:|Expires:|expires:|Registry Expiry Date:|Registrar Registration Expiration Date:/ \
+        { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1}'`
     fi
 
     #echo $DOMAINDATE # debug
