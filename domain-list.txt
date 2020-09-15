@@ -74,3 +74,5 @@ google.website
 google.co.il
 isoc.org.il
 netvision.net.il
+ali.xin
+google.am
