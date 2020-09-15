@@ -600,7 +600,7 @@ check_domain_status()
         REGISTRAR=`${ECHO} ${REGISTRAR} | ${TR} -d "."`
     elif [ "${TLDTYPE}" == "hr" ];
     then
-        REGISTRAR=`${AWK} -F: '/Registrant Name:/ && $2 != "" { print $2 }' ${WHOIS_TMP}`
+        REGISTRAR=$(${AWK} -F': ' '/Registrant Name:/ && $2 != "" { print $2 }' ${WHOIS_TMP})
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -828,7 +828,7 @@ check_domain_status()
     # may work with others	 ??? ;)
     else
         DOMAINDATE=`${AWK} '/Expiration:|Expires:|expires:|Registry Expiry Date:|Registrar Registration Expiration Date:/ \
-        { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1}'`
+        { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1}' | ${HEAD} -1`
     fi
 
     #echo $DOMAINDATE # debug
