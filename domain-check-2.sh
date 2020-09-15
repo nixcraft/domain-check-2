@@ -602,7 +602,7 @@ check_domain_status()
     # If the Registrar is NULL, then we didn't get any data
     if [ "${REGISTRAR}" = "" ]
     then
-        prints "$DOMAIN" "Unknown" "Unknown" "Unknown" "Unknown"
+        prints "${DOMAIN}" "Unknown" "Unknown" "Unknown" "Unknown"
         return
     fi
 
@@ -627,7 +627,7 @@ check_domain_status()
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "ua" ]; # for .ua @click0 2019/02/12
@@ -636,7 +636,7 @@ check_domain_status()
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "укр" ]; # for .укр @click0 2019/05/15
@@ -652,8 +652,8 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "is" ]; # for .is @hawkeye116477 2019/04/08
     then
         tdomdate=`${AWK} '/expires:/ { print $2 " " $3 " " $4}' ${WHOIS_TMP}`
-        tyear=`echo ${tdomdate} | ${CUT} -d " " -f 3`
-        tmon=`echo ${tdomdate} | ${CUT} -d " " -f 1`
+        tyear=`echo ${tdomdate} | ${CUT} -d' ' -f3`
+        tmon=`echo ${tdomdate} | ${CUT} -d' ' -f1`
         case ${tmon} in
              January) tmonth=jan ;;
              February) tmonth=feb ;;
@@ -669,16 +669,16 @@ check_domain_status()
              December) tmonth=dec ;;
              *) tmonth=0 ;;
         esac
-        tday=`echo ${tdomdate} | ${CUT} -d " " -f 2`
+        tday=`echo ${tdomdate} | ${CUT} -d' ' -f2`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "kz" ]; # for .kz @click0 2019/02/23
     then
-        tdomdate=`${GREP} -A 1 "expire" ${WHOIS_2_TMP} | ${GREP} "utc" | ${AWK} -F\" '{print $4;}'`
+        tdomdate=`${GREP} -A 1 "expire" ${WHOIS_2_TMP} | ${AWK} -F\" '/utc/ {print $4;}'`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o \
@@ -701,7 +701,7 @@ check_domain_status()
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "edu" ] # added on 26-aug-2017 by nixCraft
@@ -710,7 +710,7 @@ check_domain_status()
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f3`
         tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         DOMAINDATE=`echo "${tday}-${tmon}-${tyear}"`
 
      elif [ "${TLDTYPE}" == "cz" ] # added on 20170830 by Minitram
@@ -719,7 +719,7 @@ check_domain_status()
         tyear=`echo ${tdomdate} | ${CUT} -d'.' -f3`
         tmon=`echo ${tdomdate} |${CUT} -d'.' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "." -f 1`
+        tday=`echo ${tdomdate} | ${CUT} -d'.' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "pl" ] &&  [ "${SUBTLDTYPE}" != "co.pl" ] # NASK
@@ -734,55 +734,55 @@ check_domain_status()
     elif  [ "${SUBTLDTYPE}" == "co.pl" ]; # for .co.pl @hawkeye116477 2019/05/14
     then
         tdomdate=`${AWK} '/Expires:/ { print $2 }' ${WHOIS_TMP}`
-        tyear=`echo ${tdomdate} | ${CUT} -d "." -f 1`
-        tmon=`echo ${tdomdate} | ${CUT} -d "." -f 2`
+        tyear=`echo ${tdomdate} | ${CUT} -d'.' -f1`
+        tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "." -f 3`
+        tday=`echo ${tdomdate} | ${CUT} -d'.' -f3`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "fi" ];
     then
         tdomdate=`${AWK} '/expires/ { print $2 }' ${WHOIS_TMP}`
-        tyear=`echo ${tdomdate} | ${CUT} -d "." -f 3`
-        tmon=`echo ${tdomdate} | ${CUT} -d "." -f 2`
+        tyear=`echo ${tdomdate} | ${CUT} -d'.' -f3`
+        tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "." -f 1`
+        tday=`echo ${tdomdate} | ${CUT} -d'.' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "fr" -o "${TLDTYPE}" == "re" -o "${TLDTYPE}" == "tf" -o "${TLDTYPE}" == "yt" -o \
       "${TLDTYPE}" == "pm" -o "${TLDTYPE}" == "wf" -o "${TLDTYPE}" == "mx" -o "${TLDTYPE}" == "sk"  ];
     then
         tdomdate=`${AWK} '/Expiry Date:|Expiration Date:|Valid Until:/ { print $3 }' ${WHOIS_TMP}`
-        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
-        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
+        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
+        tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3 | ${CUT} -d "T" -f 1`
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "tr" ];
     then
         tdomdate=`${AWK} '/Expires/ { print substr($3, 1, length($3)-1) }' ${WHOIS_TMP}`
-        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
-        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
+        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
+        tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f3`
         DOMAINDATE=`echo "${tday}-${tmon}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "cn" ];	# for .cn @click0 2019/02/12
     then
         tdomdate=`${AWK} -F':' '/Expiration Time:/ { print $2 }' ${WHOIS_TMP} | ${AWK} '{ print $1; }'`
-        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
-        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
+        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
+        tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f3`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "id" ]; # for .id @Minitram 2019/07/01
     then
         tdomdate=`${AWK} '/Expiration Date:/ { print $2 }' ${WHOIS_TMP} | ${AWK} -F: '{ print $2}'`
-        tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
-        tmon=`echo ${tdomdate} | ${CUT} -d "-" -f 2`
+        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f3`
+        tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(tolower ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${SUBTLDTYPE}" == "com.br" ];
@@ -798,18 +798,27 @@ check_domain_status()
      then
         tdomdate=`${AWK} '/validity:/ { print $NF }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f3`
-        tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
+        tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
      elif [ "${TLDTYPE}" == "tg" ]
      then
         tdomdate=`${AWK} -F: '/Expiration:/ { print $2 }' ${WHOIS_TMP} | ${HEAD} -1 | ${TR} -d "."`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
-        tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
+        tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d "-" -f 3`
+        tday=`echo ${tdomdate} | ${CUT} -d '-' -f3`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+     elif [ "${TLDTYPE}" == "rs" ]
+     then
+        tdomdate=`${AWK} '/Expiration date:/ { print $3 }' ${WHOIS_TMP} `
+        tyear=`echo ${tdomdate} | ${CUT} -d'.' -f3`
+        tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d'.' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     # may work with others	 ??? ;)
@@ -890,8 +899,8 @@ prints()
 {
     if [ "${QUIET}" != "TRUE" ]
     then
-        MIN_DATE=$(echo $3 | ${AWK} '{ print $1, $2, $4 }')
-        printf "%-35s %-46s %-8s %-11s %-5s\n" "$1" "$5" "$2" "$MIN_DATE" "$4"
+        local MIN_DATE=$(${ECHO} $3 | ${AWK} '{ print $1, $2, $4 }')
+        printf "%-35s %-46s %-8s %-11s %-5s\n" "$1" "$5" "$2" "${MIN_DATE}" "$4"
     fi
 }
 
@@ -903,14 +912,14 @@ prints()
 usage()
 {
     echo "Usage: $0 [ -e email ] [ -x expir_days ] [ -s whois server ] [ -q ] [ -a ] [ -h ] [ -v ] [ -V ]"
-    echo "	  {[ -d domain_namee ]} || { -f domainfile}"
+    echo "	  {[ -d domain_name ]} || {[ -f domain_file ]}"
     echo ""
     echo "  -a               : Send a warning message through email"
-    echo "  -d domain        : Domain to analyze (interactive mode)"
+    echo "  -d domain_name   : Domain to analyze (interactive mode)"
     echo "  -e email address : Email address to send expiration notices"
-    echo "  -f domain file   : File with a list of domains"
+    echo "  -f domain_file   : File with a list of domains"
     echo "  -h               : Print this screen"
-    echo "  -s whois server  : Whois sever to query for information"
+    echo "  -s whois server  : Whois server to query for information"
     echo "  -q               : Don't print anything on the console"
     echo "  -x days          : Domain expiration interval (eg. if domain_date < days)"
     echo "  -v               : Show debug information when running script"
