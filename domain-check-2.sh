@@ -496,7 +496,7 @@ check_domain_status()
 
     if [ "${TLDTYPE}" == "uk" ]; # for .uk domain
     then
-        REGISTRAR=`${AWK} -F: '/Registrar:/ && $0 != "" { getline; REGISTRAR=substr($0,9,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
+        REGISTRAR=`${AWK} -F: '/Registrar:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $0; }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "me" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,23) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -601,6 +601,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "hr" ];
     then
         REGISTRAR=$(${AWK} -F': ' '/Registrant Name:/ && $2 != "" { print $2 }' ${WHOIS_TMP})
+    elif [ "${TLDTYPE}" == "gg" ];
+    then
+        REGISTRAR=`${AWK} -F'(' '/Registrar:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $1; }' ${WHOIS_TMP}`
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -823,6 +826,30 @@ check_domain_status()
         tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
         tmonth=$(getmonth_number ${tmon})
         tday=`echo ${tdomdate} | ${CUT} -d'.' -f1`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+     elif [ "${TLDTYPE}" == "gg" ]
+     then
+        tdomdate=`${AWK} -F' ' '/Registry fee due on/ && $0 != "" {print $5" "$6;}' ${WHOIS_TMP}`
+#        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
+		tyear=$(( ${YEAR} + 1 ))
+        tmon=`echo ${tdomdate} | ${CUT} -d' ' -f2`
+        case ${tmon} in
+             January) tmonth=jan ;;
+             February) tmonth=feb ;;
+             March) tmonth=mar ;;
+             April) tmonth=apr ;;
+             May) tmonth=may ;;
+             June) tmonth=jun ;;
+             July) tmonth=jul ;;
+             August) tmonth=aug ;;
+             September) tmonth=sep ;;
+             October) tmonth=oct ;;
+             November) tmonth=nov ;;
+             December) tmonth=dec ;;
+             *) tmonth=0 ;;
+        esac
+        tday=`echo ${tdomdate} | ${AWK} -F'th|st' '{print $1; }'`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     # may work with others	 ??? ;)
