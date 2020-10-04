@@ -700,7 +700,7 @@ check_domain_status()
         "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" -o "${TLDTYPE}" == "dk" -o "${TLDTYPE}" == "it" -o \
         "${TLDTYPE}" == "do" -o "${TLDTYPE}" == "ro" -o "${TLDTYPE}" == "game" ];
     then
-        tdomdate=`${AWK} '/Registry Expiry Date:|Expiry Date:|Expiration date:|Renewal date:|Expire Date:|Expires On:|Expires:|expires:/ \
+        tdomdate=`${AWK} '/Expiration Date:|Registry Expiry Date:|Expiry Date:|Expiration date:|Renewal date:|Expire Date:|Expires On:|Expires:|expires:/ \
            { print $NF }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
