@@ -65,7 +65,7 @@ nic.stream
 google.xxx
 google.id
 nic.today
-google.game
+mail.game
 google.sk
 dream.team
 google.app
@@ -73,6 +73,6 @@ google.host
 google.website
 google.co.il
 isoc.org.il
-netvision.net.il
+hot.net.il
 ali.xin
 google.am

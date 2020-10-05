@@ -5,10 +5,14 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.51
-# Last Updated: 16-September-2020
+# Current Version: 2.52
+# Last Updated: 05-October-2020
 #
 # Revision History:
+#
+#  Version 2.52
+#  Added work with specific whois servers.
+#  Fixed typos.
 #
 #  Version 2.51
 #  Added support for .rs/.am/.xin/ domains -- Vladislav V. Prodan <github.com/click0>
@@ -305,7 +309,7 @@ VERSIONENABLE="FALSE"
 VERBOSE="FALSE"
 
 # Whois server to use (cmdline: -s)
-WHOIS_SERVER="whois.internic.org"
+WHOIS_SERVER="whois.iana.org"
 
 # Location of system binaries
 AWK=`which awk`
@@ -447,7 +451,7 @@ check_domain_status()
     # Save the domain since set will trip up the ordering
     local DOMAIN=${1}
     local TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($NF);}')
-    if [ "${TLDTYPE}"  == "" ];
+    if [ "x${TLDTYPE}"  == "x" ];
     then
         TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1));}')
     fi
@@ -460,29 +464,15 @@ check_domain_status()
     #${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
     # Let whois select server
 
-    local WHS="$(${WHOIS} -h "whois.iana.org" "${TLDTYPE}" | ${GREP} 'whois:' | ${AWK} '{print $2}')"
+	if [ -n "${WHOIS_SERVER}" ] && [ "${WHOIS_SERVER}" == "whois.iana.org" ]; then
+	    local WHS="$(${WHOIS} -h "${WHOIS_SERVER}" "${TLDTYPE}" | ${AWK} '/whois:/ {print $2}')"
+	else
+	    local WHS="${WHOIS_SERVER}"
+	fi
 
-    if [ "${TLDTYPE}" == "aero" ];
-    then
-        ${WHOIS} -h whois.aero "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}" == "cn" ];
-    then
-       ${WHOIS} -h whois.cnnic.cn "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}" == "pl" ] && [ "${SUBTLDTYPE}" != "co.pl" ];
-    then
-       ${WHOIS} -h whois.dns.pl "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    elif [ "${SUBTLDTYPE}" == "co.pl" ]; # added by @hawkeye116477 20190514
-    then
-       ${WHOIS} -h whois.co.pl "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}" == "is" ]; # added by @hawkeye116477 20190408
-    then
-       ${WHOIS} -h whois.isnic.is "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    elif [ "${TLDTYPE}" == "stream" ]; # added by @hawkeye116477 20190616
-    then
-        ${WHOIS} -h whois.nic.stream "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    else
-        ${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
-    fi
+	[ "${SUBTLDTYPE}" == "co.pl" ] && local WHS="whois.co.pl"; 	# added by @hawkeye116477 20190514
+
+	${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
 
     if [ "${TLDTYPE}" == "kz" ];
     then
@@ -703,7 +693,7 @@ check_domain_status()
         "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" -o "${TLDTYPE}" == "dk" -o "${TLDTYPE}" == "it" -o \
         "${TLDTYPE}" == "do" -o "${TLDTYPE}" == "ro" -o "${TLDTYPE}" == "game" ];
     then
-        tdomdate=`${AWK} '/Expiration Date:|Registry Expiry Date:|Expiry Date:|Expiration date:|Renewal date:|Expire Date:|Expires On:|Expires:|expires:/ \
+        tdomdate=`${AWK} '/"Registrar Registration Expiration Date:"|Registry Expiry Date:|Expiry Date:|Expiration date:|Renewal date:|Expire Date:|Expires On:|Expires:|expires:/ \
            { print $NF }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
