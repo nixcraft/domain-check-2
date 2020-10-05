@@ -11,20 +11,22 @@
 # Revision History:
 #
 #  Version 2.52
-#  Added work with specific whois servers.
-#  Fixed typos.
+#   Added work with specific whois servers.
+#   Fixed display of the registrar name in the .uk domain zone.
+#   Partially added .gg domain zone, but it does not display the year.
+#   Fixed typos.
 #
 #  Version 2.51
-#  Added support for .rs/.am/.xin/ domains -- Vladislav V. Prodan <github.com/click0>
-#  Fixed typos.
+#   Added support for .rs/.am/.xin/ domains -- Vladislav V. Prodan <github.com/click0>
+#   Fixed typos.
 #
 #  Version 2.50
-#  Added support for .tg/.co.il/.net.il/.org.il domains -- Vladislav V. Prodan <github.com/click0>
-#  Added an additional function to change to the desired date format.
-#  Fixed display of the registrar in the .cn/.edu domains.
+#   Added support for .tg/.co.il/.net.il/.org.il domains -- Vladislav V. Prodan <github.com/click0>
+#   Added an additional function to change to the desired date format.
+#   Fixed display of the registrar in the .cn/.edu domains.
 #
 #  Version 2.49
-#  Added support for .com.br domain -- Vladislav V. Prodan <github.com/click0>
+#   Added support for .com.br domain -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.48
 #   Added support for .team/.app/.host/.website domains -- Vladislav V. Prodan <github.com/click0>
@@ -32,7 +34,7 @@
 #   Merged some checks
 #
 #  Version 2.47
-#  Added support for .do domain -- rk00t <github.com/rk00t>
+#   Added support for .do domain -- rk00t <github.com/rk00t>
 #
 #  Version 2.46
 #   Spaces, tabs and blank lines in the domain list file are now ignored -- Vladislav V. Prodan <github.com/click0>
