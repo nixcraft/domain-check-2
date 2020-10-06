@@ -695,8 +695,8 @@ check_domain_status()
         "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" -o "${TLDTYPE}" == "dk" -o "${TLDTYPE}" == "it" -o \
         "${TLDTYPE}" == "do" -o "${TLDTYPE}" == "ro" -o "${TLDTYPE}" == "game" ];
     then
-        tdomdate=`${AWK} '/"Registrar Registration Expiration Date:"|Registry Expiry Date:|Expiry Date:|Expiration date:|Renewal date:|Expire Date:|Expires On:|Expires:|expires:/ \
-           { print $NF }' ${WHOIS_TMP}`
+        tdomdate=`${AWK} '/Registrar\ Registration\ Expiration\ [Dd]ate:|Registry\ Expiry\ Date:|Expiration\ [Dd]ate:|Renewal\ date:|Expir[ey]\ [Dd]ate:|Expires\ On:|[Ee]xpires:/ \
+           { print $NF; }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1}' | ${HEAD} -1`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
@@ -723,7 +723,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "pl" ] &&  [ "${SUBTLDTYPE}" != "co.pl" ] # NASK
     then
-        tdomdate=`${AWK} -F: '/^expiration date:/ || /renewal date:/ { print $2; }' ${WHOIS_TMP} | ${AWK} -F" " '{ print $1; }'`
+        tdomdate=`${AWK} -F: '/^expiration\ date:/ || /renewal\ date:/ { print $2; }' ${WHOIS_TMP} | ${AWK} -F" " '{ print $1; }'`
         tyear=`echo ${tdomdate} | ${CUT} -d'.' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
         tmonth=$(getmonth_number ${tmon})
@@ -751,7 +751,7 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "fr" -o "${TLDTYPE}" == "re" -o "${TLDTYPE}" == "tf" -o "${TLDTYPE}" == "yt" -o \
       "${TLDTYPE}" == "pm" -o "${TLDTYPE}" == "wf" -o "${TLDTYPE}" == "mx" -o "${TLDTYPE}" == "sk"  ];
     then
-        tdomdate=`${AWK} '/Expiry Date:|Expiration Date:|Valid Until:/ { print $3 }' ${WHOIS_TMP}`
+        tdomdate=`${AWK} '/Expiry\ Date:|Expiration\ Date:|Valid\ Until:/ { print $3 }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
@@ -813,7 +813,7 @@ check_domain_status()
 
      elif [ "${TLDTYPE}" == "rs" ]
      then
-        tdomdate=`${AWK} '/Expiration date:/ { print $3 }' ${WHOIS_TMP} `
+        tdomdate=`${AWK} '/Expiration\ date:/ { print $3 }' ${WHOIS_TMP} `
         tyear=`echo ${tdomdate} | ${CUT} -d'.' -f3`
         tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
         tmonth=$(getmonth_number ${tmon})
@@ -823,7 +823,6 @@ check_domain_status()
      elif [ "${TLDTYPE}" == "gg" ]
      then
         tdomdate=`${AWK} -F' ' '/Registry fee due on/ && $0 != "" {print $5" "$6;}' ${WHOIS_TMP}`
-#        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
 		tyear=$(( ${YEAR} + 1 ))
         tmon=`echo ${tdomdate} | ${CUT} -d' ' -f2`
         case ${tmon} in
@@ -846,7 +845,7 @@ check_domain_status()
 
     # may work with others	 ??? ;)
     else
-        DOMAINDATE=`${AWK} '/Expiration:|Expires:|expires:|Registry Expiry Date:|Registrar Registration Expiration Date:/ \
+        DOMAINDATE=`${AWK} '/Expiration:|[Ee]xpires:|Registry\ Expiry\ Date:|Registrar\ Registration\ Expiration\ Date:/ \
         { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1}' | ${HEAD} -1`
     fi
 
