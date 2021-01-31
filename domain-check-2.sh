@@ -1,14 +1,23 @@
 #!/usr/bin/env bash
 
+#=========================================================================================
+# Domain Expiration Check
+#=========================================================================================
 #
-# Program: Domain Expiration Check <domain-check>
+# Summary:  Checks registration status of a domain
 #
-# Author: Matty < matty91 at gmail dot com >
+# Author:   Matty <matty91@gmail.com>
+# Repo:     https://github.com/nixcraft/domain-check-2
 #
-# Current Version: 2.18
-# Last Updated: 07-Jan-2019
+# Version:  2.19
+# Updated:  2021-jan-31
 #
-# Revision History:
+#=========================================================================================
+#
+# Revision History
+#
+#  Version 2.19
+#   Added support for .io domain -- Tyler Moore <https://github.com/devopsec>
 #
 #  Version 2.18
 #   Added support for .pro/.mx/.ro/.aero/.asia/.cc/.college domain -- Vivek Gite <github.com/nixcraft>
@@ -101,7 +110,6 @@
 #  Version 1.0
 #    Initial Release
 #
-#
 # Purpose:
 #  domain-check checks to see if a domain has expired. domain-check
 #  can be run in interactive and batch mode, and provides faciltities
@@ -119,7 +127,7 @@
 #   registrars.
 #
 # Requirements:
-#   Requires whois
+#   sudo apt-get install whois gawk mailutils
 #
 # Installation:
 #   Copy the shell script to a suitable location
@@ -484,7 +492,7 @@ check_domain_status()
 		esac
             tday=`echo ${tdomdate} | ${CUT} -d'/' -f3`
 	    DOMAINDATE=`echo $tday-$tmonth-$tyear`
-    elif [ "${TLDTYPE}" == "me" ]; # for .me domain
+    elif [ "${TLDTYPE}" == "me" -o "${TLDTYPE}" == "io" ]; # for .me and .io domain
     then
 	tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Registry Expiry Date:/ { print $4 }'`
 	tyear=`echo ${tdomdate} | ${CUT} -d "-" -f 1`
