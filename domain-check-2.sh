@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.52
-# Last Updated: 05-October-2020
+# Current Version: 2.53
+# Last Updated: 03-Mart-2021
 #
 # Revision History:
+#
+#  Version 2.53
+#   Added support for .kr/.hk/.pt/.sg domains -- @copenhaus
 #
 #  Version 2.52
 #   Added work with specific whois servers.
@@ -596,6 +599,17 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "gg" ];
     then
         REGISTRAR=`${AWK} -F'(' '/Registrar:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $1; }' ${WHOIS_TMP}`
+    elif [ "${TLDTYPE}" == "kr" ];
+    then
+        REGISTRAR=`${AWK} -F: '/Registrant   / && $2 != "" { REGISTRAR=substr($2,2,30) } END { print REGISTRAR }' ${WHOIS_TMP}`
+
+    elif [ "${TLDTYPE}" == "hk" ];
+    then
+        REGISTRAR=`${AWK} -F: '/Registrar Name:/ && $2 != "" { REGISTRAR=substr($2,2,38) } END { print REGISTRAR }' ${WHOIS_TMP}`
+
+    elif [ "${TLDTYPE}" == "pt" ];
+    then
+       REGISTRAR=`${AWK} -F: '/Admin Name:/ && $2 != "" { REGISTRAR=substr($2,2,30) } END { print REGISTRAR }' ${WHOIS_TMP}`
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -842,6 +856,41 @@ check_domain_status()
         esac
         tday=`echo ${tdomdate} | ${AWK} -F'th|st' '{print $1; }'`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif [ "${TLDTYPE}" == "kr" ]; # for .kr added @copenhaus 2021/02/18
+    then
+        tdomdate=`${AWK} -F\: '/Expiration/ {print $2}' ${WHOIS_TMP} | ${TR} -d " \r"`
+        tyear=`echo ${tdomdate} | ${CUT} -d'.' -f1`
+        tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d'.' -f3`
+        DOMAINDATE=`echo $tday-$tmonth-$tyear`
+
+    elif [ "${TLDTYPE}" == "hk" ]; # for .hk added @copenhaus 2021/02/18
+    then
+       tdomdate=`${AWK} '/Expiry Date:/ {print $3}' ${WHOIS_TMP} | ${TR} -d " \r"`
+       tyear=$(echo $tdomdate| ${CUT} -c7-10)
+       tmonth=$(echo $tdomdate| ${CUT} -c4-5)
+       tmonth=$(getmonth_number ${tmonth})
+       tday=$(echo $tdomdate| ${CUT} -c-2)
+       DOMAINDATE=`echo $tday-$tmonth-$tyear`
+
+    elif [ "${TLDTYPE}" == "pt" ]; # for .pt added @copenhaus 2021/03/02
+    then
+       tdomdate=`${AWK} '/Expiration Date:/ {print $3}' ${WHOIS_TMP} | ${TR} -d " \r"`
+       tyear=$(echo $tdomdate| ${CUT} -c7-10)
+       tmonth=$(echo $tdomdate| ${CUT} -c4-5)
+       tmonth=$(getmonth_number ${tmonth})
+       tday=$(echo $tdomdate| ${CUT} -c-2)
+       DOMAINDATE=`echo $tday-$tmonth-$tyear`
+
+    elif [ "${TLDTYPE}" == "sg" ]; # for .sg added @copenhaus 2021/03/02
+    then
+       tdomdate=`${AWK} '/Expiration Date:/ {print $3}' ${WHOIS_TMP} | ${TR} -d " \r"`
+       tyear=$(echo $tdomdate| ${CUT} -c8-11)
+       tmonth=$(echo $tdomdate| ${CUT} -c4-6)
+       tday=$(echo $tdomdate| ${CUT} -c-2)
+       DOMAINDATE=`echo $tday-$tmonth-$tyear`
 
     # may work with others	 ??? ;)
     else
