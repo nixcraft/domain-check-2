@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.53
-# Last Updated: 03-Mart-2021
+# Current Version: 2.54
+# Last Updated: 25-Apr-2021
 #
 # Revision History:
+#
+#  Version 2.54
+#   Fixed checking on the existence of binary files of the necessary programs for the script to work.
 #
 #  Version 2.53
 #   Added support for .kr/.hk/.pt/.sg domains -- @copenhaus
@@ -246,7 +249,7 @@
 #   registrars.
 #
 # Requirements:
-#   Requires whois
+#   Requires whois, curl (for domains in the .kz zone)
 #
 # Installation:
 #   Copy the shell script to a suitable location
@@ -317,17 +320,25 @@ VERBOSE="FALSE"
 WHOIS_SERVER="whois.iana.org"
 
 # Location of system binaries
-AWK=`which awk`
-WHOIS=`which whois`
-DATE=`which date`
-CUT=`which cut`
-GREP=`which grep`
-TR=`which tr`
-MAIL=`which mail`
-CURL=`which curl`
-ECHO=`which echo`
-HEAD=`which head`
-SED=`which sed`
+for BINARY in whois date mail curl ; do
+    if [ ! -x "$(command -v $BINARY)" ]; then
+        echo "ERROR: The $BINARY binary does not exist in \$$BINARY."
+        echo "  FIX: Please modify the \$$BINARY variable in the program header."
+        exit 1
+    fi
+done
+
+AWK=$(command -v awk)
+WHOIS=$(command -v whois)
+DATE=$(command -v date)
+CUT=$(command -v cut)
+GREP=$(command -v grep)
+TR=$(command -v tr)
+MAIL=$(command -v mail)
+CURL=$(command -v curl)
+ECHO=$(command -v echo)
+HEAD=$(command -v head)
+SED=$(command -v sed)
 
 # Version of the script
 VERSION=$(${AWK} -F': ' '/^# Current Version:/ {print $2; exit}' $0)
@@ -1022,22 +1033,6 @@ done
 if [ "${VERBOSE}" == "TRUE" ]
 then
     set -x
-fi
-
-### Check to see if the whois binary exists
-if [ ! -f ${WHOIS} ]
-then
-    echo "ERROR: The whois binary does not exist in ${WHOIS} ."
-    echo "  FIX: Please modify the \$WHOIS variable in the program header."
-    exit 1
-fi
-
-### Check to make sure a date utility is available
-if [ ! -f ${DATE} ]
-then
-    echo "ERROR: The date binary does not exist in ${DATE} ."
-    echo "  FIX: Please modify the \$DATE variable in the program header."
-    exit 1
 fi
 
 ### Print version of the script
