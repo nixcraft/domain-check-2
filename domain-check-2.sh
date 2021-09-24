@@ -5,10 +5,14 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.54
-# Last Updated: 25-Apr-2021
+# Current Version: 2.55
+# Last Updated: 24-Sep-2021
 #
 # Revision History:
+#
+#  Version 2.55
+#   Fixed support for .md/.id/.kz/.uk domains -- Vladislav V. Prodan <github.com/click0>
+#   Fixed typos.
 #
 #  Version 2.54
 #   Fixed checking on the existence of binary files of the necessary programs for the script to work.
@@ -339,9 +343,13 @@ CURL=$(command -v curl)
 ECHO=$(command -v echo)
 HEAD=$(command -v head)
 SED=$(command -v sed)
+TAIL=$(command -v tail)
 
 # Version of the script
-VERSION=$(${AWK} -F': ' '/^# Current Version:/ {print $2; exit}' $0)
+VERSION=$(${AWK} -F': ' '/^# Current Version:/ { print $2; exit}' $0)
+
+# User-Agent
+VARUSERAGENT="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15"
 
 # Place to stash temporary files
 WHOIS_TMP="/var/tmp/whois.$$"
@@ -492,7 +500,7 @@ check_domain_status()
 
     if [ "${TLDTYPE}" == "kz" ];
     then
-       ${CURL} -s "https://api.ps.kz/kzdomain/domain-whois?username=test&password=test&input_format=http&output_format=get&dname=${1}" \
+       ${CURL} -s -A "$VARUSERAGENT" "https://hoster.kz/whois/?d=${1}" \
         | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_2_TMP}
     fi
 
@@ -502,7 +510,8 @@ check_domain_status()
 
     if [ "${TLDTYPE}" == "uk" ]; # for .uk domain
     then
-        REGISTRAR=`${AWK} -F: '/Registrar:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $0; }' ${WHOIS_TMP}`
+        REGISTRAR=`${AWK} -F: '/Registrar:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $0; }' ${WHOIS_TMP} \
+        	| ${AWK} -F'[' '{ print $1 }'`
     elif [ "${TLDTYPE}" == "me" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,23) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -512,7 +521,7 @@ check_domain_status()
     # no longer shows Registrar name, so will use Status #
     elif [ "${TLDTYPE}" == "md" ];
     then
-        REGISTRAR=`${AWK} -F: '/Status:/ && $2 != "" { REGISTRAR=substr($2,2,27) } END { print REGISTRAR }' ${WHOIS_TMP} | ${TR} -d "\r"`
+        REGISTRAR=`${AWK} -F: '/Status:/ && $2 != "" { REGISTRAR=substr($2,2,27) } END { print REGISTRAR }' ${WHOIS_TMP} | ${TR} -d "\r "`
     elif [ "${TLDTYPE}" == "info" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -546,7 +555,7 @@ check_domain_status()
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,65) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "kz" ]; # added by @click0 20190223
     then
-        REGISTRAR=`${AWK} -F": " '/Current Registar:/ && $0 != "" {print $2;}' ${WHOIS_TMP} | ${TR} -d " \r"`
+        REGISTRAR=`${AWK} -F": " '/Current Registar:/ && $0 != "" { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
     elif [ "${TLDTYPE}" == "cz" ]; # added by Minitram 20170830
     then
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,5,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -555,7 +564,7 @@ check_domain_status()
         REGISTRAR=`${AWK} -F: '/REGISTRAR:/ && $0 != "" { getline; REGISTRAR=substr($0,0,35) } END { print REGISTRAR }' ${WHOIS_TMP} | ${TR} -d " \r"`
     elif [ "${SUBTLDTYPE}" == "co.pl" ] # added by @hawkeye116477 20190514;
     then
-        REGISTRAR=`${GREP} -A1 'Holder data:' ${WHOIS_TMP} | ${AWK} -F': ' '/Name...:/ {print $2}'`
+        REGISTRAR=`${GREP} -A1 'Holder data:' ${WHOIS_TMP} | ${AWK} -F': ' '/Name...:/ { print $2 }'`
     elif [ "${TLDTYPE}" == "xyz" ];
     then
         REGISTRAR=`${GREP} Registrar: ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $0 != "" { getline; REGISTRAR=substr($0,12,35) } END { print REGISTRAR }'`
@@ -570,37 +579,37 @@ check_domain_status()
         REGISTRAR=`${GREP} "registrar:" ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { getline; REGISTRAR=substr($2,4,20) } END { print REGISTRAR }'`
     elif [ "${TLDTYPE}" == "dk" ];
     then
-        REGISTRAR=`${GREP} Copyright ${WHOIS_TMP} | ${AWK}  '{print $8, $9, $10}'`
+        REGISTRAR=`${GREP} Copyright ${WHOIS_TMP} | ${AWK}  '{ print $8, $9, $10 }'`
     elif [ "${TLDTYPE}" == "tr" ];
     then
-        REGISTRAR=`${GREP} "Organization Name" -m 1 ${WHOIS_TMP} | ${AWK} -F': ' '{print $2}'`
+        REGISTRAR=`${GREP} "Organization Name" -m 1 ${WHOIS_TMP} | ${AWK} -F': ' '{ print $2 }'`
     elif [ "${TLDTYPE}" == "it" ];
     then
         REGISTRAR=`${AWK} -F':' '/Registrar/ && $0 != "" { getline;REGISTRAR=substr($0,21,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "cn" ];
     then
-        REGISTRAR=$(${AWK} -F': ' '/Registrant\ ID:|Registrant:/ && $0 != "" {print $2;}' ${WHOIS_TMP})
+        REGISTRAR=$(${AWK} -F': ' '/Registrant\ ID:|Registrant:/ && $0 != "" { print $2 }' ${WHOIS_TMP})
     elif [ "${TLDTYPE}" == "io" ];
     then
-        REGISTRAR=$(${AWK} -F: '/Registrar:/ && $0 != "" {print $2;}' ${WHOIS_TMP} | ${TR} -d " \r")
+        REGISTRAR=$(${AWK} -F: '/Registrar:/ && $0 != "" { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r")
     elif [ "${TLDTYPE}" == "mx" ];
     then
-        REGISTRAR=$(${AWK} '/Registrar:/ && $0 != "" {print $2;}' ${WHOIS_TMP})
+        REGISTRAR=$(${AWK} '/Registrar:/ && $0 != "" { print $2 }' ${WHOIS_TMP})
     elif [ "${TLDTYPE}" == "is" ]; # added by @hawkeye116477 20190408
     then
-        REGISTRAR=$(${AWK} '/registrant:/ && $0 != "" {print $2;}' ${WHOIS_TMP})
+        REGISTRAR=$(${AWK} '/registrant:/ && $0 != "" { print $2 }' ${WHOIS_TMP})
     elif [ "${TLDTYPE}" == "sk" ]; # added by @hawkeye116477 20190603
     then
-        REGISTRAR=$(${AWK} '/Registrar:/ && $0 != "" {print $2; exit}' ${WHOIS_TMP})
+        REGISTRAR=$(${AWK} '/Registrar:/ && $0 != "" { print $2; exit }' ${WHOIS_TMP})
     elif [ "${SUBTLDTYPE}" == "com.br" ];
     then
-        REGISTRAR=$(${AWK} -F':' '/owner:/ && $0 != "" {print $2;}' ${WHOIS_TMP} | ${SED} -e 's/[[:space:]\t]*// ;')
+        REGISTRAR=$(${AWK} -F':' '/owner:/ && $0 != "" { print $2 }' ${WHOIS_TMP} | ${SED} -e 's/[[:space:]\t]*// ;')
     elif [ "${TLDTYPE}" == "il" ];
     then
-        REGISTRAR=$(${AWK} -F':' '/registrar name:/ && $0 != "" {print $2;}' ${WHOIS_TMP} | ${SED} -e 's/[[:space:]\t]*// ;')
+        REGISTRAR=$(${AWK} -F':' '/registrar name:/ && $0 != "" { print $2 }' ${WHOIS_TMP} | ${SED} -e 's/[[:space:]\t]*// ;')
     elif [ "${TLDTYPE}" == "id" ];
     then
-        REGISTRAR=`${AWK} -F: '/Registrar Organization:/ && $2 != ""  { REGISTRAR=substr($2,1,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
+        REGISTRAR=$(${AWK} -F: '/Registrar Organization:/ && $2 != ""  { REGISTRAR=substr($2,1,40) } END { print REGISTRAR }' ${WHOIS_TMP} | ${SED} -e 's/[[:space:]\t]*// ;')
     elif [ "${TLDTYPE}" == "tg" ];
     then
         REGISTRAR=`${ECHO} ${REGISTRAR} | ${TR} -d "."`
@@ -638,7 +647,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "jp" ]; # for .jp fixed @click0 2019/06/26
     then
-        tdomdate=`${AWK} -F] '/\[有効期限\]|\[Expires on\]/ {print $2}' ${WHOIS_TMP} | ${TR} -d " \r"`
+        tdomdate=`${AWK} -F] '/\[有効期限\]|\[Expires on\]/ { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
         tyear=`echo ${tdomdate} | ${CUT} -d'/' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'/' -f2`
         tmonth=$(getmonth_number ${tmon})
@@ -698,7 +707,8 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "kz" ]; # for .kz @click0 2019/02/23
     then
-        tdomdate=`${GREP} -A 1 "expire" ${WHOIS_2_TMP} | ${AWK} -F\" '/utc/ {print $4;}'`
+        tdomdate=$(${GREP} -A 6 'Домен оплачен до' ${WHOIS_2_TMP} | ${TAIL} -n 1 | ${AWK} -F'</p>' '{ print $(NF-1) }' \
+        	| ${AWK} '{ print $1 }' | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r<p>")
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
@@ -720,8 +730,8 @@ check_domain_status()
         "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" -o "${TLDTYPE}" == "dk" -o "${TLDTYPE}" == "it" -o \
         "${TLDTYPE}" == "do" -o "${TLDTYPE}" == "ro" -o "${TLDTYPE}" == "game" ];
     then
-        tdomdate=`${AWK} '/Registrar\ Registration\ Expiration\ [Dd]ate:|Registry\ Expiry\ Date:|Expiration\ [Dd]ate:|Renewal\ date:|Expir[ey]\ [Dd]ate:|Expires\ On:|[Ee]xpires:/ \
-           { print $NF; }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1}' | ${HEAD} -1`
+        tdomdate=`${AWK} '/Registrar Registration Expiration [Dd]ate:|Registry Expiry Date:|Expiration [Dd]ate:|Renewal date:|Expir[ey] [Dd]ate:|Expires [Oo]n:|Expires    [Oo]n:|[Ee]xpires:/ \
+           { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1 }' | ${HEAD} -1`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
@@ -802,7 +812,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "id" ]; # for .id @Minitram 2019/07/01
     then
-        tdomdate=`${AWK} '/Expiration Date:/ { print $2 }' ${WHOIS_TMP} | ${AWK} -F: '{ print $2}'`
+        tdomdate=`${AWK} '/Expiration Date:/ { print $3 }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f3`
         tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(tolower ${tmon})
@@ -847,7 +857,7 @@ check_domain_status()
 
      elif [ "${TLDTYPE}" == "gg" ]
      then
-        tdomdate=`${AWK} -F' ' '/Registry fee due on/ && $0 != "" {print $5" "$6;}' ${WHOIS_TMP}`
+        tdomdate=`${AWK} -F' ' '/Registry fee due on/ && $0 != "" { print $5" "$6 }' ${WHOIS_TMP}`
 		tyear=$(( ${YEAR} + 1 ))
         tmon=`echo ${tdomdate} | ${CUT} -d' ' -f2`
         case ${tmon} in
@@ -865,12 +875,12 @@ check_domain_status()
              December) tmonth=dec ;;
              *) tmonth=0 ;;
         esac
-        tday=`echo ${tdomdate} | ${AWK} -F'th|st' '{print $1; }'`
+        tday=`echo ${tdomdate} | ${AWK} -F'th|st' '{ print $1 }'`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "kr" ]; # for .kr added @copenhaus 2021/02/18
     then
-        tdomdate=`${AWK} -F\: '/Expiration/ {print $2}' ${WHOIS_TMP} | ${TR} -d " \r"`
+        tdomdate=`${AWK} -F\: '/Expiration/ { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
         tyear=`echo ${tdomdate} | ${CUT} -d'.' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
         tmonth=$(getmonth_number ${tmon})
@@ -879,7 +889,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "hk" ]; # for .hk added @copenhaus 2021/02/18
     then
-       tdomdate=`${AWK} '/Expiry Date:/ {print $3}' ${WHOIS_TMP} | ${TR} -d " \r"`
+       tdomdate=`${AWK} '/Expiry Date:/ { print $3 }' ${WHOIS_TMP} | ${TR} -d " \r"`
        tyear=$(echo $tdomdate| ${CUT} -c7-10)
        tmonth=$(echo $tdomdate| ${CUT} -c4-5)
        tmonth=$(getmonth_number ${tmonth})
@@ -888,7 +898,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "pt" ]; # for .pt added @copenhaus 2021/03/02
     then
-       tdomdate=`${AWK} '/Expiration Date:/ {print $3}' ${WHOIS_TMP} | ${TR} -d " \r"`
+       tdomdate=`${AWK} '/Expiration Date:/ { print $3 }' ${WHOIS_TMP} | ${TR} -d " \r"`
        tyear=$(echo $tdomdate| ${CUT} -c7-10)
        tmonth=$(echo $tdomdate| ${CUT} -c4-5)
        tmonth=$(getmonth_number ${tmonth})
@@ -897,7 +907,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "sg" ]; # for .sg added @copenhaus 2021/03/02
     then
-       tdomdate=`${AWK} '/Expiration Date:/ {print $3}' ${WHOIS_TMP} | ${TR} -d " \r"`
+       tdomdate=`${AWK} '/Expiration Date:/ { print $3 }' ${WHOIS_TMP} | ${TR} -d " \r"`
        tyear=$(echo $tdomdate| ${CUT} -c8-11)
        tmonth=$(echo $tdomdate| ${CUT} -c4-6)
        tday=$(echo $tdomdate| ${CUT} -c-2)
@@ -906,7 +916,7 @@ check_domain_status()
     # may work with others	 ??? ;)
     else
         DOMAINDATE=`${AWK} '/Expiration:|[Ee]xpires:|Registry\ Expiry\ Date:|Registrar\ Registration\ Expiration\ Date:/ \
-        { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1}' | ${HEAD} -1`
+        { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1 }' | ${HEAD} -1`
     fi
 
     #echo $DOMAINDATE # debug

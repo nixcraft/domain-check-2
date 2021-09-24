@@ -57,7 +57,7 @@ google.ca
 news.co.pl
 гугл.укр
 google.fun
-google.museum
+about.museum
 nic.live
 google.sk
 nic.club
@@ -88,3 +88,8 @@ amazon.sg
 sps.gov.sg
 shell.com.sg
 jcu.edu.sg
+donuts.media
+google.click
+google.business
+google.photo
+
