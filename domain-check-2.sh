@@ -488,15 +488,15 @@ check_domain_status()
     #${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
     # Let whois select server
 
-	if [ -n "${WHOIS_SERVER}" ] && [ "${WHOIS_SERVER}" == "whois.iana.org" ]; then
-	    local WHS="$(${WHOIS} -h "${WHOIS_SERVER}" "${TLDTYPE}" | ${AWK} '/whois:/ {print $2}')"
-	else
-	    local WHS="${WHOIS_SERVER}"
-	fi
+    if [ -n "${WHOIS_SERVER}" ] && [ "${WHOIS_SERVER}" == "whois.iana.org" ]; then
+        local WHS="$(${WHOIS} -h "${WHOIS_SERVER}" "${TLDTYPE}" | ${AWK} '/whois:/ {print $2}')"
+    else
+        local WHS="${WHOIS_SERVER}"
+    fi
 
-	[ "${SUBTLDTYPE}" == "co.pl" ] && local WHS="whois.co.pl"; 	# added by @hawkeye116477 20190514
+    [ "${SUBTLDTYPE}" == "co.pl" ] && local WHS="whois.co.pl"; 	# added by @hawkeye116477 20190514
 
-	${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
+    ${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
 
     if [ "${TLDTYPE}" == "kz" ];
     then
@@ -828,8 +828,8 @@ check_domain_status()
         tday=`echo ${tdomdate} | ${CUT} -c 7-8`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
-     elif [ "${TLDTYPE}" == "il" ]
-     then
+    elif [ "${TLDTYPE}" == "il" ]
+    then
         tdomdate=`${AWK} '/validity:/ { print $NF }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f3`
         tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
@@ -837,8 +837,8 @@ check_domain_status()
         tday=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
-     elif [ "${TLDTYPE}" == "tg" ]
-     then
+    elif [ "${TLDTYPE}" == "tg" ]
+    then
         tdomdate=`${AWK} -F: '/Expiration:/ { print $2 }' ${WHOIS_TMP} | ${HEAD} -1 | ${TR} -d "."`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
@@ -846,8 +846,8 @@ check_domain_status()
         tday=`echo ${tdomdate} | ${CUT} -d '-' -f3`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
-     elif [ "${TLDTYPE}" == "rs" ]
-     then
+    elif [ "${TLDTYPE}" == "rs" ]
+    then
         tdomdate=`${AWK} '/Expiration\ date:/ { print $3 }' ${WHOIS_TMP} `
         tyear=`echo ${tdomdate} | ${CUT} -d'.' -f3`
         tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
@@ -855,8 +855,8 @@ check_domain_status()
         tday=`echo ${tdomdate} | ${CUT} -d'.' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
-     elif [ "${TLDTYPE}" == "gg" ]
-     then
+    elif [ "${TLDTYPE}" == "gg" ]
+    then
         tdomdate=`${AWK} -F' ' '/Registry fee due on/ && $0 != "" { print $5" "$6 }' ${WHOIS_TMP}`
 		tyear=$(( ${YEAR} + 1 ))
         tmon=`echo ${tdomdate} | ${CUT} -d' ' -f2`
@@ -928,8 +928,8 @@ check_domain_status()
     if [ "$MONTH" == "0" ]; then
         MONTH=${2#0}
         MONTH_IN_WORDS=$(getmonth_number ${2#0})
-		DOMAINDATE=${3}-${MONTH_IN_WORDS}-${1}
-		set -- ${DOMAINDATE}
+        DOMAINDATE=${3}-${MONTH_IN_WORDS}-${1}
+        set -- ${DOMAINDATE}
     fi
     IFS=""
 
