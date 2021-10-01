@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.55
-# Last Updated: 24-Sep-2021
+# Current Version: 2.56
+# Last Updated: 01-Oct-2021
 #
 # Revision History:
+#
+#  Version 2.56
+#   Added data output in CSV format -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.55
 #   Fixed support for .md/.id/.kz/.uk domains -- Vladislav V. Prodan <github.com/click0>
@@ -313,6 +316,10 @@ QUIET="FALSE"
 
 # Don't send emails by default (cmdline: -a)
 ALARM="FALSE"
+
+# Output the result in formatted (by default) or CSV format (csv) (cmdline: -o)
+OUTPUT_FORMAT="format"
+CSV_DELIMITER=","
 
 # Don't show the version of the script by default (cmdline: -V)
 VERSIONENABLE="FALSE"
@@ -858,7 +865,7 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "gg" ]
     then
         tdomdate=`${AWK} -F' ' '/Registry fee due on/ && $0 != "" { print $5" "$6 }' ${WHOIS_TMP}`
-		tyear=$(( ${YEAR} + 1 ))
+        tyear=$(( ${YEAR} + 1 ))
         tmon=`echo ${tdomdate} | ${CUT} -d' ' -f2`
         case ${tmon} in
              January) tmonth=jan ;;
@@ -974,8 +981,14 @@ print_heading()
 {
     if [ "${QUIET}" != "TRUE" ]
     then
-        printf "\n%-35s %-46s %-8s %-11s %-5s\n" "Domain" "Registrar" "Status" "Expires" "Days Left"
-        echo "----------------------------------- ---------------------------------------------- -------- ----------- ---------"
+        if [ "${OUTPUT_FORMAT}" == "format" ]; then
+            printf "\n%-35s %-46s %-8s %-11s %-5s\n" "Domain" "Registrar" "Status" "Expires" "Days Left"
+            echo "----------------------------------- ---------------------------------------------- -------- ----------- ---------"
+        fi
+        if [ "${OUTPUT_FORMAT}" == "csv" ]; then
+            printf "%s${CSV_DELIMITER}" "Domain" "Registrar" "Status" "Expires" "\"Days Left\"" | ${SED} "s/${CSV_DELIMITER}$//"
+            printf '\n'
+        fi
     fi
 }
 
@@ -992,8 +1005,15 @@ prints()
 {
     if [ "${QUIET}" != "TRUE" ]
     then
-        local MIN_DATE=$(${ECHO} $3 | ${AWK} '{ print $1, $2, $4 }')
-        printf "%-35s %-46s %-8s %-11s %-5s\n" "$1" "$5" "$2" "${MIN_DATE}" "$4"
+        local MIN_DATE=$(${ECHO} $3 | ${AWK} '{ print $1, $2, $4 }' | ${TR} -d " " )
+        if [ "${OUTPUT_FORMAT}" == "format" ]; then
+            printf "%-35s %-46s %-8s %-11s %-5s\n" "$1" "$5" "$2" "${MIN_DATE}" "$4"
+        fi
+        if [ "${OUTPUT_FORMAT}" == "csv" ]; then
+            printf "%s${CSV_DELIMITER}" "$1" "\"$5\"" "$2" "${MIN_DATE}" "$4" | ${SED} "s/${CSV_DELIMITER}$//"
+            printf '\n'
+        fi
+
     fi
 }
 
@@ -1004,7 +1024,7 @@ prints()
 ##########################################
 usage()
 {
-    echo "Usage: $0 [ -e email ] [ -x expir_days ] [ -s whois server ] [ -q ] [ -a ] [ -h ] [ -v ] [ -V ]"
+    echo "Usage: $0 [ -e email ] [ -x expir_days ] [ -s whois server ] [ -o output format ] [ -q ] [ -a ] [ -h ] [ -v ] [ -V ]"
     echo "	  {[ -d domain_name ]} || {[ -f domain_file ]}"
     echo ""
     echo "  -a               : Send a warning message through email"
@@ -1013,6 +1033,7 @@ usage()
     echo "  -f domain_file   : File with a list of domains"
     echo "  -h               : Print this screen"
     echo "  -s whois server  : Whois server to query for information"
+    echo "  -o output format : Output the result in formatted (format) [by default] or CSV format (csv)"
     echo "  -q               : Don't print anything on the console"
     echo "  -x days          : Domain expiration interval (eg. if domain_date < days)"
     echo "  -v               : Show debug information when running script"
@@ -1021,7 +1042,7 @@ usage()
 }
 
 ### Evaluate the options passed on the command line
-while getopts ad:e:f:hs:qx:vV option
+while getopts ad:e:f:hs:o:qx:vV option
 do
     case "${option}"
     in
@@ -1030,6 +1051,7 @@ do
         e) ADMIN=${OPTARG};;
         f) SERVERFILE=$OPTARG;;
         s) WHOIS_SERVER=$OPTARG;;
+        o) OUTPUT_FORMAT=$OPTARG;;
         q) QUIET="TRUE";;
         x) WARNDAYS=$OPTARG;;
         v) VERBOSE="TRUE";;
