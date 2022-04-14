@@ -20,53 +20,51 @@ Usage:
 Run it as follows:
 ```
 $ domain-check-2 -d google.com
-$ domain-check-2 -d cyberciti.biz
-$ domain-check-2 -f domain-list.txt 
+$ domain-check-2 -f domain-list.txt
+$ domain-check-2 -f domain-list.txt -a -e admin@my-cool-domain.com 
 ```
 Sample outputs:
 ```
 Domain                              Registrar                                      Status   Expires     Days Left
 ----------------------------------- ---------------------------------------------- -------- ----------- ---------
-nixcraft.com                        GoDaddy.com, LLC                               Valid    10-may-2023   2022 
-google.org                          MarkMonitor Inc.                               Valid    20-oct-2018   359  
-google.net                          MarkMonitor Inc.                               Valid    15-mar-2018   140  
-google.info                         MarkMonitor Inc.                               Valid    31-jul-2018   278  
-cyberciti.biz                       GoDaddy.com, Inc.                              Valid    30-jun-2024   2439 
-google.in                           MarkMonitor Inc. (R84-AFIN)                    Valid    14-Feb-2018   111  
-google.co.in                        MarkMonitor Inc. (R84-AFIN)                    Valid    23-Jun-2018   240  
-google.us                           MarkMonitor, Inc.                              Valid    18-apr-2018   174  
-google.uk                           Markmonitor Inc.                               Valid    11-Jun-2018   228  
-google.co.uk                        Markmonitor Inc.                               Valid    14-Feb-2018   111  
-google.jp                           Google                                         Valid    31-may-2018   217  
-
-google.cz                           REG-MARKMONITOR                                Valid    22-jul-2018   269  
-google.pl                           Markmonitor, Inc.                              Valid    18-sep-2018   327  
-google.co                           MARKMONITOR, INC.                              Valid    24-Feb-2018   121  
-google.ru                           RU-CENTER-RU                                   Valid    04-mar-2018   129  
-google.blog                         MarkMonitor Inc                                Valid    19-aug-2018   297  
-linux.cafe                          OVH SAS                                        Valid    14-nov-2018   384  
-google.md                           Google Inc.                                    Valid    02-may-2018   188  
-google.co                           MARKMONITOR, INC.                              Valid    24-Feb-2018   121  
-dotmobi.mobi                        CSC Corporate Dom                              Valid    11-may-2018   197  
-google.me                           MarkMonitor Inc.                               Valid    13-jun-2018   230  
-google.us                           MarkMonitor, Inc.                              Valid    18-apr-2018   174  
-google.su                           RUCENTER-SU                                    Valid    15-oct-2018   354  
-youtube.tv                          MARKMONITOR INC.                               Valid    14-aug-2018   292  
-abc.xyz                             MarkMonitor, Inc (TLDs)                        Valid    20-mar-2025   2702 
-google.se                           MarkMonitor Inc                                Valid    20-oct-2018   359  
-google.dk                           DK Hostmaster A/S                              Valid    31-mar-2018   156
+nixcraft.com                        NameCheap, Inc.                                Valid    10-may-2024   756
+google.org                          MarkMonitor Inc.                               Valid    20-oct-2022   188
+google.net                          MarkMonitor Inc.                               Valid    15-mar-2023   334
+google.info                         MarkMonitor Inc.                               Valid    31-jul-2022   107
+cyberciti.biz                       NameCheap, Inc.                                Valid    30-jun-2025   1172
+google.in                           MarkMonitor Inc.                               Valid    14-feb-2023   305
+google.co.in                        MarkMonitor Inc.                               Valid    23-jun-2022   69
+google.us                           MarkMonitor, Inc.                              Valid    18-apr-2023   368
+google.uk                           Markmonitor Inc.                               Valid    11-Jun-2022   57
+google.co.uk                        Markmonitor Inc.                               Valid    14-Feb-2023   305
+google.jp                           Google LLC                                     Valid    31-may-2022   46
+google.cz                           REG-MARKMONITOR                                Valid    22-jul-2022   98
+google.pl                           Markmonitor,Inc.                               Valid    18-sep-2022   156
+google.co                           MarkMonitor, Inc.                              Valid    24-feb-2023   315
+google.ru                           RU-CENTER-RU                                   Valid    04-mar-2023   323
+google.blog                         MarkMonitor, Inc                               Valid    19-aug-2022   126
+linux.cafe                          Porkbun LLC                                    Valid    14-nov-2022   213
+google.co                           MarkMonitor, Inc.                              Valid    24-feb-2023   315
+dotmobi.mobi                        CSC Corporate Domains, Inc.                    Expiring 11-may-2022   26
+google.me                           MarkMonitor Inc.                               Valid    13-jun-2022   59
+google.us                           MarkMonitor, Inc.                              Valid    18-apr-2023   368
+google.su                           RUCENTER-SU                                    Valid    15-oct-2022   183
+youtube.tv                          MarkMonitor Inc.                               Valid    14-aug-2022   121
+abc.xyz                             MarkMonitor, Inc (TLDs)                        Valid    20-mar-2025   1070
+google.se                           MarkMonitor Inc                                Valid    20-oct-2022   188
+google.dk                           DK Hostmaster A/S                              Valid    31-mar-2023   350
 ```
 [Setup Unix/Linux cron job](https://www.cyberciti.biz/faq/how-do-i-add-jobs-to-cron-under-linux-or-unix-oses/)  as follows to get email notification to send expiration notices:
 
 ```
-@daily /path/to/domain-check-2.sh -f /path/to/your-domains.txt -e you@example.com
+@daily /path/to/domain-check-2.sh -f /path/to/your-domains.txt -a -e you@example.com
 ```
 Getting help
 ------------
 ```
 $ domain-check-2.sh -h
 Usage: domain-check-2.sh [ -e email ] [ -x expir_days ] [ -q ] [ -a ] [ -h ] [ -v ] [ -V ]
-          {[ -d domain_namee ]} || { -f domainfile}
+         [ -s shois_server ] {[ -d domain_namee ]} || { -f domainfile}
 
   -a               : Send a warning message through email
   -d domain        : Domain to analyze (interactive mode)
@@ -83,5 +81,5 @@ Usage: domain-check-2.sh [ -e email ] [ -x expir_days ] [ -q ] [ -a ] [ -h ] [ -
 Authors:
 --------
 * Origianl Author: Matty < matty91 at gmail dot com > https://github.com/Matty9191
-* Forked and maitained by nixCraft https://www.cyberciti.biz/tips/domain-check-script.html 
-* I added support and fixed for various C/TLDS.
+* Forked by nixCraft https://www.cyberciti.biz/tips/domain-check-script.html 
+* Forked and maintained by Vladislav V. Prodan <github.com/click0>

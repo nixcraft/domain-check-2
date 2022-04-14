@@ -5,10 +5,14 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.56
-# Last Updated: 01-Oct-2021
+# Current Version: 2.57
+# Last Updated: 14-Apr-2022
 #
 # Revision History:
+#
+#  Version 2.57
+#   Fixed partial support for .md domain -- Vladislav V. Prodan <github.com/click0>
+#   Fixed typos.
 #
 #  Version 2.56
 #   Added data output in CSV format -- Vladislav V. Prodan <github.com/click0>
@@ -528,7 +532,8 @@ check_domain_status()
     # no longer shows Registrar name, so will use Status #
     elif [ "${TLDTYPE}" == "md" ];
     then
-        REGISTRAR=`${AWK} -F: '/Status:/ && $2 != "" { REGISTRAR=substr($2,2,27) } END { print REGISTRAR }' ${WHOIS_TMP} | ${TR} -d "\r "`
+        #REGISTRAR=`${AWK} -F: '/Status:/ && $2 != "" { REGISTRAR=substr($2,2,27) } END { print REGISTRAR }' ${WHOIS_TMP} | ${TR} -d "\r "`
+        REGISTRAR="Unknown"
     elif [ "${TLDTYPE}" == "info" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -640,7 +645,7 @@ check_domain_status()
     fi
 
     # If the Registrar is NULL, then we didn't get any data
-    if [ "${REGISTRAR}" = "" ]
+    if [ "x${REGISTRAR}" = "x" ]
     then
         prints "${DOMAIN}" "Unknown" "Unknown" "Unknown" "Unknown"
         return
@@ -737,7 +742,8 @@ check_domain_status()
         "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" -o "${TLDTYPE}" == "dk" -o "${TLDTYPE}" == "it" -o \
         "${TLDTYPE}" == "do" -o "${TLDTYPE}" == "ro" -o "${TLDTYPE}" == "game" ];
     then
-        tdomdate=`${AWK} '/Registrar Registration Expiration [Dd]ate:|Registry Expiry Date:|Expiration [Dd]ate:|Renewal date:|Expir[ey] [Dd]ate:|Expires [Oo]n:|Expires    [Oo]n:|[Ee]xpires:/ \
+        tdomdate=`${AWK} '/Registrar Registration Expiration [Dd]ate:|Registry Expiry Date:|Expiration [Dd]ate:|\
+          Renewal date:|Expir[ey] [Dd]ate:|Expires [Oo]n:|Expires    [Oo]n:|[Ee]xpires:/ \
            { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1 }' | ${HEAD} -1`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
@@ -1025,7 +1031,7 @@ prints()
 usage()
 {
     echo "Usage: $0 [ -e email ] [ -x expir_days ] [ -s whois server ] [ -o output format ] [ -q ] [ -a ] [ -h ] [ -v ] [ -V ]"
-    echo "	  {[ -d domain_name ]} || {[ -f domain_file ]}"
+    echo "	 [ -s shois_server ] {[ -d domain_name ]} || {[ -f domain_file ]}"
     echo ""
     echo "  -a               : Send a warning message through email"
     echo "  -d domain_name   : Domain to analyze (interactive mode)"
