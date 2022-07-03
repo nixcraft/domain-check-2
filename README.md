@@ -83,3 +83,13 @@ Authors:
 * Origianl Author: Matty < matty91 at gmail dot com > https://github.com/Matty9191
 * Forked by nixCraft https://www.cyberciti.biz/tips/domain-check-script.html 
 * Forked and maintained by Vladislav V. Prodan <github.com/click0>
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/click0/domain-check-2/issues). 
+
+## Show your support
+
+Give a ⭐ if this project helped you!
+
+<a href="https://www.buymeacoffee.com/click0" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-orange.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
