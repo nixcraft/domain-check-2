@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.57
-# Last Updated: 14-Apr-2022
+# Current Version: 2.58
+# Last Updated: 21-Jul-2022
 #
 # Revision History:
+#
+#  Version 2.58
+#   Fixed support for .com.ar/.ar domains -- Axel Vasquez <github.com/axelvf>
 #
 #  Version 2.57
 #   Fixed partial support for .md domain -- Vladislav V. Prodan <github.com/click0>
@@ -642,6 +645,10 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "pt" ];
     then
        REGISTRAR=`${AWK} -F: '/Admin Name:/ && $2 != "" { REGISTRAR=substr($2,2,30) } END { print REGISTRAR }' ${WHOIS_TMP}`
+
+    elif [ "${TLDTYPE}" == "ar" ] && [ "${SUBTLDTYPE}" != "com.ar" ];
+    then
+        REGISTRAR=`${AWK} -F: '/name:/ && $2 != "" { REGISTRAR=substr($2,2,30) } END { print REGISTRAR }' ${WHOIS_TMP}`
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -925,6 +932,15 @@ check_domain_status()
        tmonth=$(echo $tdomdate| ${CUT} -c4-6)
        tday=$(echo $tdomdate| ${CUT} -c-2)
        DOMAINDATE=`echo $tday-$tmonth-$tyear`
+
+    elif [ "${TLDTYPE}" == "ar" ] &&  [ "${SUBTLDTYPE}" != "com.ar" ] # for .ar added @axelvf 2022/07/21
+    then
+        tdomdate=`${AWK} '/expire:/ { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
+        tyear=`echo ${tdomdate} | ${CUT} -d'.' -f1`
+        tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d'.' -f3`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     # may work with others	 ??? ;)
     else
