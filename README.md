@@ -64,7 +64,7 @@ Getting help
 ```
 $ domain-check-2.sh -h
 Usage: domain-check-2.sh [ -e email ] [ -x expir_days ] [ -q ] [ -a ] [ -h ] [ -v ] [ -V ]
-         [ -s shois_server ] {[ -d domain_namee ]} || { -f domainfile}
+         [ -s shois_server ] {[ -d domain_name ]} || { -f domainfile}
 
   -a               : Send a warning message through email
   -d domain        : Domain to analyze (interactive mode)
