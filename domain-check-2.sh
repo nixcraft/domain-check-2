@@ -648,7 +648,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "ar" ] && [ "${SUBTLDTYPE}" != "com.ar" ];
     then
-        REGISTRAR=`${AWK} -F: '/name:/ && $2 != "" { REGISTRAR=substr($2,2,30) } END { print REGISTRAR }' ${WHOIS_TMP}`
+        REGISTRAR=`${AWK} -F: '/name:/ && $2 != "" { REGISTRAR=substr($2,3,30) } END { print REGISTRAR }' ${WHOIS_TMP}`
     fi
 
     # If the Registrar is NULL, then we didn't get any data
