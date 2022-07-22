@@ -5,10 +5,14 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.58
-# Last Updated: 21-Jul-2022
+# Current Version: 2.59
+# Last Updated: 23-Jul-2022
 #
 # Revision History:
+#
+#  Version 2.59
+#   Fixed support for .md/.kz domains -- Vladislav V. Prodan <github.com/click0>
+#   Fixed typos.
 #
 #  Version 2.58
 #   Fixed support for .com.ar/.ar domains -- Axel Vasquez <github.com/axelvf>
@@ -363,7 +367,7 @@ TAIL=$(command -v tail)
 VERSION=$(${AWK} -F': ' '/^# Current Version:/ { print $2; exit}' $0)
 
 # User-Agent
-VARUSERAGENT="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15"
+VARUSERAGENT="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
 
 # Place to stash temporary files
 WHOIS_TMP="/var/tmp/whois.$$"
@@ -514,8 +518,8 @@ check_domain_status()
 
     if [ "${TLDTYPE}" == "kz" ];
     then
-       ${CURL} -s -A "$VARUSERAGENT" "https://hoster.kz/whois/?d=${1}" \
-        | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_2_TMP}
+        ${CURL} -s -A "$VARUSERAGENT" "https://www.ps.kz/domains/whois/result?q=${1}" \
+            | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" >${WHOIS_2_TMP}
     fi
 
     # Parse out the expiration date and registrar -- uses the last registrar it finds
@@ -525,7 +529,7 @@ check_domain_status()
     if [ "${TLDTYPE}" == "uk" ]; # for .uk domain
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $0; }' ${WHOIS_TMP} \
-        	| ${AWK} -F'[' '{ print $1 }'`
+            | ${AWK} -F'[' '{ print $1 }'`
     elif [ "${TLDTYPE}" == "me" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,23) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -535,8 +539,7 @@ check_domain_status()
     # no longer shows Registrar name, so will use Status #
     elif [ "${TLDTYPE}" == "md" ];
     then
-        #REGISTRAR=`${AWK} -F: '/Status:/ && $2 != "" { REGISTRAR=substr($2,2,27) } END { print REGISTRAR }' ${WHOIS_TMP} | ${TR} -d "\r "`
-        REGISTRAR="Unknown"
+        REGISTRAR=$(${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,7,46) } END { print REGISTRAR }' ${WHOIS_TMP})
     elif [ "${TLDTYPE}" == "info" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -726,12 +729,11 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "kz" ]; # for .kz @click0 2019/02/23
     then
-        tdomdate=$(${GREP} -A 6 'Домен оплачен до' ${WHOIS_2_TMP} | ${TAIL} -n 1 | ${AWK} -F'</p>' '{ print $(NF-1) }' \
-        	| ${AWK} '{ print $1 }' | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r<p>")
+        tdomdate=$(${GREP} -A 2 'Дата окончания:' ${WHOIS_2_TMP} | ${TAIL} -n 1 | ${AWK} '{print $1;}' | ${AWK} -FT '{print $1}')
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
+        tday=$(echo ${tdomdate} | ${CUT} -d'-' -f3)
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o \

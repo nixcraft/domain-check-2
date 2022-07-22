@@ -80,7 +80,7 @@ visa.go.kr
 dominos.co.kr
 google.kr
 coronavirus.gov.hk
-hkexnews.hk
+hkdnr.net.hk
 mtr.com.hk
 dns.pt
 ana.pt
