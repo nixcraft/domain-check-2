@@ -319,7 +319,7 @@ export PATH
 # Who to page when an expired domain is detected (cmdline: -e)
 ADMIN="sysadmin@mydomain.com"
 
-# Number of days in the warning threshhold  (cmdline: -x)
+# Number of days in the warning threshhold (cmdline: -x)
 WARNDAYS=30
 
 # If QUIET is set to TRUE, don't print anything on the console (cmdline: -q)
@@ -385,7 +385,7 @@ WHOIS_2_TMP="/var/tmp/whois_2.$$"
 #############################################################################
 date2julian()
 {
-    if [ "${1} != "" ] && [ "${2} != ""  ] && [ "${3}" != "" ]
+    if [ "${1} != "" ] && [ "${2} != "" ] && [ "${3}" != "" ]
     then
          ## Since leap years add aday at the end of February,
          ## calculations are done from 1 March 0000 (a fictional year)
@@ -396,7 +396,7 @@ date2julian()
 
          ## The number of days from 1 March 0000 is calculated
          ## and the number of days from 1 Jan. 4713BC is added
-         echo $(( (734 * ${d2j_tmpmonth} + 15) / 24 -  2 * ${d2j_tmpyear} + ${d2j_tmpyear}/4 \
+         echo $(( (734 * ${d2j_tmpmonth} + 15) / 24 - 2 * ${d2j_tmpyear} + ${d2j_tmpyear}/4 \
             - ${d2j_tmpyear}/100 + ${d2j_tmpyear}/400 + $2 + 1721119 ))
     else
          echo 0
@@ -406,7 +406,7 @@ date2julian()
 #############################################################################
 # Purpose: Convert a string month into an integer representation
 # Arguments:
-#   $1 -> Month name (e.g., Sep)
+#    $1 -> Month name (e.g., Sep)
 #############################################################################
 getmonth()
 {
@@ -493,11 +493,11 @@ check_domain_status()
     # Save the domain since set will trip up the ordering
     local DOMAIN=${1}
     local TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($NF);}')
-    if [ "x${TLDTYPE}"  == "x" ];
+    if [ "x${TLDTYPE}" == "x" ];
     then
         TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1));}')
     fi
-    if [ "${TLDTYPE}"  == "ua" -o "${TLDTYPE}"  == "pl" -o "${TLDTYPE}"  == "br" ];
+    if [ "${TLDTYPE}" == "ua" -o "${TLDTYPE}" == "pl" -o "${TLDTYPE}" == "br" ];
     then
         local SUBTLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1)"."$(NF));}')
     fi
@@ -591,13 +591,13 @@ check_domain_status()
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { getline; REGISTRAR=substr($2,9,20) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "fi" ];
     then
-        REGISTRAR=`${AWK} -F: '/registrar......../ && $2 != "" { REGISTRAR=substr($2,2,20) } END { print  REGISTRAR }' ${WHOIS_TMP}`
+        REGISTRAR=`${AWK} -F: '/registrar......../ && $2 != "" { REGISTRAR=substr($2,2,20) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "fr" -o "${TLDTYPE}" == "re" -o "${TLDTYPE}" == "tf" -o "${TLDTYPE}" == "yt" -o "${TLDTYPE}" == "pm" -o "${TLDTYPE}" == "wf" ];
     then
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,4,20) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "dk" ];
     then
-        REGISTRAR=`${GREP} Copyright ${WHOIS_TMP} | ${AWK}  '{ print $8, $9, $10 }'`
+        REGISTRAR=`${GREP} Copyright ${WHOIS_TMP} | ${AWK} '{ print $8, $9, $10 }'`
     elif [ "${TLDTYPE}" == "tr" ];
     then
         REGISTRAR=`${GREP} "Organization Name" -m 1 ${WHOIS_TMP} | ${AWK} -F': ' '{ print $2 }'`
@@ -627,7 +627,7 @@ check_domain_status()
         REGISTRAR=$(${AWK} -F':' '/registrar name:/ && $0 != "" { print $2 }' ${WHOIS_TMP} | ${SED} -e 's/[[:space:]\t]*// ;')
     elif [ "${TLDTYPE}" == "id" ];
     then
-        REGISTRAR=$(${AWK} -F: '/Registrar Organization:/ && $2 != ""  { REGISTRAR=substr($2,1,40) } END { print REGISTRAR }' ${WHOIS_TMP} | ${SED} -e 's/[[:space:]\t]*// ;')
+        REGISTRAR=$(${AWK} -F: '/Registrar Organization:/ && $2 != "" { REGISTRAR=substr($2,1,40) } END { print REGISTRAR }' ${WHOIS_TMP} | ${SED} -e 's/[[:space:]\t]*// ;')
     elif [ "${TLDTYPE}" == "tg" ];
     then
         REGISTRAR=`${ECHO} ${REGISTRAR} | ${TR} -d "."`
@@ -639,7 +639,7 @@ check_domain_status()
         REGISTRAR=`${AWK} -F'(' '/Registrar:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $1; }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "kr" ];
     then
-        REGISTRAR=`${AWK} -F: '/Registrant   / && $2 != "" { REGISTRAR=substr($2,2,30) } END { print REGISTRAR }' ${WHOIS_TMP}`
+        REGISTRAR=`${AWK} -F: '/Registrant / && $2 != "" { REGISTRAR=substr($2,2,30) } END { print REGISTRAR }' ${WHOIS_TMP}`
 
     elif [ "${TLDTYPE}" == "hk" ];
     then
@@ -739,7 +739,7 @@ check_domain_status()
         tday=$(echo ${tdomdate} | ${CUT} -d'-' -f3)
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
-    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org"  -o "${TLDTYPE}" == "link" -o \
+    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org" -o "${TLDTYPE}" == "link" -o \
         "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o \
         "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o \
         "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o \
@@ -781,7 +781,7 @@ check_domain_status()
         tday=`echo ${tdomdate} | ${CUT} -d'.' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
-    elif [ "${TLDTYPE}" == "pl" ] &&  [ "${SUBTLDTYPE}" != "co.pl" ] # NASK
+    elif [ "${TLDTYPE}" == "pl" ] && [ "${SUBTLDTYPE}" != "co.pl" ] # NASK
     then
         tdomdate=`${AWK} -F: '/^expiration\ date:/ || /renewal\ date:/ { print $2; }' ${WHOIS_TMP} | ${AWK} -F" " '{ print $1; }'`
         tyear=`echo ${tdomdate} | ${CUT} -d'.' -f1`
@@ -809,7 +809,7 @@ check_domain_status()
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "fr" -o "${TLDTYPE}" == "re" -o "${TLDTYPE}" == "tf" -o "${TLDTYPE}" == "yt" -o \
-      "${TLDTYPE}" == "pm" -o "${TLDTYPE}" == "wf" -o "${TLDTYPE}" == "mx" -o "${TLDTYPE}" == "sk"  ];
+      "${TLDTYPE}" == "pm" -o "${TLDTYPE}" == "wf" -o "${TLDTYPE}" == "mx" -o "${TLDTYPE}" == "sk" ];
     then
         tdomdate=`${AWK} '/Expiry\ Date:|Expiration\ Date:|Valid\ Until:/ { print $3 }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
@@ -938,7 +938,7 @@ check_domain_status()
        tday=$(echo $tdomdate| ${CUT} -c-2)
        DOMAINDATE=`echo $tday-$tmonth-$tyear`
 
-    elif [ "${TLDTYPE}" == "ar" ] &&  [ "${SUBTLDTYPE}" != "com.ar" ] # for .ar added @axelvf 2022/07/21
+    elif [ "${TLDTYPE}" == "ar" ] && [ "${SUBTLDTYPE}" != "com.ar" ] # for .ar added @axelvf 2022/07/21
     then
         tdomdate=`${AWK} '/expire:/ { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
         tyear=`echo ${tdomdate} | ${CUT} -d'.' -f1`
