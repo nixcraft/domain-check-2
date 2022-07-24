@@ -597,10 +597,10 @@ check_domain_status()
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,4,20) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "dk" ];
     then
-        REGISTRAR=`${GREP} Copyright ${WHOIS_TMP} | ${AWK} '{ print $8, $9, $10 }'`
+        REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,13,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "tr" ];
     then
-        REGISTRAR=`${GREP} "Organization Name" -m 1 ${WHOIS_TMP} | ${AWK} -F': ' '{ print $2 }'`
+        REGISTRAR=`${AWK} -F': ' '/Organization Name/ {print $2}' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "it" ];
     then
         REGISTRAR=`${AWK} -F':' '/Registrar/ && $0 != "" { getline;REGISTRAR=substr($0,21,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
