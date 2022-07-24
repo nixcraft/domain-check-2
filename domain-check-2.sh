@@ -5,10 +5,15 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.59
-# Last Updated: 23-Jul-2022
+# Current Version: 2.60
+# Last Updated: 24-Jul-2022
 #
 # Revision History:
+#
+#  Version 2.60
+#   Added support for .cf domain -- Vladislav V. Prodan <github.com/click0>
+#   Simplified checking for .dk/.tr/.xyz/.fi/.fr zones.
+#   Fixed typos.
 #
 #  Version 2.59
 #   Fixed support for .md/.kz domains -- Vladislav V. Prodan <github.com/click0>
