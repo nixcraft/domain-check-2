@@ -585,16 +585,16 @@ check_domain_status()
         REGISTRAR=`${GREP} -A1 'Holder data:' ${WHOIS_TMP} | ${AWK} -F': ' '/Name...:/ { print $2 }'`
     elif [ "${TLDTYPE}" == "xyz" ];
     then
-        REGISTRAR=`${GREP} Registrar: ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $0 != "" { getline; REGISTRAR=substr($0,12,35) } END { print REGISTRAR }'`
+        REGISTRAR=`${AWK} -F: '/Registrar:/ && $0 != "" { REGISTRAR=substr($2,2,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" ];
     then
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { getline; REGISTRAR=substr($2,9,20) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "fi" ];
     then
-        REGISTRAR=`${GREP} 'registrar' ${WHOIS_TMP} | ${AWK} -F: '/registrar/ && $2 != "" { getline; REGISTRAR=substr($2,2,20) } END { print  REGISTRAR }'`
+        REGISTRAR=`${AWK} -F: '/registrar......../ && $2 != "" { REGISTRAR=substr($2,2,20) } END { print  REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "fr" -o "${TLDTYPE}" == "re" -o "${TLDTYPE}" == "tf" -o "${TLDTYPE}" == "yt" -o "${TLDTYPE}" == "pm" -o "${TLDTYPE}" == "wf" ];
     then
-        REGISTRAR=`${GREP} "registrar:" ${WHOIS_TMP} | ${AWK} -F: '/registrar:/ && $2 != "" { getline; REGISTRAR=substr($2,4,20) } END { print REGISTRAR }'`
+        REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,4,20) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "dk" ];
     then
         REGISTRAR=`${GREP} Copyright ${WHOIS_TMP} | ${AWK}  '{ print $8, $9, $10 }'`
