@@ -652,6 +652,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "ar" ] && [ "${SUBTLDTYPE}" != "com.ar" ];
     then
         REGISTRAR=`${AWK} -F: '/name:/ && $2 != "" { REGISTRAR=substr($2,3,30) } END { print REGISTRAR }' ${WHOIS_TMP}`
+    elif [ "${TLDTYPE}" == "cf" ];
+    then
+        REGISTRAR=`${AWK} -F: '/Owner contact:/ { getline; getline; REGISTRAR=substr($2,10,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
     fi
 
     # If the Registrar is NULL, then we didn't get any data
@@ -943,6 +946,14 @@ check_domain_status()
         tmonth=$(getmonth_number ${tmon})
         tday=`echo ${tdomdate} | ${CUT} -d'.' -f3`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif [ "${TLDTYPE}" == "cf" ]; # for .sg added @click0 2021/07/24
+    then
+       tdomdate=`${AWK} -F: '/Record will expire on:/ { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
+       tyear=$(echo ${tdomdate} | ${CUT} -d'/' -f3)
+       tmonth=$(echo ${tdomdate} | ${CUT} -d'/' -f1)
+       tday=$(echo ${tdomdate} | ${CUT} -d'/' -f2)
+       DOMAINDATE=`echo ${tday}-${tmonth}-${tyear}`
 
     # may work with others	 ??? ;)
     else
