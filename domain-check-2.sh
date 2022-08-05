@@ -5,10 +5,13 @@
 #
 # Author: Matty < matty91 at gmail dot com >
 #
-# Current Version: 2.18
-# Last Updated: 07-Jan-2019
+# Current Version: 2.19
+# Last Updated: 06-Aug-2022
 #
 # Revision History:
+#
+#  Version 2.19
+#   Added support for .casa domain -- github.com/tacerus
 #
 #  Version 2.18
 #   Added support for .pro/.mx/.ro/.aero/.asia/.cc/.college domain -- Vivek Gite <github.com/nixcraft>
@@ -329,7 +332,7 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "md" ];
     then
         REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Status:/ && $2 != ""  { REGISTRAR=substr($2,2,27) } END { print REGISTRAR }'`
-    elif [ "${TLDTYPE}" == "info" ];
+    elif [ "${TLDTYPE}" == "info" -o "${TLDTYPE}" == "casa" ];
     then
         REGISTRAR=`cat ${WHOIS_TMP} | ${AWK} -F: '/Registrar:/ && $2 != ""  { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }'`
     elif [ "${TLDTYPE}" == "ca" ];
@@ -393,7 +396,7 @@ check_domain_status()
 
     # The whois Expiration data should resemble the following: "Expiration Date: 09-may-2008"
 
-    if [ "${TLDTYPE}" == "info" -o "${TLDTYPE}" == "org" ];
+    if [ "${TLDTYPE}" == "info" -o "${TLDTYPE}" == "org" -o "${TLDTYPE}" == "casa" ];
     then
 	    tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expiry Date:/ { print $4 }'`
             tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
