@@ -1,6 +1,6 @@
 Domain Expiration Check Shell Script
 ====================================
-A simple shell script to display or notify the user via email about domain status and expiry date. 
+A simple shell script to display or notify the user via email about domain status and expiry date.
 
 Installation:
 -------------
@@ -9,11 +9,14 @@ Use the curl or wget command to grab script as follows:
 ```
 $ wget https://raw.githubusercontent.com/click0/domain-check-2/master/domain-check-2.sh
 ## [ sample domain list for testing purpose ] ##
-$ wget https://raw.githubusercontent.com/click0/domain-check-2/master/domain-list.txt 
+$ wget https://raw.githubusercontent.com/click0/domain-check-2/master/domain-list.txt
 ## [ install it in /usr/local/bin dir ] ##
 $ sudo cp -vf domain-check-2.sh /usr/local/bin/domain-check-2
 $ sudo chmod +x /usr/local/bin/domain-check-2
 ```
+Requirements:
+-
+Requires whois, curl (for domains in the .kz zone), mail (mailutils).
 
 Usage:
 ------
@@ -21,7 +24,7 @@ Run it as follows:
 ```
 $ domain-check-2 -d google.com
 $ domain-check-2 -f domain-list.txt
-$ domain-check-2 -f domain-list.txt -a -e admin@my-cool-domain.com 
+$ domain-check-2 -f domain-list.txt -a -e admin@my-cool-domain.com
 ```
 Sample outputs:
 ```
@@ -81,12 +84,12 @@ Usage: domain-check-2.sh [ -e email ] [ -x expir_days ] [ -q ] [ -a ] [ -h ] [ -
 Authors:
 --------
 * Origianl Author: Matty < matty91 at gmail dot com > https://github.com/Matty9191
-* Forked by nixCraft https://www.cyberciti.biz/tips/domain-check-script.html 
+* Forked by nixCraft https://www.cyberciti.biz/tips/domain-check-script.html
 * Forked and maintained by Vladislav V. Prodan <github.com/click0>
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/click0/domain-check-2/issues). 
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/click0/domain-check-2/issues).
 
 ## Show your support
 

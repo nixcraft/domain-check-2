@@ -4,11 +4,15 @@
 # Program: Domain Expiration Check <domain-check>
 #
 # Author: Matty < matty91 at gmail dot com >
+# Co-author: Vladislav V. Prodan <github.com/click0>
 #
-# Current Version: 2.60
-# Last Updated: 24-Jul-2022
+# Current Version: 2.61
+# Last Updated: 26-Aug-2022
 #
 # Revision History:
+#
+#  Version 2.61
+#   The list of requirements has been corrected and added to the project description.
 #
 #  Version 2.60
 #   Added support for .cf domain -- Vladislav V. Prodan <github.com/click0>
@@ -272,7 +276,7 @@
 #   registrars.
 #
 # Requirements:
-#   Requires whois, curl (for domains in the .kz zone)
+#   Requires whois, curl (for domains in the .kz zone), mail (mailutils)
 #
 # Installation:
 #   Copy the shell script to a suitable location
