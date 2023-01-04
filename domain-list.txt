@@ -94,3 +94,4 @@ google.click
 google.business
 google.photo
 google.com.ar
+amazon.bm

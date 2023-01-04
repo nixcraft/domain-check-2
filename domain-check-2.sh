@@ -6,10 +6,13 @@
 # Author: Matty < matty91 at gmail dot com >
 # Co-author: Vladislav V. Prodan <github.com/click0>
 #
-# Current Version: 2.61
-# Last Updated: 26-Aug-2022
+# Current Version: 2.62
+# Last Updated: 05-Jan-2023
 #
 # Revision History:
+#
+#  Version 2.62
+#   Added support for .bm domain -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.61
 #   The list of requirements has been corrected and added to the project description.
@@ -521,7 +524,14 @@ check_domain_status()
         local WHS="${WHOIS_SERVER}"
     fi
 
-    [ "${SUBTLDTYPE}" == "co.pl" ] && local WHS="whois.co.pl"; 	# added by @hawkeye116477 20190514
+    if [ -n "${WHOIS_SERVER}" ];
+    then
+        # section for TLDTYPE
+        [ "${TLDTYPE}" == "bm" ] && local WHS="whois.bermudanic.bm";
+
+        # section for SUBTLDTYPE
+        [ "${SUBTLDTYPE}" == "co.pl" ] && local WHS="whois.co.pl"; 	# added by @hawkeye116477 20190514
+    fi
 
     ${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
 
@@ -664,8 +674,11 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "cf" ];
     then
         REGISTRAR=`${AWK} -F: '/Owner contact:/ { getline; getline; REGISTRAR=substr($2,10,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
+    elif [ "${TLDTYPE}" == "bm" ];
+    then
+        REGISTRAR="$(${AWK} -F'Registrar: ' '/Registrar:/ && $2 != "" { print $2 }' ${WHOIS_TMP} |
+            ${AWK} '/http:/ { print substr($1,8,40) } /https:/ { print substr($1,9,40) }' | ${TR} -d "/")"
     fi
-
     # If the Registrar is NULL, then we didn't get any data
     if [ "x${REGISTRAR}" = "x" ]
     then
