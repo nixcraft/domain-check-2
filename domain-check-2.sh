@@ -6,10 +6,13 @@
 # Author: Matty < matty91 at gmail dot com >
 # Co-author: Vladislav V. Prodan <github.com/click0>
 #
-# Current Version: 2.62
-# Last Updated: 05-Jan-2023
+# Current Version: 2.63
+# Last Updated: 13-Jan-2023
 #
 # Revision History:
+#
+#  Version 2.63
+#   Removed the check for the existence of the mail client binary if the script does not use mail notification.
 #
 #  Version 2.62
 #   Added support for .bm domain -- Vladislav V. Prodan <github.com/click0>
@@ -354,7 +357,7 @@ VERBOSE="FALSE"
 WHOIS_SERVER="whois.iana.org"
 
 # Location of system binaries
-for BINARY in whois date mail curl ; do
+for BINARY in whois date curl ; do
     if [ ! -x "$(command -v $BINARY)" ]; then
         echo "ERROR: The $BINARY binary does not exist in \$$BINARY."
         echo "  FIX: Please modify the \$$BINARY variable in the program header."
@@ -368,7 +371,6 @@ DATE=$(command -v date)
 CUT=$(command -v cut)
 GREP=$(command -v grep)
 TR=$(command -v tr)
-MAIL=$(command -v mail)
 CURL=$(command -v curl)
 ECHO=$(command -v echo)
 HEAD=$(command -v head)
@@ -1117,6 +1119,20 @@ do
         exit 1;;
     esac
 done
+
+### Checking for the existence of a mail client
+if [ "${ALARM}" == "TRUE" ]
+then
+    for BINARY in mail ; do
+        if [ ! -x "$(command -v mail)" ]; then
+            echo "ERROR: The $BINARY binary does not exist in \$$BINARY."
+            echo "  FIX: Please modify the \$$BINARY variable in the program header."
+            exit 1
+        fi
+    done
+    MAIL=$(command -v mail)
+fi
+
 
 ### Show debug information when running script
 if [ "${VERBOSE}" == "TRUE" ]
