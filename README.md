@@ -16,7 +16,7 @@ $ sudo chmod +x /usr/local/bin/domain-check-2
 ```
 Requirements:
 -
-Requires whois, curl (for domains in the .kz zone), mail (mailutils).
+Requires `whois`, `curl` (for domains in the .kz zone), `mail` (mailutils).
 
 Usage:
 ------
