@@ -6,10 +6,13 @@
 # Author: Matty < matty91 at gmail dot com >
 # Co-author: Vladislav V. Prodan <github.com/click0>
 #
-# Current Version: 2.63
-# Last Updated: 13-Jan-2023
+# Current Version: 2.64
+# Last Updated: 18-Jan-2023
 #
 # Revision History:
+#
+#  Version 2.64
+#   Removed whitespace escape for awk.
 #
 #  Version 2.63
 #   Removed the check for the existence of the mail client binary if the script does not use mail notification.
