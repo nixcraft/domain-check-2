@@ -13,6 +13,7 @@
 #
 #  Version 2.64
 #   Removed whitespace escape for awk.
+#   Fixed registrar output formatting for some domain zones.
 #
 #  Version 2.63
 #   Removed the check for the existence of the mail client binary if the script does not use mail notification.
