@@ -9,6 +9,8 @@
 # Last Updated: 07-Jan-2019
 #
 # Revision History:
+#  Version 2.19
+#   Added support for .systems/.network/.run/.rocks/.win/.tel -- https://github.com/abhisheknair
 #
 #  Version 2.18
 #   Added support for .pro/.mx/.ro/.aero/.asia/.cc/.college domain -- Vivek Gite <github.com/nixcraft>
@@ -393,7 +395,7 @@ check_domain_status()
 
     # The whois Expiration data should resemble the following: "Expiration Date: 09-may-2008"
 
-    if [ "${TLDTYPE}" == "info" -o "${TLDTYPE}" == "org" ];
+    if [ "${TLDTYPE}" == "info" -o "${TLDTYPE}" == "org" -o "${TLDTYPE}" == "systems" -o "${TLDTYPE}" == "network" -o "${TLDTYPE}" == "run" -o "${TLDTYPE}" == "rocks" -o "${TLDTYPE}" == "win" -o "${TLDTYPE}" == "tel" ];
     then
 	    tdomdate=`cat ${WHOIS_TMP} | ${AWK} '/Expiry Date:/ { print $4 }'`
             tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
