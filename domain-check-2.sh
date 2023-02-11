@@ -1103,7 +1103,7 @@ prints()
 usage()
 {
     echo "Usage: $0 [ -e email ] [ -x expir_days ] [ -s whois server ] [ -o output format ] [ -q ] [ -a ] [ -h ] [ -v ] [ -V ]"
-    echo "	 [ -s shois_server ] {[ -d domain_name ]} || {[ -f domain_file ]}"
+    echo "	 [ -s whois_server ] {[ -d domain_name ]} || {[ -f domain_file ]}"
     echo ""
     echo "  -a               : Send a warning message through email"
     echo "  -d domain_name   : Domain to analyze (interactive mode)"
