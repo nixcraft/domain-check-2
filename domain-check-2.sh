@@ -6,10 +6,13 @@
 # Author: Matty < matty91 at gmail dot com >
 # Co-author: Vladislav V. Prodan <github.com/click0>
 #
-# Current Version: 2.64
-# Last Updated: 18-Jan-2023
+# Current Version: 2.65
+# Last Updated: 11-Feb-2023
 #
 # Revision History:
+#
+#  Version 2.65
+#   Added support for .co.jp domain -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.64
 #   Removed whitespace escape for awk.
@@ -515,7 +518,7 @@ check_domain_status()
     then
         TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1));}')
     fi
-    if [ "${TLDTYPE}" == "ua" -o "${TLDTYPE}" == "pl" -o "${TLDTYPE}" == "br" ];
+    if [ "${TLDTYPE}" == "ua" -o "${TLDTYPE}" == "pl" -o "${TLDTYPE}" == "br" -o "${TLDTYPE}" == "jp" ];
     then
         local SUBTLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1)"."$(NF));}')
     fi
@@ -558,9 +561,12 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "me" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,23) } END { print REGISTRAR }' ${WHOIS_TMP}`
-    elif [ "${TLDTYPE}" == "jp" ];
+    elif [ "${TLDTYPE}" == "jp" ] && [ "${SUBTLDTYPE}" != "co.jp" ];
     then
         REGISTRAR=`${AWK} -F\] '/\[Registrant\]/ && $2 != "" { REGISTRAR=substr($2,21,40) } END { print REGISTRAR }' ${WHOIS_TMP} | ${TR} -d "\r"`
+    elif [ "${SUBTLDTYPE}" == "co.jp" ];
+    then
+        REGISTRAR=`${AWK} -F\] '/\[Organization\]/ && $2 != "" { REGISTRAR=substr($2,16,40) } END { print REGISTRAR }' ${WHOIS_TMP} | ${TR} -d "\r"`
     # no longer shows Registrar name, so will use Status #
     elif [ "${TLDTYPE}" == "md" ];
     then
@@ -698,9 +704,18 @@ check_domain_status()
     then
         DOMAINDATE=`${AWK} '/Renewal date:/ || /Expiry date:/ { print $3 }' ${WHOIS_TMP}`
 
-    elif [ "${TLDTYPE}" == "jp" ]; # for .jp fixed @click0 2019/06/26
+    elif [ "${TLDTYPE}" == "jp" ] && [ "${SUBTLDTYPE}" != "co.jp" ];
     then
         tdomdate=`${AWK} -F] '/\[有効期限\]|\[Expires on\]/ { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
+        tyear=`echo ${tdomdate} | ${CUT} -d'/' -f1`
+        tmon=`echo ${tdomdate} | ${CUT} -d'/' -f2`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d'/' -f3`
+        DOMAINDATE=`echo $tday-$tmonth-$tyear`
+
+    elif [ "${SUBTLDTYPE}" == "co.jp" ];
+    then
+        tdomdate=`${AWK} '/\[状態\]/ { print $NF }' ${WHOIS_TMP} | ${TR} -d "() \r"`
         tyear=`echo ${tdomdate} | ${CUT} -d'/' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'/' -f2`
         tmonth=$(getmonth_number ${tmon})

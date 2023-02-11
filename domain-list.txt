@@ -95,3 +95,4 @@ google.business
 google.photo
 google.com.ar
 amazon.bm
+google.co.jp
