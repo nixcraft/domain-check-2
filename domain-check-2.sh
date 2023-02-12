@@ -690,6 +690,9 @@ check_domain_status()
     then
         REGISTRAR="$(${AWK} -F'Registrar: ' '/Registrar:/ && $2 != "" { print $2 }' ${WHOIS_TMP} |
             ${AWK} '/http:/ { print substr($1,8,40) } /https:/ { print substr($1,9,40) }' | ${TR} -d "/")"
+    elif [ "${TLDTYPE}" == "ee" ];
+    then
+        REGISTRAR=`${AWK} -F: '/Registrant:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$2); print $2 }' ${WHOIS_TMP}`
     fi
     # If the Registrar is NULL, then we didn't get any data
     if [ "x${REGISTRAR}" = "x" ]
@@ -991,6 +994,14 @@ check_domain_status()
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${TLDTYPE}" == "cf" ]; # for .sg added @click0 2021/07/24
+    then
+       tdomdate=`${AWK} -F: '/Record will expire on:/ { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
+       tyear=$(echo ${tdomdate} | ${CUT} -d'/' -f3)
+       tmonth=$(echo ${tdomdate} | ${CUT} -d'/' -f1)
+       tday=$(echo ${tdomdate} | ${CUT} -d'/' -f2)
+       DOMAINDATE=`echo ${tday}-${tmonth}-${tyear}`
+
+    elif [ "${TLDTYPE}" == "ee" ];
     then
        tdomdate=`${AWK} -F: '/Record will expire on:/ { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
        tyear=$(echo ${tdomdate} | ${CUT} -d'/' -f3)
