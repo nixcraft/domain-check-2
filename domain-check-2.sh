@@ -406,19 +406,19 @@ WHOIS_2_TMP="/var/tmp/whois_2.$$"
 #############################################################################
 date2julian()
 {
-    if [ "${1} != "" ] && [ "${2} != "" ] && [ "${3}" != "" ]
+    if [ -n "${1}" ] && [ -n "${2}" ] && [ -n "${3}" ]
     then
          ## Since leap years add aday at the end of February,
          ## calculations are done from 1 March 0000 (a fictional year)
          d2j_tmpmonth=$((12 * ${3} + ${1} - 3))
 
          ## If it is not yet March, the year is changed to the previous year
-         d2j_tmpyear=$(( ${d2j_tmpmonth} / 12))
+         d2j_tmpyear=$(( d2j_tmpmonth / 12))
 
          ## The number of days from 1 March 0000 is calculated
          ## and the number of days from 1 Jan. 4713BC is added
-         echo $(( (734 * ${d2j_tmpmonth} + 15) / 24 - 2 * ${d2j_tmpyear} + ${d2j_tmpyear}/4 \
-            - ${d2j_tmpyear}/100 + ${d2j_tmpyear}/400 + $2 + 1721119 ))
+         echo $(( (734 * d2j_tmpmonth + 15) / 24 - 2 * d2j_tmpyear + d2j_tmpyear/4 \
+            - d2j_tmpyear/100 + d2j_tmpyear/400 + ${2} + 1721119 ))
     else
          echo 0
     fi
@@ -431,7 +431,7 @@ date2julian()
 #############################################################################
 getmonth()
 {
-    LOWER=`tolower $1`
+    LOWER=`tolower ${1}`
 
     case ${LOWER} in
           jan) echo 1 ;;
@@ -482,9 +482,9 @@ getmonth_number()
 #############################################################################
 date_diff()
 {
-    if [ "${1}" != "" ] && [ "${2}" != "" ]
+    if [ -n "${1}" ] && [ -n "${2}" ]
     then
-        echo $(expr ${2} - ${1})
+        echo $((${2} - ${1}))
     else
         echo 0
     fi
@@ -519,7 +519,7 @@ check_domain_status()
     TLDTYPE=$(echo "${DOMAIN}" | ${AWK} -F. '{print tolower($NF);}')
     if [ "x${TLDTYPE}" == "x" ];
     then
-        TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1));}')
+        TLDTYPE=$(echo "${DOMAIN}" | ${AWK} -F. '{print tolower($(NF-1));}')
     fi
     if [ "${TLDTYPE}" == "ua" ] || [ "${TLDTYPE}" == "pl" ] || [ "${TLDTYPE}" == "br" ] || [ "${TLDTYPE}" == "jp" ] || \
         [ "${TLDTYPE}" == "uk" ];
@@ -529,7 +529,7 @@ check_domain_status()
     fi
 
     # Invoke whois to find the domain registrar and expiration date
-    #${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
+    # ${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
     # Let whois select server
 
     local WHS
@@ -564,7 +564,7 @@ check_domain_status()
 
     if [ "${TLDTYPE}" == "uk" ] && [ "${SUBTLDTYPE}" != "gov.uk" ]; # for .uk domain
     then
-        REGISTRAR=`${AWK} -F: '/Registrar:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $0; }' ${WHOIS_TMP} \
+        REGISTRAR=`${AWK} -F: '/Registrar:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $0 }' ${WHOIS_TMP} \
             | ${AWK} -F'[' '{ print $1 }'`
     elif [ "${SUBTLDTYPE}" == "gov.uk" ];
     then
@@ -685,7 +685,7 @@ check_domain_status()
         REGISTRAR=$(${AWK} -F': ' '/Registrant Name:/ && $2 != "" { print $2 }' ${WHOIS_TMP})
     elif [ "${TLDTYPE}" == "gg" ];
     then
-        REGISTRAR=`${AWK} -F'(' '/Registrar:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $1; }' ${WHOIS_TMP}`
+        REGISTRAR=`${AWK} -F'(' '/Registrar:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $1 }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "kr" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrant / && $2 != "" { REGISTRAR=substr($2,2,30) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -1180,7 +1180,7 @@ do
         x) WARNDAYS=$OPTARG;;
         v) VERBOSE="TRUE";;
         V) VERSIONENABLE="TRUE";;
-        \?) usage
+        \?|h) usage
         exit 1;;
     esac
 done
@@ -1189,7 +1189,7 @@ done
 if [ "${ALARM}" == "TRUE" ]
 then
     for BINARY in mail ; do
-        if [ ! -x "$(command -v mail)" ]; then
+        if [ ! -x "$(command -v $BINARY)" ]; then
             echo "ERROR: The $BINARY binary does not exist in \$$BINARY."
             echo "  FIX: Please modify the \$$BINARY variable in the program header."
             exit 1
