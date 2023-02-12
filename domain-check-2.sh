@@ -539,6 +539,7 @@ check_domain_status()
         [ "${TLDTYPE}" == "bm" ] && local WHS="whois.bermudanic.bm";
 
         # section for SUBTLDTYPE
+        [ "${SUBTLDTYPE}" == "co.pl" ] && WHS="whois.co.pl"; 	# added by @hawkeye116477 20190514
         [ "${SUBTLDTYPE}" == "gov.uk" ] && WHS="whois.gov.uk";
         [ "${SUBTLDTYPE}" == "biz.ua" ] && WHS="whois.biz.ua";
     fi
