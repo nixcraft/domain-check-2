@@ -6,10 +6,15 @@
 # Author: Matty < matty91 at gmail dot com >
 # Co-author: Vladislav V. Prodan <github.com/click0>
 #
-# Current Version: 2.65
-# Last Updated: 11-Feb-2023
+# Current Version: 2.66
+# Last Updated: 12-Feb-2023
 #
 # Revision History:
+#
+#  Version 2.66
+#   Added support for .ee/.pk/.biz.ua/.gov.uk/.co.ua/.pp.ua TLDs. -- Vladislav V. Prodan <github.com/click0>
+#   Code optimization with minor bug fixes.
+#   Optimization to get rid of long lines in the code.
 #
 #  Version 2.65
 #   Added support for .co.jp domain -- Vladislav V. Prodan <github.com/click0>
@@ -522,6 +527,7 @@ check_domain_status()
         TLDTYPE=$(echo "${DOMAIN}" | ${AWK} -F. '{print tolower($(NF-1));}')
     fi
     if [ "${TLDTYPE}" == "ua" ] || [ "${TLDTYPE}" == "pl" ] || [ "${TLDTYPE}" == "br" ] || [ "${TLDTYPE}" == "jp" ] || \
+        [ "${TLDTYPE}" == "za" ] || \
         [ "${TLDTYPE}" == "uk" ];
     then
         local SUBTLDTYPE
@@ -546,6 +552,10 @@ check_domain_status()
 
         # section for SUBTLDTYPE
         [ "${SUBTLDTYPE}" == "co.pl" ] && WHS="whois.co.pl"; 	# added by @hawkeye116477 20190514
+        [ "${SUBTLDTYPE}" == "ac.za" ] || [ "${SUBTLDTYPE}" == "co.za" ] || [ "${SUBTLDTYPE}" == "net.za" ] || \
+            [ "${SUBTLDTYPE}" == "org.za" ] || [ "${SUBTLDTYPE}" == "web.za" ] && \
+            WHS="whois.registry.net.za";
+        [ "${SUBTLDTYPE}" == "gov.za" ] && WHS="whois.gov.za";
         [ "${SUBTLDTYPE}" == "gov.uk" ] && WHS="whois.gov.uk";
         [ "${SUBTLDTYPE}" == "biz.ua" ] && WHS="whois.biz.ua";
         [ "${SUBTLDTYPE}" == "co.ua" ] && WHS="whois.co.ua";
