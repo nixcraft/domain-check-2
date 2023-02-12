@@ -659,7 +659,7 @@ check_domain_status()
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,13,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "tr" ];
     then
-        REGISTRAR=`${AWK} -F': ' '/Organization Name/ {print $2}' ${WHOIS_TMP}`
+        REGISTRAR=`${AWK} -F': ' '/Organization Name/ { REGISTRAR=substr($2,0,47);print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "it" ];
     then
         REGISTRAR=`${AWK} -F':' '/Registrar/ && $0 != "" { getline;REGISTRAR=substr($0,21,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
