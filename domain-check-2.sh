@@ -521,7 +521,8 @@ check_domain_status()
     then
         TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1));}')
     fi
-    if [ "${TLDTYPE}" == "ua" -o "${TLDTYPE}" == "pl" -o "${TLDTYPE}" == "br" -o "${TLDTYPE}" == "jp" ];
+    if [ "${TLDTYPE}" == "ua" ] || [ "${TLDTYPE}" == "pl" ] || [ "${TLDTYPE}" == "br" ] || [ "${TLDTYPE}" == "jp" ] || \
+        [ "${TLDTYPE}" == "uk" ];
     then
         local SUBTLDTYPE
         SUBTLDTYPE=$(echo "${DOMAIN}" | ${AWK} -F. '{print tolower($(NF-1)"."$(NF));}')
@@ -574,10 +575,12 @@ check_domain_status()
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,23) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "jp" ] && [ "${SUBTLDTYPE}" != "co.jp" ];
     then
-        REGISTRAR=`${AWK} -F\] '/\[Registrant\]/ && $2 != "" { REGISTRAR=substr($2,21,40) } END { print REGISTRAR }' ${WHOIS_TMP} | ${TR} -d "\r"`
+        REGISTRAR=`${AWK} -F']' '/\[Registrant\]/ && $2 != "" { sub(/^[ \t]+/,"",$2); print $2 }' ${WHOIS_TMP} |
+            ${TR} -d "\r"`
     elif [ "${SUBTLDTYPE}" == "co.jp" ];
     then
-        REGISTRAR=`${AWK} -F\] '/\[Organization\]/ && $2 != "" { REGISTRAR=substr($2,16,40) } END { print REGISTRAR }' ${WHOIS_TMP} | ${TR} -d "\r"`
+        REGISTRAR=`${AWK} -F']' '/\[Organization\]/ && $2 != "" { sub(/^[ \t]+/,"",$2); print $2 }' ${WHOIS_TMP} |
+            ${TR} -d "\r"`
     # no longer shows Registrar name, so will use Status #
     elif [ "${TLDTYPE}" == "md" ];
     then
@@ -624,7 +627,7 @@ check_domain_status()
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,5,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "pl" ] && [ "${SUBTLDTYPE}" != "co.pl" ];
     then
-        REGISTRAR=`${AWK} -F: '/REGISTRAR:/ && $0 != "" { getline; REGISTRAR=substr($0,0,35) } END { print REGISTRAR }' ${WHOIS_TMP} | ${TR} -d " \r"`
+        REGISTRAR=`${AWK} -F: '/REGISTRAR:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $0 }' ${WHOIS_TMP} | ${TR} -d " \r"`
     elif [ "${SUBTLDTYPE}" == "co.pl" ] # added by @hawkeye116477 20190514;
     then
         REGISTRAR=`${GREP} -A1 'Holder data:' ${WHOIS_TMP} | ${AWK} -F': ' '/Name...:/ { print $2 }'`
@@ -637,7 +640,8 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "fi" ];
     then
         REGISTRAR=`${AWK} -F: '/registrar......../ && $2 != "" { REGISTRAR=substr($2,2,20) } END { print REGISTRAR }' ${WHOIS_TMP}`
-    elif [ "${TLDTYPE}" == "fr" -o "${TLDTYPE}" == "re" -o "${TLDTYPE}" == "tf" -o "${TLDTYPE}" == "yt" -o "${TLDTYPE}" == "pm" -o "${TLDTYPE}" == "wf" ];
+    elif [ "${TLDTYPE}" == "fr" -o "${TLDTYPE}" == "re" -o "${TLDTYPE}" == "tf" -o "${TLDTYPE}" == "yt" -o \
+           "${TLDTYPE}" == "pm" -o "${TLDTYPE}" == "wf" ];
     then
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,22,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "dk" ];
@@ -672,7 +676,7 @@ check_domain_status()
         REGISTRAR=$(${AWK} -F': ' '/registrar name:/ && $0 != "" { print $2 }' ${WHOIS_TMP})
     elif [ "${TLDTYPE}" == "id" ];
     then
-        REGISTRAR=$(${AWK} -F: '/Registrar Organization:/ && $2 != "" { REGISTRAR=substr($2,1,40) } END { print REGISTRAR }' ${WHOIS_TMP} | ${SED} -e 's/[[:space:]\t]*// ;')
+        REGISTRAR=$(${AWK} -F: '/Registrar Organization:/ && $2 != "" { sub(/^[ \t]+/,"",$2); print $2 }' ${WHOIS_TMP})
     elif [ "${TLDTYPE}" == "tg" ];
     then
         REGISTRAR=`${ECHO} ${REGISTRAR} | ${TR} -d "."`
