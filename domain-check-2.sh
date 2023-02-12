@@ -598,10 +598,10 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "ru" -o "${TLDTYPE}" == "su" ]; # added 20141113
     then
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,6,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
-    elif [ "${TLDTYPE}" == "ua" -a "${SUBTLDTYPE}" == "od.ua" ]; # added by @click0 20190212
+    elif [ "${SUBTLDTYPE}" == "od.ua" ];
     then
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,11,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
-    elif [ "${TLDTYPE}" == "ua" ]; # added by @click0 20190212
+    elif [ "${TLDTYPE}" == "ua" ] && [ "${SUBTLDTYPE}" != "biz.ua" ] && [ "${SUBTLDTYPE}" != "od.ua" ]; # added by @click0 20190212
     then
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,9,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${SUBTLDTYPE}" == "biz.ua" ];
@@ -777,7 +777,7 @@ check_domain_status()
         tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
-    elif [ "${TLDTYPE}" == "ua" ]; # for .ua @click0 2019/02/12
+    elif [ "${TLDTYPE}" == "ua" ] && [ "${SUBTLDTYPE}" != "biz.ua" ]; # for .ua @click0 2019/02/12
     then
         tdomdate=`${AWK} '/expires:/ { print $2 }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
