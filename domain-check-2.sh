@@ -508,35 +508,40 @@ tolower()
 ##################################################################
 check_domain_status()
 {
-    local REGISTRAR=""
+    local REGISTRAR
+    REGISTRAR=""
     # Avoid WHOIS LIMIT EXCEEDED - slowdown our whois client by adding 1 sec
     sleep 1
     # Save the domain since set will trip up the ordering
-    local DOMAIN=${1}
-    local TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($NF);}')
+    local DOMAIN
+    DOMAIN="${1}"
+    local TLDTYPE
+    TLDTYPE=$(echo "${DOMAIN}" | ${AWK} -F. '{print tolower($NF);}')
     if [ "x${TLDTYPE}" == "x" ];
     then
         TLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1));}')
     fi
     if [ "${TLDTYPE}" == "ua" -o "${TLDTYPE}" == "pl" -o "${TLDTYPE}" == "br" -o "${TLDTYPE}" == "jp" ];
     then
-        local SUBTLDTYPE=$(echo ${DOMAIN} | ${AWK} -F. '{print tolower($(NF-1)"."$(NF));}')
+        local SUBTLDTYPE
+        SUBTLDTYPE=$(echo "${DOMAIN}" | ${AWK} -F. '{print tolower($(NF-1)"."$(NF));}')
     fi
 
     # Invoke whois to find the domain registrar and expiration date
     #${WHOIS} -h ${WHOIS_SERVER} "=${1}" > ${WHOIS_TMP}
     # Let whois select server
 
+    local WHS
     if [ -n "${WHOIS_SERVER}" ] && [ "${WHOIS_SERVER}" == "whois.iana.org" ]; then
-        local WHS="$(${WHOIS} -h "${WHOIS_SERVER}" "${TLDTYPE}" | ${AWK} '/whois:/ {print $2}')"
+        WHS="$(${WHOIS} -h "${WHOIS_SERVER}" "${TLDTYPE}" | ${AWK} '/whois:/ {print $2}')"
     else
-        local WHS="${WHOIS_SERVER}"
+        WHS="${WHOIS_SERVER}"
     fi
 
     if [ -n "${WHOIS_SERVER}" ];
     then
         # section for TLDTYPE
-        [ "${TLDTYPE}" == "bm" ] && local WHS="whois.bermudanic.bm";
+        [ "${TLDTYPE}" == "bm" ] && WHS="whois.bermudanic.bm";
 
         # section for SUBTLDTYPE
         [ "${SUBTLDTYPE}" == "co.pl" ] && WHS="whois.co.pl"; 	# added by @hawkeye116477 20190514
@@ -1119,7 +1124,8 @@ prints()
 {
     if [ "${QUIET}" != "TRUE" ]
     then
-        local MIN_DATE=$(${ECHO} $3 | ${AWK} '{ print $1, $2, $4 }' | ${TR} -d " " )
+        local MIN_DATE
+        MIN_DATE=$(${ECHO} $3 | ${AWK} '{ print $1, $2, $4 }' | ${TR} -d " " )
         if [ "${OUTPUT_FORMAT}" == "format" ]; then
             printf "%-35s %-46s %-8s %-11s %-5s\n" "$1" "$5" "$2" "${MIN_DATE}" "$4"
         fi
