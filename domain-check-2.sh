@@ -548,6 +548,7 @@ check_domain_status()
         [ "${SUBTLDTYPE}" == "co.pl" ] && WHS="whois.co.pl"; 	# added by @hawkeye116477 20190514
         [ "${SUBTLDTYPE}" == "gov.uk" ] && WHS="whois.gov.uk";
         [ "${SUBTLDTYPE}" == "biz.ua" ] && WHS="whois.biz.ua";
+        [ "${SUBTLDTYPE}" == "co.ua" ] && WHS="whois.co.ua";
     fi
 
     ${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
@@ -610,12 +611,15 @@ check_domain_status()
     elif [ "${SUBTLDTYPE}" == "od.ua" ];
     then
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,11,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
-    elif [ "${TLDTYPE}" == "ua" ] && [ "${SUBTLDTYPE}" != "biz.ua" ] && [ "${SUBTLDTYPE}" != "od.ua" ]; # added by @click0 20190212
+    elif [ "${TLDTYPE}" == "ua" ] && [ "${SUBTLDTYPE}" != "biz.ua" ] && [ "${SUBTLDTYPE}" != "co.ua" ] && [ "${SUBTLDTYPE}" != "od.ua" ]; # added by @click0 20190212
     then
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,9,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${SUBTLDTYPE}" == "biz.ua" ];
     then
         REGISTRAR=`${AWK} -F: '/[Rr]egistrar:/ && $2 != "" { print $2 }' ${WHOIS_TMP}`
+    elif [ "${SUBTLDTYPE}" == "co.ua" ];
+    then
+        REGISTRAR=`${AWK} -F: '/Billing [Oo]rganization:/ && $2 != "" { print $2 }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "укр" ]; # added by @click0 20190515
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,65) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -787,7 +791,7 @@ check_domain_status()
         tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
-    elif [ "${TLDTYPE}" == "ua" ] && [ "${SUBTLDTYPE}" != "biz.ua" ]; # for .ua @click0 2019/02/12
+    elif [ "${TLDTYPE}" == "ua" ] && [ "${SUBTLDTYPE}" != "biz.ua" ] && [ "${SUBTLDTYPE}" != "co.ua" ];
     then
         tdomdate=`${AWK} '/expires:/ { print $2 }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
@@ -797,6 +801,11 @@ check_domain_status()
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
     elif [ "${SUBTLDTYPE}" == "biz.ua" ];
+    then
+        tdomdate=`${AWK} '/Expiration Date:/ { print $2 }' ${WHOIS_TMP} | ${AWK} -F: '{ print tolower($2) }'`
+        DOMAINDATE=${tdomdate}
+
+    elif [ "${SUBTLDTYPE}" == "co.ua" ];
     then
         tdomdate=`${AWK} '/Expiration Date:/ { print $2 }' ${WHOIS_TMP} | ${AWK} -F: '{ print tolower($2) }'`
         DOMAINDATE=${tdomdate}

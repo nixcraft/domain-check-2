@@ -101,3 +101,4 @@ google.ee
 google.pk
 hse.gov.uk
 news.biz.ua
+google.co.ua
