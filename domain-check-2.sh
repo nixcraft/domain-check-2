@@ -539,7 +539,7 @@ check_domain_status()
         [ "${TLDTYPE}" == "bm" ] && local WHS="whois.bermudanic.bm";
 
         # section for SUBTLDTYPE
-        [ "${SUBTLDTYPE}" == "co.pl" ] && local WHS="whois.co.pl"; 	# added by @hawkeye116477 20190514
+        [ "${SUBTLDTYPE}" == "biz.ua" ] && WHS="whois.biz.ua";
     fi
 
     ${WHOIS} -h ${WHS} "${1}" | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" > ${WHOIS_TMP}
@@ -599,6 +599,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "ua" ]; # added by @click0 20190212
     then
         REGISTRAR=`${AWK} -F: '/registrar:/ && $2 != "" { REGISTRAR=substr($2,9,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
+    elif [ "${SUBTLDTYPE}" == "biz.ua" ];
+    then
+        REGISTRAR=`${AWK} -F: '/[Rr]egistrar:/ && $2 != "" { print $2 }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "укр" ]; # added by @click0 20190515
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,65) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -745,6 +748,11 @@ check_domain_status()
         tmonth=$(getmonth_number ${tmon})
         tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif [ "${SUBTLDTYPE}" == "biz.ua" ];
+    then
+        tdomdate=`${AWK} '/Expiration Date:/ { print $2 }' ${WHOIS_TMP} | ${AWK} -F: '{ print tolower($2) }'`
+        DOMAINDATE=${tdomdate}
 
     elif [ "${TLDTYPE}" == "укр" ]; # for .укр @click0 2019/05/15
     then
