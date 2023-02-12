@@ -539,6 +539,7 @@ check_domain_status()
         [ "${TLDTYPE}" == "bm" ] && local WHS="whois.bermudanic.bm";
 
         # section for SUBTLDTYPE
+        [ "${SUBTLDTYPE}" == "gov.uk" ] && WHS="whois.gov.uk";
         [ "${SUBTLDTYPE}" == "biz.ua" ] && WHS="whois.biz.ua";
     fi
 
@@ -554,10 +555,14 @@ check_domain_status()
     REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,40) } END { print REGISTRAR }' ${WHOIS_TMP}\
         | env LC_CTYPE=C LC_ALL=C ${TR} -d "\r" | ${SED} -e 's/[[:space:]\t]*// ;'`
 
-    if [ "${TLDTYPE}" == "uk" ]; # for .uk domain
+    if [ "${TLDTYPE}" == "uk" ] && [ "${SUBTLDTYPE}" != "gov.uk" ]; # for .uk domain
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$0); print $0; }' ${WHOIS_TMP} \
             | ${AWK} -F'[' '{ print $1 }'`
+    elif [ "${SUBTLDTYPE}" == "gov.uk" ];
+    then
+        REGISTRAR=`${AWK} '/Registered By:/ && $2 != "" { getline; sub(/^[ \t]+/,"",$0); print $0 }' ${WHOIS_TMP} |
+            ${TR} -d "\r"`
     elif [ "${TLDTYPE}" == "me" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,23) } END { print REGISTRAR }' ${WHOIS_TMP}`
@@ -709,9 +714,41 @@ check_domain_status()
 
     # The whois Expiration data should resemble the following: "Expiration Date: 09-may-2008"
 
-    if [ "${TLDTYPE}" == "uk" ]; # for .uk domain
+    if [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org" -o "${TLDTYPE}" == "link" -o \
+        "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o \
+        "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o \
+        "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o \
+        "${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero" -o "${TLDTYPE}" == "online" -o \
+        "${TLDTYPE}" == "app" -o "${TLDTYPE}" == "io" -o "${TLDTYPE}" == "me" -o "${TLDTYPE}" == "xyz" -o \
+        "${TLDTYPE}" == "top" -o "${TLDTYPE}" == "bid" -o "${TLDTYPE}" == "ng" -o "${TLDTYPE}" == "site" -o \
+        "${TLDTYPE}" == "icu"  -o "${TLDTYPE}" == "cloud" -o "${TLDTYPE}" == "systems" -o \
+        "${TLDTYPE}" == "expert" -o "${TLDTYPE}" == "express" -o "${TLDTYPE}" == "ca" -o "${TLDTYPE}" == "space" -o \
+        "${TLDTYPE}" == "fun" -o "${TLDTYPE}" == "museum" -o "${TLDTYPE}" == "live" -o "${TLDTYPE}" == "club" -o \
+        "${TLDTYPE}" == "stream" -o "${TLDTYPE}" == "today" -o "${TLDTYPE}" == "website" -o "${TLDTYPE}" == "host" -o \
+        "${TLDTYPE}" == "team" -o "${TLDTYPE}" == "info" -o "${TLDTYPE}" == "xxx" -o "${TLDTYPE}" == "md" -o \
+        "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" -o "${TLDTYPE}" == "dk" -o "${TLDTYPE}" == "it" -o \
+        "${TLDTYPE}" == "do" -o "${TLDTYPE}" == "ro" -o "${TLDTYPE}" == "game" -o "${TLDTYPE}" == "pk" -o \
+        "${TLDTYPE}" == "ee" ];
     then
-        DOMAINDATE=`${AWK} '/Renewal date:/ || /Expiry date:/ { print $3 }' ${WHOIS_TMP}`
+        # From date format 2023-12-11 convert to ${tday}-${tmonth}-${tyear} (11-dec-2023)
+        tdomdate=`${AWK} '/Registrar Registration Expiration [Dd]ate:|Registry Expiry Date:|Expiration [Dd]ate:|\
+          Renewal date:|Expir[ey] [Dd]ate:|Expires [Oo]n:|Expires    [Oo]n:|[Ee]xpires?:/ \
+          { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1 }' | ${HEAD} -1`
+        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
+        tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
+        tmonth=$(getmonth_number ${tmon})
+        tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
+        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
+
+    elif [ "${TLDTYPE}" == "uk" ] && [ "${SUBTLDTYPE}" != "gov.uk" ]; # for .uk domain (excluding .gov.uk subdomains)
+    then
+        DOMAINDATE=`${AWK} '/Renewal date:|Expiry date:/ { print tolower($3) }' ${WHOIS_TMP}`
+
+    elif [ "${SUBTLDTYPE}" == "gov.uk" ];
+    then
+        tdomdate=`${AWK} '/Renewal date:/ && $2 != "" \
+            { getline; sub(/^[ \t]+/,"",$0); sub(/th/,"",$2);print $2"-"tolower($3)"-"$4 }' ${WHOIS_TMP}`
+        DOMAINDATE=${tdomdate}
 
     elif [ "${TLDTYPE}" == "jp" ] && [ "${SUBTLDTYPE}" != "co.jp" ];
     then
