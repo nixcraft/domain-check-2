@@ -834,30 +834,6 @@ check_domain_status()
         tday=$(echo ${tdomdate} | ${CUT} -d'-' -f3)
         DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
 
-    elif [ "${TLDTYPE}" == "com" -o "${TLDTYPE}" == "net" -o "${TLDTYPE}" == "org" -o "${TLDTYPE}" == "link" -o \
-        "${TLDTYPE}" == "blog" -o "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "biz" -o "${TLDTYPE}" == "us" -o \
-        "${TLDTYPE}" == "mobi" -o "${TLDTYPE}" == "tv" -o "${TLDTYPE}" == "co" -o "${TLDTYPE}" == "pro" -o \
-        "${TLDTYPE}" == "cafe" -o "${TLDTYPE}" == "in" -o "${TLDTYPE}" == "cat" -o "${TLDTYPE}" == "asia" -o \
-        "${TLDTYPE}" == "cc" -o "${TLDTYPE}" == "college" -o "${TLDTYPE}" == "aero" -o "${TLDTYPE}" == "online" -o \
-        "${TLDTYPE}" == "app" -o "${TLDTYPE}" == "io" -o "${TLDTYPE}" == "me" -o "${TLDTYPE}" == "xyz" -o \
-        "${TLDTYPE}" == "top" -o "${TLDTYPE}" == "bid" -o "${TLDTYPE}" == "ng" -o "${TLDTYPE}" == "site" -o \
-        "${TLDTYPE}" == "icu"  -o "${TLDTYPE}" == "cloud" -o "${TLDTYPE}" == "systems" -o \
-        "${TLDTYPE}" == "expert" -o "${TLDTYPE}" == "express" -o "${TLDTYPE}" == "ca" -o "${TLDTYPE}" == "space" -o \
-        "${TLDTYPE}" == "fun" -o "${TLDTYPE}" == "museum" -o "${TLDTYPE}" == "live" -o "${TLDTYPE}" == "club" -o \
-        "${TLDTYPE}" == "stream" -o "${TLDTYPE}" == "today" -o "${TLDTYPE}" == "website" -o "${TLDTYPE}" == "host" -o \
-        "${TLDTYPE}" == "team" -o "${TLDTYPE}" == "info" -o "${TLDTYPE}" == "xxx" -o "${TLDTYPE}" == "md" -o \
-        "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" -o "${TLDTYPE}" == "dk" -o "${TLDTYPE}" == "it" -o \
-        "${TLDTYPE}" == "do" -o "${TLDTYPE}" == "ro" -o "${TLDTYPE}" == "game" ];
-    then
-        tdomdate=`${AWK} '/Registrar Registration Expiration [Dd]ate:|Registry Expiry Date:|Expiration [Dd]ate:|\
-          Renewal date:|Expir[ey] [Dd]ate:|Expires [Oo]n:|Expires    [Oo]n:|[Ee]xpires:/ \
-           { print $NF }' ${WHOIS_TMP} | ${AWK} -FT '{ print $1 }' | ${HEAD} -1`
-        tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
-        tmon=`echo ${tdomdate} |${CUT} -d'-' -f2`
-        tmonth=$(getmonth_number ${tmon})
-        tday=`echo ${tdomdate} | ${CUT} -d'-' -f3 | ${CUT} -d'T' -f1`
-        DOMAINDATE=`echo "${tday}-${tmonth}-${tyear}"`
-
     elif [ "${TLDTYPE}" == "edu" ] # added on 26-aug-2017 by nixCraft
     then
         tdomdate=`${AWK} '/Domain expires:/ { print $NF }' ${WHOIS_TMP}`
