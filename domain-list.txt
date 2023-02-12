@@ -96,3 +96,8 @@ google.photo
 google.com.ar
 amazon.bm
 google.co.jp
+google.icu
+google.ee
+google.pk
+hse.gov.uk
+news.biz.ua
