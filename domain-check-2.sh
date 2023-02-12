@@ -693,6 +693,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "ee" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrant:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$2); print $2 }' ${WHOIS_TMP}`
+    elif [ "${TLDTYPE}" == "pk" ];
+    then
+        REGISTRAR=$(${AWK} '/Domain:/ && $0 != "" { print $2 }' ${WHOIS_TMP})
     fi
     # If the Registrar is NULL, then we didn't get any data
     if [ "x${REGISTRAR}" = "x" ]
