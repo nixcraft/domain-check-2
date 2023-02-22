@@ -631,11 +631,12 @@ check_domain_status()
         REGISTRAR=`${AWK} -F: '/[Rr]egistrar:/ && $2 != "" { print $2 }' ${WHOIS_TMP}`
     elif [ "${SUBTLDTYPE}" == "co.ua" ];
     then
-        REGISTRAR=`${AWK} -F: '/Billing [Oo]rganization:/ && $2 != "" { print $2 }' ${WHOIS_TMP}`
+        REGISTRAR=`${AWK} -F: '/Billing [Oo]rganization:/ && $2 != "" && $2 !~ "not disclosed" { print $2 }' ${WHOIS_TMP}`
+        [ "x${REGISTRAR}" = "x" ] && REGISTRAR=`${AWK} -F: '/Billing ID:/ && $2 != "" && $2 !~ "not disclosed" { print $2 }' ${WHOIS_TMP}`
     elif [ "${SUBTLDTYPE}" == "pp.ua" ];
     then
-        REGISTRAR=`${AWK} -F: '/Billing [Oo]rganization:/ && $2 != "" && $2 != "<not disclosed>" { print $2 }' ${WHOIS_TMP}`
-        REGISTRAR=`${AWK} -F: '/Billing ID:/ && $2 != "" && $2 != "<not disclosed>" { print $2 }' ${WHOIS_TMP}`
+        REGISTRAR=`${AWK} -F: '/Billing [Oo]rganization:/ && $2 != "" && $2 !~ "not disclosed" { print $2 }' ${WHOIS_TMP}`
+        [ "x${REGISTRAR}" = "x" ] && REGISTRAR=`${AWK} -F: '/Billing ID:/ && $2 != "" && $2 !~ "not disclosed" { print $2 }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "укр" ]; # added by @click0 20190515
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,65) } END { print REGISTRAR }' ${WHOIS_TMP}`
