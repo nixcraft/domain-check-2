@@ -1079,7 +1079,7 @@ check_domain_status()
     then
        tdomdate=`${AWK} -F: '/expiration:/ { sub(/^[ \t]+/,"",$2); sub(/T[0-9]+/,"",$2); print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
        tyear=$(echo ${tdomdate} | ${CUT} -d'-' -f1)
-       tmon=$(echo ${tdomdate} | ${CUT} -d'.' -f2)
+       tmon=$(echo ${tdomdate} | ${CUT} -d'-' -f2)
        tmonth=$(getmonth_number ${tmon})
        tday=$(echo ${tdomdate} | ${CUT} -d'-' -f3)
        DOMAINDATE=`echo ${tday}-${tmonth}-${tyear}`
