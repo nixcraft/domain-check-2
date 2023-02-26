@@ -1067,14 +1067,6 @@ check_domain_status()
        tday=$(echo ${tdomdate} | ${CUT} -d'/' -f2)
        DOMAINDATE=`echo ${tday}-${tmonth}-${tyear}`
 
-    elif [ "${TLDTYPE}" == "ee" ];
-    then
-       tdomdate=`${AWK} -F: '/Record will expire on:/ { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
-       tyear=$(echo ${tdomdate} | ${CUT} -d'/' -f3)
-       tmonth=$(echo ${tdomdate} | ${CUT} -d'/' -f1)
-       tday=$(echo ${tdomdate} | ${CUT} -d'/' -f2)
-       DOMAINDATE=`echo ${tday}-${tmonth}-${tyear}`
-
     elif [ "${TLDTYPE}" == "sn" ];
     then
        tdomdate=`${AWK} -F: '/expiration:/ { sub(/^[ \t]+/,"",$2); sub(/T[0-9]+/,"",$2); print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
