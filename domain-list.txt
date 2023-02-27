@@ -103,3 +103,7 @@ hse.gov.uk
 news.biz.ua
 google.co.ua
 google.pp.ua
+google.sn
+google.st
+google.th
+google.co.th
