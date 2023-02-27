@@ -759,7 +759,7 @@ check_domain_status()
         "${TLDTYPE}" == "team" -o "${TLDTYPE}" == "info" -o "${TLDTYPE}" == "xxx" -o "${TLDTYPE}" == "md" -o \
         "${TLDTYPE}" == "se" -o "${TLDTYPE}" == "nu" -o "${TLDTYPE}" == "dk" -o "${TLDTYPE}" == "it" -o \
         "${TLDTYPE}" == "do" -o "${TLDTYPE}" == "ro" -o "${TLDTYPE}" == "game" -o "${TLDTYPE}" == "pk" -o \
-        "${TLDTYPE}" == "ee" ];
+        "${TLDTYPE}" == "ee" -o "${TLDTYPE}" == "st" ];
     then
         # From date format 2023-12-11 convert to ${tday}-${tmonth}-${tyear} (11-dec-2023)
         tdomdate=`${AWK} '/Registrar Registration Expiration [Dd]ate:|Registry Expiry Date:|Expiration [Dd]ate:|\
