@@ -108,3 +108,4 @@ google.st
 google.th
 google.co.th
 google.by
+google.ps

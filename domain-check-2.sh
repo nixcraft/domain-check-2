@@ -549,6 +549,7 @@ check_domain_status()
     then
         # section for TLDTYPE
         [ "${TLDTYPE}" == "bm" ] && WHS="whois.bermudanic.bm";
+        [ "${TLDTYPE}" == "ps" ] && WHS="whois.pnina.ps";
 
         # section for SUBTLDTYPE
         [ "${SUBTLDTYPE}" == "co.pl" ] && WHS="whois.co.pl"; 	# added by @hawkeye116477 20190514
