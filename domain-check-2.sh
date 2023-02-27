@@ -1081,6 +1081,15 @@ check_domain_status()
        tdomdate=`${AWK} -F: '/Exp date:/ { sub(/^[ \t]+/,"",$2); gsub(/ /,"-",$2); print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
        DOMAINDATE=${tdomdate}
 
+    elif [ "${TLDTYPE}" == "by" ];
+    then
+       tdomdate=`${AWK} -F": " '/Expiration Date:/ { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
+       tyear=$(echo ${tdomdate} | ${CUT} -d'-' -f1)
+       tmon=$(echo ${tdomdate} | ${CUT} -d'-' -f2)
+       tmonth=$(getmonth_number ${tmon})
+       tday=$(echo ${tdomdate} | ${CUT} -d'-' -f3)
+       DOMAINDATE=`echo ${tday}-${tmonth}-${tyear}`
+
     # may work with others	 ??? ;)
     else
         DOMAINDATE=`${AWK} '/Expiration:|[Ee]xpires:|Registry Expiry Date:|Registrar Registration Expiration Date:/ \
