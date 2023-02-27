@@ -1076,7 +1076,7 @@ check_domain_status()
        tday=$(echo ${tdomdate} | ${CUT} -d'-' -f3)
        DOMAINDATE=`echo ${tday}-${tmonth}-${tyear}`
 
-    elif [ "${TLDTYPE}" == "th" ]; # for .pt added @copenhaus 2021/03/02
+    elif [ "${TLDTYPE}" == "th" ];
     then
        tdomdate=`${AWK} -F: '/Exp date:/ { sub(/^[ \t]+/,"",$2); gsub(/ /,"-",$2); print $2 }' ${WHOIS_TMP} | ${TR} -d " \r"`
        DOMAINDATE=${tdomdate}
