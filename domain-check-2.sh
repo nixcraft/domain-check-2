@@ -6,10 +6,13 @@
 # Author: Matty < matty91 at gmail dot com >
 # Co-author: Vladislav V. Prodan <github.com/click0>
 #
-# Current Version: 2.66
-# Last Updated: 12-Feb-2023
+# Current Version: 2.67
+# Last Updated: 28-Feb-2023
 #
 # Revision History:
+#
+#  Version 2.67
+#   Added support for sn/.st/.th/.co.th/.by/.ps TLDs. -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.66
 #   Added support for .ee/.pk/.biz.ua/.gov.uk/.co.ua/.pp.ua TLDs. -- Vladislav V. Prodan <github.com/click0>
