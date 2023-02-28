@@ -109,3 +109,4 @@ google.th
 google.co.th
 google.by
 google.ps
+google.kg

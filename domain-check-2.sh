@@ -739,6 +739,9 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "pk" ];
     then
         REGISTRAR=$(${AWK} '/Domain:/ && $0 != "" { print $2 }' ${WHOIS_TMP})
+    elif [ "${TLDTYPE}" == "kg" ];
+    then
+        REGISTRAR="$(${AWK} -F: '/Billing Contact:/ { getline; getline; sub(/^[ \t]+/,"",$2); print $2 }' ${WHOIS_TMP})"
     fi
     # If the Registrar is NULL, then we didn't get any data
     if [ "x${REGISTRAR}" = "x" ]
@@ -1093,6 +1096,13 @@ check_domain_status()
        tmonth=$(getmonth_number ${tmon})
        tday=$(echo ${tdomdate} | ${CUT} -d'-' -f3)
        DOMAINDATE=`echo ${tday}-${tmonth}-${tyear}`
+
+    elif [ "${TLDTYPE}" == "kg" ]; then
+        tdomdate=$(${AWK} -F: '/Record expires on:/ { sub(/^[ \t]+/,"",$2); print $2" "$4 }' ${WHOIS_TMP})
+        tyear=$(echo ${tdomdate} | ${CUT} -d' ' -f6)
+        tmonth=$(echo ${tdomdate} | ${CUT} -d' ' -f2)
+        tday=$(echo ${tdomdate} | ${CUT} -d' ' -f3)
+        DOMAINDATE=$(echo ${tday}-${tmonth}-${tyear})
 
     # may work with others	 ??? ;)
     else
