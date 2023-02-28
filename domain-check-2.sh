@@ -680,7 +680,7 @@ check_domain_status()
         REGISTRAR=`${AWK} -F':' '/Registrar/ && $0 != "" { getline;REGISTRAR=substr($0,21,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "cn" ];
     then
-        REGISTRAR=$(${AWK} -F': ' '/Registrant\ ID:|Registrant:/ && $0 != "" { print $2 }' ${WHOIS_TMP})
+        REGISTRAR=$(${AWK} -F': ' '/Registrant ID:|Registrant:/ && $0 != "" { print $2 }' ${WHOIS_TMP})
     elif [ "${TLDTYPE}" == "io" ];
     then
         REGISTRAR=$(${AWK} -F: '/Registrar:/ && $0 != "" { print $2 }' ${WHOIS_TMP} | ${TR} -d " \r")
@@ -902,7 +902,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "pl" ] && [ "${SUBTLDTYPE}" != "co.pl" ] # NASK
     then
-        tdomdate=`${AWK} -F: '/^expiration\ date:/ || /renewal\ date:/ { print $2; }' ${WHOIS_TMP} | ${AWK} -F" " '{ print $1; }'`
+        tdomdate=`${AWK} -F: '/^expiration date:/ || /renewal date:/ { print $2; }' ${WHOIS_TMP} | ${AWK} -F" " '{ print $1; }'`
         tyear=`echo ${tdomdate} | ${CUT} -d'.' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
         tmonth=$(getmonth_number ${tmon})
@@ -930,7 +930,7 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "fr" -o "${TLDTYPE}" == "re" -o "${TLDTYPE}" == "tf" -o "${TLDTYPE}" == "yt" -o \
       "${TLDTYPE}" == "pm" -o "${TLDTYPE}" == "wf" -o "${TLDTYPE}" == "mx" -o "${TLDTYPE}" == "sk" ];
     then
-        tdomdate=`${AWK} '/Expiry\ Date:|Expiration\ Date:|Valid\ Until:/ { print $3 }' ${WHOIS_TMP}`
+        tdomdate=`${AWK} '/Expiry Date:|Expiration Date:|Valid Until:/ { print $3 }' ${WHOIS_TMP}`
         tyear=`echo ${tdomdate} | ${CUT} -d'-' -f1`
         tmon=`echo ${tdomdate} | ${CUT} -d'-' -f2`
         tmonth=$(getmonth_number ${tmon})
@@ -992,7 +992,7 @@ check_domain_status()
 
     elif [ "${TLDTYPE}" == "rs" ]
     then
-        tdomdate=`${AWK} '/Expiration\ date:/ { print $3 }' ${WHOIS_TMP} `
+        tdomdate=`${AWK} '/Expiration date:/ { print $3 }' ${WHOIS_TMP} `
         tyear=`echo ${tdomdate} | ${CUT} -d'.' -f3`
         tmon=`echo ${tdomdate} | ${CUT} -d'.' -f2`
         tmonth=$(getmonth_number ${tmon})
