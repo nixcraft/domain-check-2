@@ -110,3 +110,8 @@ google.co.th
 google.by
 google.ps
 google.kg
+nic.network
+nic.run
+nic.rocks
+google.win
+google.tel
