@@ -6,10 +6,13 @@
 # Author: Matty < matty91 at gmail dot com >
 # Co-author: Vladislav V. Prodan <github.com/click0>
 #
-# Current Version: 2.67
-# Last Updated: 28-Feb-2023
+# Current Version: 2.68
+# Last Updated: 06-Jun-2023
 #
 # Revision History:
+#
+#  Version 2.68
+#   Fixed support for .md domain -- Vladislav V. Prodan <github.com/click0>
 #
 #  Version 2.67
 #   Added support for sn/.st/.th/.co.th/.by/.ps TLDs. -- Vladislav V. Prodan <github.com/click0>
@@ -601,6 +604,7 @@ check_domain_status()
     elif [ "${TLDTYPE}" == "md" ];
     then
         REGISTRAR=$(${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,7,46) } END { print REGISTRAR }' ${WHOIS_TMP})
+        [ "x${REGISTRAR}" = "x" ] && REGISTRAR="Hidden"
     elif [ "${TLDTYPE}" == "info" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrar:/ && $2 != "" { REGISTRAR=substr($2,2,17) } END { print REGISTRAR }' ${WHOIS_TMP}`
