@@ -17,7 +17,7 @@ google.blog
 linux.cafe
 google.md
 google.co
-dotmobi.mobi
+google.mobi
 google.wf
 google.me
 google.us
@@ -67,7 +67,6 @@ google.xxx
 google.id
 nic.today
 mail.game
-google.sk
 dream.team
 google.app
 google.host

@@ -6,10 +6,13 @@
 # Author: Matty < matty91 at gmail dot com >
 # Co-author: Vladislav V. Prodan <github.com/click0>
 #
-# Current Version: 2.68
-# Last Updated: 06-Jun-2023
+# Current Version: 2.69
+# Last Updated: 19-Mar-2024
 #
 # Revision History:
+#
+#  Version 2.69
+#   Fixed support for .sk/.bm TLDs. -- Vladyslav V. Prodan <github.com/click0>
 #
 #  Version 2.68
 #   Fixed support for .md domain -- Vladislav V. Prodan <github.com/click0>
@@ -554,7 +557,7 @@ check_domain_status()
     if [ -n "${WHOIS_SERVER}" ];
     then
         # section for TLDTYPE
-        [ "${TLDTYPE}" == "bm" ] && WHS="whois.bermudanic.bm";
+        [ "${TLDTYPE}" == "bm" ] && WHS="whois.nic.bm";
         [ "${TLDTYPE}" == "ps" ] && WHS="whois.pnina.ps";
 
         # section for SUBTLDTYPE
@@ -696,7 +699,7 @@ check_domain_status()
         REGISTRAR=$(${AWK} '/registrant:/ && $0 != "" { print $2 }' ${WHOIS_TMP})
     elif [ "${TLDTYPE}" == "sk" ]; # added by @hawkeye116477 20190603
     then
-        REGISTRAR=$(${AWK} '/Registrar:/ && $0 != "" { print $2; exit }' ${WHOIS_TMP})
+        REGISTRAR=$(${AWK} -F: '/^Registrar:/ && $0 != "" { getline; getline; sub(/^[ \t]+/,"",$2); print $2 }' ${WHOIS_TMP})
     elif [ "${SUBTLDTYPE}" == "com.br" ];
     then
         REGISTRAR=$(${AWK} -F':' '/owner:/ && $0 != "" { print $2 }' ${WHOIS_TMP} | ${SED} -e 's/[[:space:]\t]*// ;')
@@ -735,8 +738,7 @@ check_domain_status()
         REGISTRAR=`${AWK} -F: '/Owner contact:/ { getline; getline; REGISTRAR=substr($2,10,40) } END { print REGISTRAR }' ${WHOIS_TMP}`
     elif [ "${TLDTYPE}" == "bm" ];
     then
-        REGISTRAR="$(${AWK} -F'Registrar: ' '/Registrar:/ && $2 != "" { print $2 }' ${WHOIS_TMP} |
-            ${AWK} '/http:/ { print substr($1,8,40) } /https:/ { print substr($1,9,40) }' | ${TR} -d "/")"
+        REGISTRAR="$(${AWK} -F': ' '/Admin Organization:/ && $2 != "" { print $2 }' ${WHOIS_TMP})"
     elif [ "${TLDTYPE}" == "ee" ];
     then
         REGISTRAR=`${AWK} -F: '/Registrant:/ && $0 != "" { getline; sub(/^[ \t]+/,"",$2); print $2 }' ${WHOIS_TMP}`
